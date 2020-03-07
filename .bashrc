@@ -100,6 +100,8 @@ alias uur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 
 # Custom functions
 cs() { cd "$@" && ls -laF; }
+change_wallpaper() { gsettings set org.gnome.desktop.background picture-uri file:///"$@"; }
+change_lockscreen() { gsettings set org.gnome.desktop.screensaver picture-uri file:///"$@"; }
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
