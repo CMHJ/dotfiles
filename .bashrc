@@ -1,3 +1,7 @@
+############################
+# Captain's Custom .bashrc #
+############################
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -91,6 +95,11 @@ fi
 alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
+alias uu='sudo apt update && sudo apt upgrade -y'
+alias uur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+
+# Custom functions
+cs() { cd "$@" && ls -laF; }
 
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
@@ -115,3 +124,4 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
