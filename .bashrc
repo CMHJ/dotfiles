@@ -100,6 +100,7 @@ alias uur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 
 # Custom functions
 cs() { cd "$@" && ls -laF; }
+mkcd() { mkdir -p "$@" && cd "$@"; }
 change_wallpaper() { gsettings set org.gnome.desktop.background picture-uri file:///$(pwd)/"$@"; }
 change_lockscreen() { gsettings set org.gnome.desktop.screensaver picture-uri file:///$(pwd)/"$@"; }
 
@@ -127,3 +128,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
+source /opt/ros/melodic/setup.bash
