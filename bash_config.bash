@@ -1,3 +1,10 @@
+###############################
+# Connor's Bash Configuration #
+###############################
+
+# Set vi mode for bash
+set -o vi
+
 # Custom Aliases
 #unalias -a
 #alias v='nvim'

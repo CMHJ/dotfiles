@@ -15,5 +15,6 @@ set smarttab
 
 "colo delek
 "colo pablo
-colo elflord
+"colo elflord
+colo ron
 set background=dark
