@@ -1,5 +1,4 @@
 " designed for vim 8+
-" (see https://rwx.gg/vi for help)
 let skip_defaults_vim=1
 set nocompatible
 
@@ -73,7 +72,8 @@ set relativenumber
 set listchars=tab:→\ ,eol:↲,nbsp:␣,space:·,trail:·,extends:⟩,precedes:⟨
 
 " turn on default spell checking
-"set spell
+"set spell 
+set spelllang=en_au
 
 " more risky, but cleaner
 "set nobackup
@@ -138,4 +138,10 @@ endif
 
 autocmd vimleavepre *.rs !rustfmt %
 
+" Remappings
 nmap <C-g> :Goyo<CR>
+
+" Detecting filetypes
+augroup pandoc_syntax
+  au! BufNewFile,BufFilePre,BufRead *.md set filetype=markdown.pandoc
+augroup END
