@@ -1,11 +1,11 @@
 #!/bin/sh
-
 code --install-extension austin.code-gnu-global
 code --install-extension barrsan.reui
+code --install-extension bungcip.better-toml
 code --install-extension diff001a.kawaii-theme
 code --install-extension dracula-theme.theme-dracula
-code --install-extension endorfina.roseate
 code --install-extension enkia.tokyo-night
+code --install-extension golang.go
 code --install-extension idleberg.hopscotch
 code --install-extension interactiveRob.sedona
 code --install-extension kgscott.retreon
@@ -18,7 +18,9 @@ code --install-extension ms-vscode.cpptools
 code --install-extension nowsci.glassit-linux
 code --install-extension platformio.platformio-ide
 code --install-extension redhat.vscode-xml
+code --install-extension rust-lang.rust
 code --install-extension shardulm94.trailing-spaces
+code --install-extension sumneko.lua
 code --install-extension torn4dom4n.latex-support
 code --install-extension twxs.cmake
 code --install-extension vscodevim.vim
