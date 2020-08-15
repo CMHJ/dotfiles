@@ -5,6 +5,9 @@
 # Set vi mode for bash
 set -o vi
 
+# Set script dir in PATH variable
+export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
+
 # Custom Aliases
 #unalias -a
 #alias v='nvim'

@@ -1,8 +1,11 @@
 #!/bin/sh
-script_dir=$(dirname $0)
+script_dir="$(dirname "$(readlink -f "$0")")"
 
-ln -sf "$PWD"/vimrc ~/.vimrc
+ln -sf "$script_dir"/vimrc ~/.vimrc
 ls -l ~/.vimrc
 
-ln -sf "$PWD"/bash_config.bash ~/.bash_aliases
+ln -sf "$script_dir"/bash_config.bash ~/.bash_aliases
 ls -l ~/.bash_aliases
+
+# Setup lynx config
+./lynx/setup
