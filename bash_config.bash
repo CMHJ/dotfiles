@@ -23,3 +23,4 @@ alias pie='perl -p -i -e'
 # Custom functions
 cs() { cd "$@" && ls -laF; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
+vic() { vim $(which "$1"); }
