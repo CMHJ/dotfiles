@@ -12,7 +12,7 @@ fi
 
 mkdir ~/.config 2>/dev/null
 rm -rf ~/.config/lynx 2>/dev/null
-# This is an poo poo symlink, doesn't work unless in the directory
+# This is a poo poo symlink, doesn't work unless in the directory
 # ln -s "$PWD" "$HOME/.config/lynx"
 ln -s "$(dirname $(realpath "$0"))" "$HOME/.config/lynx"
 ls -l ~/.config/lynx

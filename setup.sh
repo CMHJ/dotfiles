@@ -8,4 +8,4 @@ ln -sf "$script_dir"/bash_config.bash ~/.bash_aliases
 ls -l ~/.bash_aliases
 
 # Setup lynx config
-./lynx/setup
+"$script_dir"/lynx/setup
