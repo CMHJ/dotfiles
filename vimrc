@@ -102,6 +102,27 @@ syntax enable
 " faster scrolling
 set ttyfast
 
+" Mapping timeout
+set timeout timeoutlen=250
+
+" Autoclose parentheses
+inoremap {      {}<Left>
+inoremap {<CR>  {<CR>}<Esc>O
+inoremap {{     {
+inoremap {}     {}
+inoremap {;<CR> {<CR>};<ESC>O
+
+inoremap (      ()<Left>
+inoremap (<CR>  (<CR>)<Esc>O
+inoremap ((     (
+inoremap ()     ()
+
+inoremap "      ""<Left>
+inoremap ""     "
+
+inoremap '      ''<Left>
+inoremap ''     '
+
 " allow sensing the filetype
 filetype plugin on
 
