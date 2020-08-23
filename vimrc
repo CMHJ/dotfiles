@@ -84,6 +84,9 @@ set spelllang=en_au
 set laststatus=0
 set icon
 
+" center the cursor always on the screen
+set scrolloff=999
+
 " prevents truncated yanks, deletes, etc.
 set viminfo='20,<1000,s1000
 
@@ -102,6 +105,9 @@ syntax enable
 " faster scrolling
 set ttyfast
 
+" Esc shortcut for insert mode
+inoremap jk     <Esc>
+
 " Mapping timeout
 set timeout timeoutlen=250
 
@@ -116,6 +122,11 @@ inoremap (      ()<Left>
 inoremap (<CR>  (<CR>)<Esc>O
 inoremap ((     (
 inoremap ()     ()
+
+inoremap [      []<Left>
+inoremap [<CR>  [<CR>]<Esc>O
+inoremap [[     [
+inoremap []     []
 
 inoremap "      ""<Left>
 inoremap ""     "
