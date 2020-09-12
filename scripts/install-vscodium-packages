@@ -1,0 +1,13 @@
+#!/bin/sh
+codium --install-extension bungcip.better-toml
+codium --install-extension dracula-theme.theme-dracula
+codium --install-extension enkia.tokyo-night
+codium --install-extension golang.go
+codium --install-extension idleberg.hopscotch
+codium --install-extension max-SS.Cyberpunk
+codium --install-extension ms-python.python
+codium --install-extension redhat.vscode-xml
+codium --install-extension rust-lang.rust
+codium --install-extension sumneko.lua
+codium --install-extension twxs.cmake
+codium --install-extension vscodevim.vim

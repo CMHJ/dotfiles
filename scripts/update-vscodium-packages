@@ -1,0 +1,5 @@
+#!/bin/sh
+current_dir="$(dirname "$(readlink -f "$0")")"
+install_sh="$current_dir/install-vscodium-packages"
+printf "#!/bin/sh\n" > "$install_sh"
+codium --list-extensions | xargs -L 1 echo codium --install-extension >> "$install_sh"
