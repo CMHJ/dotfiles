@@ -17,6 +17,7 @@ code --install-extension ms-vscode.cmake-tools
 code --install-extension ms-vscode.cpptools
 code --install-extension nowsci.glassit-linux
 code --install-extension platformio.platformio-ide
+code --install-extension rebornix.ruby
 code --install-extension redhat.vscode-xml
 code --install-extension rust-lang.rust
 code --install-extension shardulm94.trailing-spaces
@@ -24,3 +25,4 @@ code --install-extension sumneko.lua
 code --install-extension torn4dom4n.latex-support
 code --install-extension twxs.cmake
 code --install-extension vscodevim.vim
+code --install-extension wingrunr21.vscode-ruby
