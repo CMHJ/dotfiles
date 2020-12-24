@@ -1,0 +1,15 @@
+#!/bin/sh
+# Set ssh files permissions as they should be
+
+chown $USER:$USER /home/$USER/.ssh
+chown $USER:$USER /home/$USER/.ssh/*
+
+chmod 700 /home/$USER/.ssh
+chmod 644 /home/$USER/.ssh/*
+
+# Grab private keys and loop through "array" to change permissions
+private_keys=$(ls /home/$USER/.ssh/*.pub | sed 's/\.pub//g')
+echo "$private_keys" | tr ' ' '\n' | while read private_key; do
+  chmod 600 $private_key
+done
+
