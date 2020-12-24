@@ -16,6 +16,8 @@ alias c='clear'
 alias uu='sudo apt update && sudo apt upgrade -y'
 alias uur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 alias gfs='git fetch && git status'
+alias gs='git status'
+alias gd='git diff'
 alias steal='git clone'
 
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir i.e.
