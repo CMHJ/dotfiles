@@ -8,6 +8,14 @@ set -o vi
 # Set script dir in PATH variable
 export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
 
+
+# Set go paths
+if command -v /usr/bin/go &> /dev/null
+then
+    export GOPATH=$(go env GOPATH)
+    export PATH=$PATH:$(go env GOPATH)/bin
+fi
+
 # Custom Aliases
 #unalias -a
 #alias v='nvim'
