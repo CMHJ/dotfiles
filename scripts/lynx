@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# see ../lynx/README.md for configs
+# Stolen shamelessly from rwxrob
 
 lynxpath=/usr/bin/lynx
 
