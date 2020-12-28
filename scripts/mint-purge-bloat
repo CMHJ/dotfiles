@@ -1,0 +1,13 @@
+#!/bin/sh
+
+sudo apt purge -y \
+    libreoffice-core \
+    celluloid \
+    xed \
+    drawing \
+    rhythmbox \
+    hexchat \
+    pix \
+    thunderbird
+
+sudo apt autoremove -y
