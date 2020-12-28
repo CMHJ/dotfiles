@@ -11,13 +11,12 @@ code --install-extension interactiveRob.sedona
 code --install-extension kgscott.retreon
 code --install-extension max-SS.Cyberpunk
 code --install-extension maximetinu.identical-sublime-monokai-csharp-theme-colorizer
-code --install-extension ms-iot.vscode-ros
 code --install-extension ms-python.python
+code --install-extension ms-toolsai.jupyter
 code --install-extension ms-vscode.cmake-tools
 code --install-extension ms-vscode.cpptools
 code --install-extension nowsci.glassit-linux
 code --install-extension platformio.platformio-ide
-code --install-extension rebornix.ruby
 code --install-extension redhat.vscode-xml
 code --install-extension rust-lang.rust
 code --install-extension shardulm94.trailing-spaces
