@@ -85,7 +85,7 @@ set laststatus=0
 set icon
 
 " center the cursor always on the screen
-set scrolloff=999
+" set scrolloff=999
 
 " prevents truncated yanks, deletes, etc.
 set viminfo='20,<1000,s1000
@@ -112,7 +112,7 @@ inoremap jk     <Esc>
 set timeout timeoutlen=250
 
 " Autoclose parentheses
-inoremap {      {}<Left>
+inoremap {      {<Space><Space>}<Left><Left>
 inoremap {<CR>  {<CR>}<Esc>O
 inoremap {{     {
 inoremap {}     {}
