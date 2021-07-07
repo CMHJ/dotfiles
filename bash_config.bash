@@ -28,6 +28,8 @@ alias gfs='git fetch && git status'
 alias gs='git status'
 alias gd='git diff'
 alias steal='git clone'
+alias copy='xclip -sel clip'
+alias paste='xclip -out -sel clip'
 
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir i.e.
 # pie 's/replace-text/with-this-text/g' ./*.txt
