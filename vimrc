@@ -115,27 +115,27 @@ inoremap jk     <Esc>
 set timeout timeoutlen=250
 
 " Autoclose parentheses
-inoremap {      {<Space><Space>}<Left><Left>
-inoremap {<CR>  {<CR>}<Esc>O
-inoremap {{     {
-inoremap {}     {}
-inoremap {;<CR> {<CR>};<ESC>O
+"inoremap {      {<Space><Space>}<Left><Left>
+"inoremap {<CR>  {<CR>}<Esc>O
+"inoremap {{     {
+"inoremap {}     {}
+"inoremap {;<CR> {<CR>};<ESC>O
 
-inoremap (      ()<Left>
-inoremap (<CR>  (<CR>)<Esc>O
-inoremap ((     (
-inoremap ()     ()
+"inoremap (      ()<Left>
+"inoremap (<CR>  (<CR>)<Esc>O
+"inoremap ((     (
+"inoremap ()     ()
 
-inoremap [      []<Left>
-inoremap [<CR>  [<CR>]<Esc>O
-inoremap [[     [
-inoremap []     []
+"inoremap [      []<Left>
+"inoremap [<CR>  [<CR>]<Esc>O
+"inoremap [[     [
+"inoremap []     []
 
-inoremap "      ""<Left>
-inoremap ""     "
+" inoremap "      ""<Left>
+" inoremap ""     "
 
-inoremap '      ''<Left>
-inoremap ''     '
+" inoremap '      ''<Left>
+" inoremap ''     '
 
 " allow sensing the filetype
 filetype plugin on
