@@ -44,6 +44,9 @@ set showmode
 
 set tabstop=4
 
+" remove annoying swap file generation
+set noswapfile
+
 "#######################################################################
 
 " Set theme for editor
