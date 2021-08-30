@@ -8,6 +8,9 @@ set -o vi
 # Set script dir in PATH variable
 export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
 
+# Set env vars
+export EDITOR="vim"
+export LC_ALL="en_US.UTF-8"
 
 # Set go paths
 if command -v /usr/bin/go &> /dev/null
@@ -31,8 +34,8 @@ alias steal='git clone'
 alias copy='xclip -sel clip'
 alias paste='xclip -out -sel clip'
 
-alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir i.e.
-# pie 's/replace-text/with-this-text/g' ./*.txt
+alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir.
+# example: pie 's/replace-text/with-this-text/g' ./*.txt
 
 # Custom functions
 cs() { cd "$@" && ls -laF; }
