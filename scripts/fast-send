@@ -1,0 +1,10 @@
+#!/bin/sh
+
+
+[ $# -ne 3 ] && \
+    echo "Send a folder very quickly." && \
+    echo "Destination must be running receive version of this script." && \
+    echo "Usage: $(basename $0) DIR HOST PORT" && \
+    exit 1
+
+tar cf - "$1" | nc -w1 "$2" "$3"

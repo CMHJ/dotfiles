@@ -1,0 +1,11 @@
+#!/bin/sh
+
+[ $# -ne 2 ] && \
+    echo "Receive a folder very quickly." && \
+    echo "Source must run send version of this script after this." && \
+    echo "Usage: $(basename $0) PORT DEST" && \
+    exit 1
+
+printf "Waiting for file on port %d...\n" "$1"
+nc -l -p "$1" | tar xf - -C "$2"
+echo Done
