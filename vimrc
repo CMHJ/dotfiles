@@ -109,10 +109,10 @@ set ttyfast
 inoremap jk     <Esc>
 
 " Mapping timeout
-set timeout timeoutlen=250
+set timeout timeoutlen=1000
 
-" Allow saving of files as sudo when I forgot to start vim using sudo.
-cmap w!! w !sudo tee > /dev/null %
+" Force saving files that require root permission
+cnoremap w!! w !sudo tee > /dev/null %
 
 " Autoclose parentheses
 "inoremap {      {<Space><Space>}<Left><Left>
