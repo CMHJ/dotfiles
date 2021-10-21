@@ -111,6 +111,9 @@ inoremap jk     <Esc>
 " Mapping timeout
 set timeout timeoutlen=250
 
+" Allow saving of files as sudo when I forgot to start vim using sudo.
+cmap w!! w !sudo tee > /dev/null %
+
 " Autoclose parentheses
 "inoremap {      {<Space><Space>}<Left><Left>
 "inoremap {<CR>  {<CR>}<Esc>O
