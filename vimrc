@@ -44,9 +44,6 @@ set showmode
 
 set tabstop=4
 
-" remove annoying swap file generation
-set noswapfile
-
 "#######################################################################
 
 " Set theme for editor
@@ -80,7 +77,7 @@ set spelllang=en_au
 
 " more risky, but cleaner
 "set nobackup
-"set noswapfile
+set noswapfile
 "set nowritebackup
 
 " keep the terminal title updated
