@@ -112,6 +112,7 @@ inoremap jk     <Esc>
 set timeout timeoutlen=1000
 
 " Force saving files that require root permission
+" Allow saving of files as sudo when I forgot to start vim using sudo.
 cnoremap w!! w !sudo tee > /dev/null %
 
 " Autoclose parentheses
