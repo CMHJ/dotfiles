@@ -7,6 +7,7 @@ set -o vi
 
 # Set script dir in PATH variable
 export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
+export PATH="$PATH:$HOME/.local/bin"
 
 # Set env vars
 export EDITOR="vim"
