@@ -1,0 +1,5 @@
+#!/bin/sh
+
+which nvim >/dev/null 2>&1 && nvim "$@" && exit $?
+which vim >/dev/null 2>&1 && vim "$@" && exit $?
+vi "$@"
