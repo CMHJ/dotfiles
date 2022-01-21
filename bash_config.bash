@@ -4,8 +4,10 @@
 
 # Set vi mode for bash
 set -o vi
+export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
 
 # Set env vars
+export BROWSER="brave"
 export EDITOR="nvim"
 export LC_ALL="en_US.UTF-8"
 
@@ -47,7 +49,7 @@ alias pie='perl -p -i -e' # Useful for running substitute commands on files in d
 # Custom functions
 cs() { cd "$@" && ls -laF; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
-vic() { vim $(which "$1"); } # Useful for editing scripts on path variable
+vic() { v $(which "$1"); } # Useful for editing scripts on path variable
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster
 #clear() { echo -n $clear; }
