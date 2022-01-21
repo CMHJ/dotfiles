@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Useful for editing scripts on path variable
+which "$1" 1>/dev/null 2>&1 && v "$(which "$1")" || printf "No such file on path: %s\n" "$1" >&2
+
