@@ -24,3 +24,7 @@ if filereadable(expand($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
         Plug 'tpope/vim-surround'
     call plug#end()
 endif
+
+" Remappings
+nmap <C-g> :Goyo<CR>
+
