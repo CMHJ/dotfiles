@@ -3,9 +3,11 @@
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-set expandtab
-set rnu nu
-set smartcase
+set expandtab " Convert tabs to spaces
+set rnu nu " Lines numbering with relative numbering as well
+set smartcase " Do case insensitive search unless that are capitals
+set colorcolumn=80 " Have a ruler at 80 character mark, make it lightgrey
+highlight ColorColumn ctermbg=0 guibg=lightgrey
 
 " Install vim-plug if not already installed
 " glob for the file, if the results returned are empty
