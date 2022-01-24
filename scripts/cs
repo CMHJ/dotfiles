@@ -1,5 +1,5 @@
 #!/bin/sh
 
 # cd into directory and list contents
-cd "$@" && ls -laF
+cd "$@" && ls -lhAF --color=auto
 
