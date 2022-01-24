@@ -1,0 +1,46 @@
+#!/bin/sh
+# Auto converts passed in files to high quality preset using handbrake
+
+[ "$#" -eq "0" ] && \
+    printf "Usage: %s <video1> <video2> <video3> ...\n" "$0" && \
+    exit 1
+
+EXT="mkv"
+OUTPUT_DIR="./output"
+mkdir -p "$OUTPUT_DIR"
+
+for file in "$@"; do
+    printf "\nStarting conversion for: %s\n" "$file"
+    output_file="${file%.*}.$EXT"
+
+    HandBrakeCLI \
+        --format "$EXT" \
+        --markers \
+        --encoder x264 \
+        --x264-preset veryslow \
+        --x264-tune film \
+        --encopts ref=5:bframes=5 \
+        --x264-profile high \
+        --quality 22 \
+        --cfr \
+        --aencoder copy \
+        --crop \
+        --auto-anamorphic \
+        --no-comb-detect \
+        --no-deinterlace \
+        --no-decomb \
+        --no-detelecine \
+        --no-hqdn3d \
+        --no-nlmeans \
+        --no-chroma-smooth \
+        --no-unsharp \
+        --no-lapsharp \
+        --no-deblock \
+        --no-grayscale \
+        --all-subtitles \
+        -o "$OUTPUT_DIR/$output_file" \
+        -i "$file" 2>/dev/null
+
+done
+
+printf "Done.\n"
