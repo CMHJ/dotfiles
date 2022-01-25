@@ -1,0 +1,20 @@
+{
+    "python.pythonPath": "/bin/python",
+    "workbench.colorTheme": "Nord",
+    "files.trimTrailingWhitespace": true,
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "security.workspace.trust.enabled": false,
+    "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
+    "git.confirmSync": false,
+    "git.autofetch": true,
+    "editor.rulers": [
+
+        79
+    ],
+    "redhat.telemetry.enabled": false,
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Args": [
+        "append-config=~/.config/flake8"
+    ]
+}
