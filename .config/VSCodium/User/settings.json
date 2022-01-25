@@ -8,10 +8,7 @@
     "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
     "git.confirmSync": false,
     "git.autofetch": true,
-    "editor.rulers": [
-
-        79
-    ],
+    "editor.rulers": [ 79 ],
     "redhat.telemetry.enabled": false,
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Args": [
