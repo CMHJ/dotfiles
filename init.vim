@@ -23,6 +23,7 @@ if filereadable(expand($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
     call plug#end()
 endif
 
+set scrolloff=10 " Keep a space of 10 lines at top and bottom
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
