@@ -11,9 +11,9 @@
     "editor.rulers": [ 79 ],
     "redhat.telemetry.enabled": false,
     "python.linting.flake8Enabled": true,
-    "python.linting.flake8Args": [
-        "append-config=~/.config/flake8"
-    ],
     "workbench.editor.wrapTabs": true,
-    "editor.lineNumbers": "relative"
+    "editor.lineNumbers": "relative",
+    "python.linting.flake8Args": [
+        "--max-line-length=150"
+    ]
 }
