@@ -2,11 +2,12 @@
 
 " Install vim-plug if not already installed
 " glob for the file, if the results returned are empty
-if empty(glob($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
+if empty(glob(stdpath('data') . '/site/autoload/plug.vim'))
     " Install vim-plug
-    silent !mkdir -p "$XDG_DATA_HOME/nvim/site/autoload"
-    silent !curl -fLo "$XDG_DATA_HOME/nvim/site/autoload/plug.vim"
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    silent execute '!mkdir -p ' . stdpath('data') . '/site/autoload'
+    silent execute '!curl -fLo ' . stdpath('data') .
+        \ '/site/autoload/plug.vim ' . 
+        \ 'https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
     " Install the plugins listed below
     autocmd VimEnter * PlugInstall
 endif
@@ -14,7 +15,7 @@ endif
 " Only load plugins if vim-plug detected
 " This only runs the first time, if new plugins are added PlugInstall will
 " need to be called again
-if filereadable(expand($XDG_DATA_HOME . '/nvim/site/autoload/plug.vim'))
+if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
     call plug#begin(stdpath('data') . '/plugged')
         "Plug 'dracula/vim'
         Plug 'morhetz/gruvbox'
