@@ -31,6 +31,7 @@ set shiftwidth=4
 set expandtab " Convert tabs to spaces
 set rnu nu " Lines numbering with relative numbering as well
 set smartcase " Do case insensitive search unless that are capitals
+set nohlsearch " Do not continue to highlight words after a search
 colorscheme ron
 colorscheme gruvbox
 set colorcolumn=80 " Have a ruler at 80 character mark, make it lightgrey
