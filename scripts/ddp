@@ -1,0 +1,24 @@
+#!/bin/sh
+
+usage_and_die() {
+    echo "Script that uses dd and pv to clone a file given location"
+    echo "Usage: $(basename "$0") <input_file> <output_file>"
+    exit 1
+}
+
+! which pv >/dev/null 2>&1 && \
+    printf "Error: pv is not installed\n\n" && \
+    usage_and_die
+
+[ "$#" -ne "2" ] && usage_and_die
+
+# t to display elapsed time
+# p for progress bar
+# r for transfer rate 
+# e for estimated completion time
+# b for bytes transferred
+sudo pv -tpreb "$1" | dd of="$2" bs=4M
+echo Syncing...
+sync
+echo Done.
+
