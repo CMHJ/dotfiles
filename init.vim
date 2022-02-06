@@ -21,6 +21,7 @@ if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
         Plug 'morhetz/gruvbox'
         Plug 'junegunn/goyo.vim'
         Plug 'tpope/vim-surround'
+        Plug 'lambdalisue/suda.vim'
     call plug#end()
 endif
 
@@ -42,4 +43,10 @@ highlight NonText ctermbg=none
 
 " Remappings
 nmap <C-g> :Goyo<CR>
+
+" Forceably write to a sudo protected file
+" This plugin is used while this is a problem:
+" https://github.com/neovim/neovim/issues/1716
+" cnoremap w!! w !sudo tee % > /dev/null
+cnoremap w!! SudaWrite
 
