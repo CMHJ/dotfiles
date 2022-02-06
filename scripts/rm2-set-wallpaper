@@ -1,6 +1,14 @@
 #!/bin/sh
 
-[ -z "$1" ] && echo "Please provide a wallpaper as first argument" && exit 1
+! which magick && \
+    echo "Error: ImageMagick \"magick\" bin not installed" >&2 && \
+    exit 1
+
+[ -z "$1" ] && \
+    echo "Error: Please provide a wallpaper image as first argument" && \
+    exit 1
+
+set -e # Exit on error
 
 echo Converting file
 magick "$1" -resize 1404x1872\! -colorspace Gray "$1"-converted.png
@@ -11,3 +19,4 @@ rm "$1"-converted.png
 
 echo Done.
 echo Please reboot remarkable for wallpaper to take effect.
+
