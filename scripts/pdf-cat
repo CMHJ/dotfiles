@@ -1,0 +1,35 @@
+#!/bin/sh
+# Used to concatenate pdfs together
+
+err() { echo "Usage:
+    $(basename $0) [OPTIONS] file1.pdf file2.pdf ...
+Options:
+	-s: paper size as per ghostscript i.e. a4, a5, etc.
+	-o: output file name
+" && exit 1
+}
+
+[ "$#" -eq "0" ] && err
+
+while getopts "s:o:" a; do case "${a}" in
+    s) PAPER_SIZE="${OPTARG}" ;;
+	o) OUTPUT_FILE="${OPTARG}" ;;
+	*) printf "Invalid option: -%s\\n" "$OPTARG" && err ;;
+esac done
+
+shift $((OPTIND - 1))
+
+# Default to a4 if unset
+PAPER_SIZE=${PAPER_SIZE:-"a4"}
+OUTPUT_FILE=${OUTPUT_FILE:-"output.pdf"}
+
+echo $PAPER_SIZE $OUTPUT_FILE $#
+
+gs \
+    -q \
+    -sPAPERSIZE="$PAPER_SIZE" \
+    -dNOPAUSE \
+    -dBATCH \
+    -sDEVICE=pdfwrite \
+    -sOutputFile="$OUTPUT_FILE" \
+    "$@"
