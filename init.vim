@@ -17,7 +17,7 @@ endif
 " need to be called again
 if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
     call plug#begin(stdpath('data') . '/plugged')
-        "Plug 'dracula/vim'
+        Plug 'dracula/vim'
         Plug 'morhetz/gruvbox'
         Plug 'junegunn/goyo.vim'
         Plug 'tpope/vim-surround'
@@ -43,7 +43,7 @@ augroup colour-fixes
 augroup END
 
 colorscheme ron
-colorscheme gruvbox
+colorscheme dracula
 
 " Remappings
 nmap <C-g> :Goyo<CR>
