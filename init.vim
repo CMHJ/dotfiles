@@ -33,13 +33,17 @@ set expandtab " Convert tabs to spaces
 set rnu nu " Lines numbering with relative numbering as well
 set smartcase " Do case insensitive search unless that are capitals
 set nohlsearch " Do not continue to highlight words after a search
+set colorcolumn=80 " Have a ruler at 80 character mark, make it lightgrey
+" Remove the solid background from the colorscheme and add ruler
+augroup colour-fixes
+    autocmd!
+    autocmd ColorScheme * highlight Normal guibg=none ctermbg=none
+    autocmd ColorScheme * highlight NonText guibg=none ctermbg=none
+    autocmd ColorScheme * highlight ColorColumn ctermbg=0 guibg=lightgrey
+augroup END
+
 colorscheme ron
 colorscheme gruvbox
-set colorcolumn=80 " Have a ruler at 80 character mark, make it lightgrey
-highlight ColorColumn ctermbg=0 guibg=lightgrey
-" Remove the solid background from the colorscheme
-highlight Normal ctermbg=none
-highlight NonText ctermbg=none
 
 " Remappings
 nmap <C-g> :Goyo<CR>
