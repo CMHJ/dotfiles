@@ -49,6 +49,8 @@ alias yt='yt-dlp -i --add-metadata'
 
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir.
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
+cs() { cd "$@" && ls -laFh; }
+mkcd() { mkdir -p "$@" && cd "$@"; }
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }
