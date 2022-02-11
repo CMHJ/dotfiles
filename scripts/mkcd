@@ -1,5 +1,0 @@
-#!/bin/sh
-
-# Simply creates a folder if it does not exist and changes into it in one command
-mkdir -p "$@" && cd "$@"
-
