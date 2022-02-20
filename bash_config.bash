@@ -45,7 +45,9 @@ alias gcm='git commit -m'
 
 alias copy='xclip -sel clip'
 alias paste='xclip -out -sel clip'
+
 alias yt='yt-dlp -i --add-metadata'
+alias tmux='tmux -f $XDG_CONFIG_HOME/tmux/tmux.conf'
 
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir.
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
