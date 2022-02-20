@@ -22,6 +22,7 @@ if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
         Plug 'junegunn/goyo.vim'
         Plug 'tpope/vim-surround'
         Plug 'lambdalisue/suda.vim'
+        Plug 'itmammoth/doorboy.vim'
     call plug#end()
 endif
 
