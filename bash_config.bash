@@ -35,6 +35,7 @@ fi
 alias c='clear'
 alias auu='sudo apt update && sudo apt upgrade -y'
 alias auur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
+alias pip='python3 -m pip'
 alias steal='git clone'
 alias gsu='git submodule update --init --recursive'
 alias gs='git status'
