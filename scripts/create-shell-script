@@ -1,0 +1,19 @@
+#!/bin/sh
+
+usage_and_die() {
+    echo "Usage: create-shell-script <filename>"    
+    exit 1
+}
+
+# Error-checking
+[ "$#" -lt "1" ] && \
+    echo "Error: No filename entered" && \
+    usage_and_die
+
+[ -f "$@" ] && \
+    echo "Error: File already exists" && \
+    usage_and_die
+
+printf "#!/bin/sh\\n\\n" > "$@"
+chmod +x "$@"
+"$EDITOR" "$@"
