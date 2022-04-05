@@ -1,0 +1,5 @@
+#!/bin/sh
+# Uses current location and fetches weather data formatted nicely for the
+# terminal
+
+curl wttr.in
