@@ -19,10 +19,11 @@ if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
     call plug#begin(stdpath('data') . '/plugged')
         Plug 'dracula/vim'
         Plug 'morhetz/gruvbox'
-        Plug 'junegunn/goyo.vim'
-        Plug 'tpope/vim-surround'
-        Plug 'lambdalisue/suda.vim'
-        Plug 'itmammoth/doorboy.vim'
+
+        Plug 'junegunn/goyo.vim' " Centres text to allow for comfy writing
+        Plug 'tpope/vim-surround' " Allows for shortcuts with paired characters
+        Plug 'lambdalisue/suda.vim' " Fix for sudo commands in nvim
+        Plug 'itmammoth/doorboy.vim' " Auto closing of paired characters
     call plug#end()
 endif
 
