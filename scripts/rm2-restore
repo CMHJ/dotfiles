@@ -1,0 +1,11 @@
+#!/bin/sh
+
+BACKUP_DIR="$HOME/Documents/rm2/backup"
+! [ -d "$BACKUP_DIR" ] && \
+    printf "The remarkable 2 backup directory: %s does not exist\n" \
+        "$BACKUP_DIR" \
+        1>&2 && \
+    exit 1
+
+rsync -e "ssh -oPubkeyAcceptedKeyTypes=+ssh-rsa -oHostKeyAlgorithms=+ssh-rsa" -ruzP "$BACKUP_DIR/" root@10.11.99.1:/home/root/.local/share/remarkable/xochitl/
+echo Done.
