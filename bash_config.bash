@@ -16,7 +16,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
 
 # NPM vars
-export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
+#export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
 
 # Add script dir in PATH variable
 export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
