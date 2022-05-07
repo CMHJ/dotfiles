@@ -3,6 +3,8 @@
 usage_and_die() {
     echo "Script that uses dd and pv to clone a file given location"
     echo "Usage: $(basename "$0") <input_file> <output_file>"
+    echo "If using bzip archive, pipes also work:"
+    echo "bzcat <input_file> | $(basename "$0") <output_file>"
     exit 1
 }
 
@@ -10,14 +12,25 @@ usage_and_die() {
     printf "Error: pv is not installed\n\n" && \
     usage_and_die
 
-[ "$#" -ne "2" ] && usage_and_die
+[ "$#" -gt "2" ] || [ "$#" -eq "0" ] && usage_and_die
+
+if [ "$#" -eq "1" ]; then
+    INPUT="/dev/stdin"
+    OUTPUT="$1"
+else
+    INPUT="$1"
+    OUTPUT="$2"
+fi
+
+printf "INPUT: %s\n" "$INPUT"
+printf "OUTPUT: %s\n" "$OUTPUT"
 
 # t to display elapsed time
 # p for progress bar
 # r for transfer rate 
 # e for estimated completion time
 # b for bytes transferred
-sudo pv -tpreb "$1" | dd of="$2" bs=4M
+sudo pv -tpreb "$INPUT" | sudo dd of="$OUTPUT" bs=4M
 echo Syncing...
 sync
 echo Done.
