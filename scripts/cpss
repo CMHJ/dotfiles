@@ -1,5 +1,7 @@
 #!/bin/sh
 
+# Create a blank POSIX shell script
+
 usage_and_die() {
     echo "Usage: create-shell-script <filename>"    
     exit 1
