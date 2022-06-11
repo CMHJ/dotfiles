@@ -36,7 +36,7 @@ alias c='clear'
 alias auu='sudo apt update && sudo apt upgrade -y'
 alias auur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 alias pip='python3 -m pip'
-alias steal='git clone'
+alias steal='git clone --recursive'
 alias gsu='git submodule update --init --recursive'
 alias gs='git status'
 alias gfs='git fetch && git status'
@@ -54,6 +54,7 @@ alias pie='perl -p -i -e' # Useful for running substitute commands on files in d
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
 cs() { cd "$@" && ls -lAFh; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
+spe() { . .venv/bin/activate; } # Source python environment
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }
