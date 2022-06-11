@@ -1,6 +1,6 @@
 {
   "python.pythonPath": "/bin/python",
-  "workbench.colorTheme": "Nord",
+  "workbench.colorTheme": "One Monokai",
   "files.trimTrailingWhitespace": true,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.suggest.snippetsPreventQuickSuggestions": false,
@@ -8,21 +8,17 @@
   "vscode-neovim.neovimExecutablePaths.linux": "/usr/bin/nvim",
   "git.confirmSync": false,
   "git.autofetch": true,
-  "editor.rulers": [
-    79
-  ],
+  "editor.rulers": [79],
   "redhat.telemetry.enabled": false,
   "python.linting.flake8Enabled": true,
   "workbench.editor.wrapTabs": true,
   "editor.lineNumbers": "relative",
-  "python.linting.flake8Args": [
-    "--max-line-length=180"
-  ],
+  "python.linting.flake8Args": ["--max-line-length=180"],
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -40,9 +36,13 @@
   "editor.acceptSuggestionOnCommitCharacter": false,
   "typescript.suggest.completeFunctionCalls": true,
   "javascript.suggest.completeFunctionCalls": true,
-  "editor.formatOnSave": true,
   "eslint.format.enable": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": true
+  },
+  "cmake.configureOnOpen": false,
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
   }
 }
