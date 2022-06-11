@@ -27,6 +27,7 @@ if filereadable(expand(stdpath('data') . '/site/autoload/plug.vim'))
     call plug#end()
 endif
 
+set noswapfile " Disable annoying swap file
 set scrolloff=10 " Keep a space of 10 lines at top and bottom
 set tabstop=4
 set softtabstop=4
