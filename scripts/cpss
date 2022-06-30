@@ -12,9 +12,10 @@ usage_and_die() {
     echo "Error: No filename entered" && \
     usage_and_die
 
+# If file already exists just edit it, don't create
 [ -f "$@" ] && \
-    echo "Error: File already exists" && \
-    usage_and_die
+    "$EDITOR" "$@" &&
+    exit "$?"
 
 printf "#!/bin/sh\\n\\n" > "$@"
 chmod +x "$@"
