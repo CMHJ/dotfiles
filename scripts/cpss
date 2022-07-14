@@ -1,9 +1,10 @@
 #!/bin/sh
 
-# Create a blank POSIX shell script
+# Create POSIX shell script
+# Creates a blank shell script file at the supplied path
 
 usage_and_die() {
-    echo "Usage: create-shell-script <filename>"    
+    echo "Usage: cpss <filename>"    
     exit 1
 }
 
