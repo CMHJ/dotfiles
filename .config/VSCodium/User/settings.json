@@ -41,9 +41,17 @@
     "source.fixAll.eslint": true
   },
   "cmake.configureOnOpen": false,
-  "editor.formatOnSave": true,
   "[python]": {
     "editor.defaultFormatter": "ms-python.python"
   },
-  "terminal.integrated.enableMultiLinePasteWarning": false
+  "terminal.integrated.enableMultiLinePasteWarning": false,
+  "terraform.languageServer": {
+    "external": true,
+    "pathToBinary": "",
+    "args": [
+      "serve"
+    ],
+    "ignoreSingleFileWarning": false
+  },
+  "python.formatting.provider": "black"
 }
