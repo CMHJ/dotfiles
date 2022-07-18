@@ -1,9 +1,13 @@
 #!/bin/sh
 
 DIR="."
+[ -n "$1" ] && DIR="$1"
 
 # Find all files and shred
-find "$DIR" -type f -print0 | xargs -0 shred -fuzv -n 48
+files=$(find "$DIR" -type f)
+[ -n "$files" ] && \
+    echo "$files" | xargs shred -fuzv -n 48
+
 # Find all now empty directories and remove them
 find "$DIR" -type d -empty -delete
 
