@@ -1,13 +1,27 @@
 #!/bin/sh
 
-DIR="."
-ITERS="4"
-[ -n "$1" ] && DIR="$1"
+usage() {
+    echo "Usage: $(basename $0) <dir>"
+    echo "Shred specified directory recursively using find, shred and xargs"
+}
+
+# Check input args
+[ -z "$1" ] || [ "$1" = "-h" ] || [ "$1" = "--help" ] && \
+    usage && \
+    exit 0
+
+# Catch directory not being specified
+! [ -d "$1" ] && \
+    echo "Error: path specified is not a directory" && \
+    exit 1
+
+DIR="$1"
+OVERWRITES=${OVERWRITES:-"48"}
 
 # Find all files and shred
 files=$(find "$DIR" -type f)
 [ -n "$files" ] && \
-    echo "$files" | xargs -d '\n' shred -fuzv -n "$ITERS"
+    echo "$files" | xargs shred -fuzv -n "$OVERWRITES"
 
 # Find all now empty directories and remove them
 find "$DIR" -type d -empty -delete
