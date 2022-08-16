@@ -1,6 +1,6 @@
 {
   "python.pythonPath": "/bin/python",
-  "workbench.colorTheme": "One Monokai",
+  "workbench.colorTheme": "Nord",
   "files.trimTrailingWhitespace": true,
   "editor.acceptSuggestionOnEnter": "off",
   "editor.suggest.snippetsPreventQuickSuggestions": false,
@@ -23,7 +23,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "editor.tabSize": 2,
   "[html]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
@@ -53,5 +52,10 @@
     ],
     "ignoreSingleFileWarning": false
   },
-  "python.formatting.provider": "black"
+  "python.formatting.provider": "black",
+  "editor.fontSize": 18,
+  "workbench.enableExperiments": false,
+  "editor.fontFamily": "FantasqueSansMono Nerd Font Mono, 'monospace', monospace",
+  "glassit-linux.opacity": 90,
+  "glassit.alpha": 230
 }
