@@ -4,12 +4,17 @@
 
 # Set vi mode for bash
 set -o vi
+complete -cf sudo
 export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
 
 # Set env vars
 export BROWSER="brave"
 export EDITOR="nvim"
+export SUDO_EDITOR="nvim"
+export VISUAL="codium"
 export LC_ALL="en_US.UTF-8"
+
+export HISTSIZE=10000
 
 # XDG vars
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -21,6 +26,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 # Add script dir in PATH variable
 export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
 export PATH="$PATH:$HOME/.local/bin"
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
 
 # Set go paths
@@ -33,6 +39,7 @@ fi
 # Custom Aliases
 #unalias -a
 alias c='clear'
+alias p='sudo pacman'
 alias auu='sudo apt update && sudo apt upgrade -y'
 alias auur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 alias pip='python3 -m pip'
@@ -55,6 +62,8 @@ alias pie='perl -p -i -e' # Useful for running substitute commands on files in d
 cs() { cd "$@" && ls -lAFh; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
 spe() { . .venv/bin/activate; } # Source python environment
+# Launch application without closing terminal
+launch() { [ -n "$@" ] && nohup "$@" >/dev/null 2>&1 & }
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }
