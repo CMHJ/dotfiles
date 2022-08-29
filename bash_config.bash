@@ -39,7 +39,7 @@ fi
 # Custom Aliases
 #unalias -a
 alias c='clear'
-alias p='sudo pacman'
+alias p='paru'
 alias auu='sudo apt update && sudo apt upgrade -y'
 alias auur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
 alias pip='python3 -m pip'
