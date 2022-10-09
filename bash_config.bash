@@ -5,16 +5,36 @@
 # Set vi mode for bash
 set -o vi
 complete -cf sudo
-export PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+
+# set a fancy prompt (non-color, unless we know we "want" color)
+case "$TERM" in
+    xterm-color) color_prompt=yes;;
+esac
+
+if [ -x "$(command -v tput)" ] && tput setaf 1 >&/dev/null; then
+# We have color support; assume it's compliant with Ecma-48
+# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+# a case would tend to support setf rather than setaf.)
+color_prompt=yes
+else
+color_prompt=
+fi
+
+if [ "$color_prompt" = yes ]; then
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+else
+    PS1='\u@\h:\W\$ '
+fi
+unset color_prompt
 
 # Set env vars
 export BROWSER="brave"
 export EDITOR="nvim"
 export SUDO_EDITOR="nvim"
-export VISUAL="codium"
+export VISUAL="nvim"
 export LC_ALL="en_US.UTF-8"
 
-export HISTSIZE=10000
+export HISTSIZE=1000000
 
 # XDG vars
 export XDG_DATA_HOME="$HOME/.local/share"
@@ -35,6 +55,9 @@ then
     export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
     export PATH=$PATH:$(go env GOPATH)/bin
 fi
+
+# Stardict Dictionaries
+export DICS="/usr/share/stardict/dic/"
 
 # Custom Aliases
 #unalias -a

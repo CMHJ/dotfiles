@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# Check if sdcv is installed
+! command -v "/usr/bin/sdcv" > /dev/null && \
+    echo "sdcv is not installed" > 2 && \
+    exit 1
+
+/usr/bin/sdcv -n --utf8-output --color "$@" 2>&1 |
+fold --width=$(tput cols) | \
+less -FRX
