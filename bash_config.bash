@@ -27,11 +27,18 @@ else
 fi
 unset color_prompt
 
-# Set env vars
+# enable color support for some common commands
+if [ -x /usr/bin/dircolors ]; then
+    alias ls='ls --color=auto'
+    alias grep='grep --color=always'
+fi
+
+# Default Programs
 export BROWSER="brave"
 export EDITOR="nvim"
 export SUDO_EDITOR="nvim"
 export VISUAL="nvim"
+
 export LC_ALL="en_US.UTF-8"
 
 export HISTSIZE=1000000
@@ -39,6 +46,7 @@ export HISTSIZE=1000000
 # XDG vars
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
 
 # NPM vars
 #export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
@@ -56,8 +64,9 @@ then
     export PATH=$PATH:$(go env GOPATH)/bin
 fi
 
-# Stardict Dictionaries
+# Other program settings:
 export DICS="/usr/share/stardict/dic/"
+export LESS="-R"
 
 # Custom Aliases
 #unalias -a
