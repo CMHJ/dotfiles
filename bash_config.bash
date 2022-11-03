@@ -34,7 +34,7 @@ if [ -x /usr/bin/dircolors ]; then
 fi
 
 # Default Programs
-export BROWSER="brave"
+export BROWSER="firefox"
 export EDITOR="nvim"
 export SUDO_EDITOR="nvim"
 export VISUAL="nvim"
