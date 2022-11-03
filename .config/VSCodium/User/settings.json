@@ -14,21 +14,6 @@
   "workbench.editor.wrapTabs": true,
   "editor.lineNumbers": "relative",
   "python.linting.flake8Args": ["--max-line-length=180"],
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
   "[markdown]": {
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
@@ -57,5 +42,12 @@
   "workbench.enableExperiments": false,
   "editor.fontFamily": "FantasqueSansMono Nerd Font Mono, 'monospace', monospace",
   "glassit-linux.opacity": 90,
-  "glassit.alpha": 230
-}
+  "glassit.alpha": 240,
+  "cSpell.language": "en-AU",
+  "cSpell.userWords": [
+    "Deque"
+  ],
+  "spellright.notificationClass": "information",
+  "spellright.language": [
+    "en_AU"
+  ]
