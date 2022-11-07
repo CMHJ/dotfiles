@@ -1,0 +1,8 @@
+#!/bin/sh
+# Script to launch and detach process, typically used with GUI programs.
+
+# Ignore when no arguments are passed
+[ "$#" -eq 0 ] && return 1
+
+nohup "$@" < /dev/null >/dev/null 2>&1 &
+
