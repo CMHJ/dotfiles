@@ -36,7 +36,7 @@ fi
 # Default Programs
 export BROWSER="firefox"
 export EDITOR="nvim"
-export SUDO_EDITOR="nvim"
+export SUDO_EDITOR="rvim"
 export VISUAL="nvim"
 
 export LC_ALL="en_US.UTF-8"
@@ -51,18 +51,23 @@ export XDG_CACHE_HOME="$HOME/.cache"
 # NPM vars
 #export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
 
-# Add script dir in PATH variable
-export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
-export PATH="$PATH:$HOME/.local/bin"
-[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-
+# Set rust paths
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+[ -f "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
+#export PATH="$PATH:$CARGO_HOME/bin"
 
 # Set go paths
 if command -v /usr/bin/go &> /dev/null
 then
     export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
-    export PATH=$PATH:$(go env GOPATH)/bin
+    export PATH="$PATH:$(go env GOPATH)/bin"
 fi
+#
+# Add script dir in PATH variable
+export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
+export PATH="$PATH:$HOME/.local/bin"
+
 
 # Other program settings:
 export DICS="/usr/share/stardict/dic/"
