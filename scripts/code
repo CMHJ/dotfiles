@@ -1,4 +1,16 @@
 #!/bin/sh
 
-which codium >/dev/null 2>&1 && codium "$@" && exit $?
-code "$@"
+CODE=""
+if [ -x "/usr/bin/codium" ]; then
+    CODE="codium"
+fi
+if [ -x "/usr/bin/code" ]; then
+    CODE="code"
+fi
+
+[ -z "$CODE" ] && \
+    echo "Error: vscodium or vscode not installed" && \
+    exit 1
+
+exec "$CODE" "$@"
+
