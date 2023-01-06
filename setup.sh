@@ -10,7 +10,6 @@ mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/
 ln -sf "$script_dir"/.config/tmux/tmux.conf "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf
 ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf
 
-
 # Neovim
 mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/
 ln -sf "$script_dir"/init.vim "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
@@ -24,4 +23,7 @@ ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/settings.json
 
 # Setup lynx config
 "$script_dir"/lynx/setup
+
+# Git
+ln -sf "$script_dir"/gitconfig "$HOME"/.gitconfig
 
