@@ -11,15 +11,29 @@ ln -sf "$script_dir"/.config/tmux/tmux.conf "${XDG_CONFIG_HOME:-$HOME/.config}"/
 ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf
 
 # Neovim
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/
-ln -sf "$script_dir"/init.vim "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
-ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
+# mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/
+# ln -sf "$script_dir"/init.vim "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
+# ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
 
 # VSCodium
 mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/
 ln -sf "$script_dir"/.config/VSCodium/User/settings.json \
     "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/settings.json
 ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/settings.json
+
+# setup environment variables
+mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/
+ln -sf "$script_dir"/.config/shell/env \
+    "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/env
+ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/env
+touch "$HOME/.profile"
+env_path="$HOME/.config/shell/env"
+if ! grep -q /shell/env $HOME/.profile; then
+    cat >> "$HOME/.profile" << EOF
+[ -f "$env_path" ] && . "$env_path"
+
+EOF
+fi
 
 # Setup lynx config
 "$script_dir"/lynx/setup

@@ -6,6 +6,10 @@
 set -o vi
 complete -cf sudo
 
+# source env vars
+env_path="$HOME/.config/shell/env"
+[ -f "$env_path" ] && . "$env_path"
+
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
     xterm-color) color_prompt=yes;;
@@ -33,45 +37,6 @@ if [ -x /usr/bin/dircolors ]; then
     alias grep='grep --color=always'
 fi
 
-# Default Programs
-export BROWSER="firefox"
-export EDITOR="nvim"
-export SUDO_EDITOR="rvim"
-export VISUAL="nvim"
-
-export LC_ALL="en_US.UTF-8"
-
-export HISTSIZE=1000000
-
-# XDG vars
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-# NPM vars
-#export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
-
-# Set rust paths
-export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
-export CARGO_HOME="$XDG_DATA_HOME/cargo"
-[ -f "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
-#export PATH="$PATH:$CARGO_HOME/bin"
-
-# Set go paths
-if command -v /usr/bin/go &> /dev/null
-then
-    export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
-    export PATH="$PATH:$(go env GOPATH)/bin"
-fi
-#
-# Add script dir in PATH variable
-export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
-export PATH="$PATH:$HOME/.local/bin"
-
-
-# Other program settings:
-export DICS="/usr/share/stardict/dic/"
-export LESS="-R"
 
 # Custom Aliases
 #unalias -a
@@ -98,9 +63,21 @@ alias pie='perl -p -i -e' # Useful for running substitute commands on files in d
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
 cs() { cd "$@" && ls -lAFh; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
+mkfile() {
+    dir_path="$(dirname "$@")"
+    mkdir -p "$dir_path"
+    touch "$@"
+    "$EDITOR" "$@"
+}
 spe() { . .venv/bin/activate; } # Source python environment
 # Launch application without closing terminal
 launch() { [ -n "$@" ] && nohup "$@" >/dev/null 2>&1 & }
+# Edit this bash config file
+bash_config() {
+    "$EDITOR" "$BASH_SOURCE"
+    . "$BASH_SOURCE"
+    echo "$BASH_SOURCE"
+}
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }

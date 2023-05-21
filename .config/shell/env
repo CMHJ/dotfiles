@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# xdg vars
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# add script dir in PATH variable
+export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
+export PATH="$PATH:$HOME/.local/bin"
+
+# default Programs
+export BROWSER="firefox"
+export EDITOR="nvim"
+export SUDO_EDITOR="rvim"
+export VISUAL="nvim"
+
+export LC_ALL="en_US.UTF-8"
+
+export HISTSIZE=1000000
+
+# npm vars
+# need to explore what this does again
+#export NPM_CONFIG_PREFIX="$XDG_CONFIG_HOME/npm-global"
+
+# set rust paths
+export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+[ -f "$CARGO_HOME/env" ] && . "$CARGO_HOME/env"
+export PATH="$PATH:$CARGO_HOME/bin"
+
+# set go paths
+export GOPATH="${XDG_DATA_HOME:-$HOME/.local/share}/go"
+if command -v /usr/bin/go &> /dev/null
+then
+    export PATH="$PATH:$(go env GOPATH)/bin"
+fi
+
+# other program settings:
+export DICS="/usr/share/stardict/dic/"
+export LESS="-R"
+export LESSHISTFILE=- # disable less history file
+
