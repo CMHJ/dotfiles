@@ -1,6 +1,9 @@
+#!/bin/bash
 ###############################
 # Connor's Bash Configuration #
 ###############################
+
+xset r rate 200 25
 
 # Set vi mode for bash
 set -o vi
@@ -44,7 +47,6 @@ alias c='clear'
 alias p='paru'
 alias auu='sudo apt update && sudo apt upgrade -y'
 alias auur='sudo apt update && sudo apt upgrade -y && sudo apt autoremove -y'
-alias pip='python3 -m pip'
 alias steal='git clone --recursive'
 alias gsu='git submodule update --init --recursive'
 alias gs='git status'
@@ -52,15 +54,15 @@ alias gfs='git fetch && git status'
 alias gfp='git fetch --prune'
 alias gd='git diff'
 alias gcm='git commit -m'
-
+alias gdog='git log --all --decorate --oneline --graph'
+alias cmb='cmake -DCMAKE_BUILD_TYPE=Release -S . -B build/ && cmake --build build/'
 alias copy='xclip -sel clip'
 alias paste='xclip -out -sel clip'
-
 alias yt='yt-dlp -i --add-metadata'
 alias tmux='tmux -f $XDG_CONFIG_HOME/tmux/tmux.conf'
-
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir.
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
+
 cs() { cd "$@" && ls -lAFh; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
 mkfile() {
@@ -69,7 +71,7 @@ mkfile() {
     touch "$@"
     "$EDITOR" "$@"
 }
-spe() { . .venv/bin/activate; } # Source python environment
+pea() { . .venv/bin/activate; } # Source python environment
 # Launch application without closing terminal
 launch() { [ -n "$@" ] && nohup "$@" >/dev/null 2>&1 & }
 # Edit this bash config file
