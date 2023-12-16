@@ -6,11 +6,11 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
 # add script dir in PATH variable
-export PATH="$(dirname "$(readlink -f "$HOME/.bash_aliases")")/scripts":$PATH
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="$(dirname "$(readlink -f "$HOME/.bash_config")")/scripts":$PATH
+export PATH="$HOME/.local/bin:$PATH"
 
 # default Programs
-export BROWSER="firefox"
+export BROWSER="brave"
 export EDITOR="nvim"
 export SUDO_EDITOR="rvim"
 export VISUAL="nvim"
