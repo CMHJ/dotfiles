@@ -1,0 +1,8 @@
+#!/bin/sh
+
+sudo reflector \
+    --protocol https \
+    --latest 10 \
+    --country Australia,America,Japan \
+    --save /etc/pacman.d/mirrorlist \
+    --sort rate
