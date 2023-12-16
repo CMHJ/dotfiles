@@ -1,0 +1,6 @@
+#!/bin/sh
+# Fix gnome app dbus poll issue by removing these packages
+
+[ "$(whoami)" != "root" ] && exec sudo "$0"
+pacman -Rndd xdg-desktop-portal xdg-desktop-portal-gtk
+
