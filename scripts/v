@@ -2,4 +2,7 @@
 
 which nvim >/dev/null 2>&1 && nvim "$@" && exit $?
 which vim >/dev/null 2>&1 && vim "$@" && exit $?
-vi "$@"
+which vi >/dev/null 2>&1 && vi "$@" && exit $?
+
+echo "No version of vim is installed"
+exit 1
