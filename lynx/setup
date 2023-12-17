@@ -12,11 +12,4 @@ fi
 
 mkdir ~/.config 2>/dev/null
 rm -rf ~/.config/lynx 2>/dev/null
-# This is a poo poo symlink, doesn't work unless in the directory
-# ln -s "$PWD" "$HOME/.config/lynx"
 ln -s "$(dirname $(realpath "$0"))" "$HOME/.config/lynx"
-ls -l ~/.config/lynx
-
-#echo $gold"Now just put lynx into your PATH or update your PATH to look something like the following:"
-#echo ""
-#echo $cyan"export PATH=\"$PWD:$PATH\""$reset
