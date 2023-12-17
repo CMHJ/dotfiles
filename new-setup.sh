@@ -22,4 +22,5 @@ cat > "$HOME/.bashrc" << EOF
 #!/bin/bash
 
 [ -f "$bash_config_link_path" ] && source "$bash_config_link_path"
+
 EOF
