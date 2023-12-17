@@ -1,51 +1,47 @@
 #!/bin/sh
 script_dir="$(dirname "$(readlink -f "$0")")"
 
-# Bash
-ln -sf "$script_dir"/bash_config.bash "$HOME"/.bash_aliases
-ls -l "$HOME"/.bash_aliases
+# create all config dirs if they don't exist
+dirs="$(find home -type d)"
+dirs="$(echo $dirs | sed "s|home|$HOME|g")"
+for p in $dirs; do
+    mkdir -p "$p"
+done
 
-# tmux
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/
-ln -sf "$script_dir"/.config/tmux/tmux.conf "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf
-ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/tmux/tmux.conf
+# symlink all config files to the appropriate spot in the home dir
+files="$(find home -type f)"
+for f in $files; do
+    real_path="$(realpath "$f")"
+    link_path="$(echo $f | sed "s|home|$HOME|g")"
+    ln -sf "$real_path" "$link_path"
+done
 
-# Neovim
-# mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/
-# ln -sf "$script_dir"/init.vim "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
-# ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/nvim/init.vim
+# point .bashrc to bash config in .config
+bash_config_path="$(find home -name config.bash)"
+bash_config_link_path="$(echo $bash_config_path | sed 's|home|\$HOME|g')"
+cat > "$HOME/.bashrc" << EOF
+#!/bin/bash
 
-# VSCodium
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/
-ln -sf "$script_dir"/.config/VSCodium/User/settings.json \
-    "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/settings.json
-ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/VSCodium/User/settings.json
+[ -f "$bash_config_link_path" ] && source "$bash_config_link_path"
 
-# setup environment variables
-mkdir -p "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/
-ln -sf "$script_dir"/.config/shell/env \
-    "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/env
-ls -l "${XDG_CONFIG_HOME:-$HOME/.config}"/shell/env
+EOF
+
+# setup env vars to be sourced at login in profile
 touch "$HOME/.profile"
 env_path="$HOME/.config/shell/env"
 if ! grep -q /shell/env $HOME/.profile; then
     cat >> "$HOME/.profile" << EOF
-[ -f "$env_path" ] && . "$env_path"
+[ -f "$env_path" ] && source "$env_path"
 
 EOF
 fi
 
-# Setup lynx config
+# setup lynx config
 "$script_dir"/lynx/setup
 
-# Git
-ln -sf "$script_dir"/gitconfig "$HOME"/.gitconfig
-
-# Firefox
+# setup Firefox
 browserdir="$HOME/.mozilla/firefox"
 profilesini="$browserdir/profiles.ini"
 profile="$(sed -n "/Default=.*.default-release/ s/.*=//p" "$profilesini")"
 pdir="$browserdir/$profile"
 ln -sf "$script_dir/user-overrides.js" "$pdir/user-overrides.js"
-ls -l "$pdir/user-overrides.js"
-
