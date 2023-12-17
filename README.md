@@ -1,3 +1,3 @@
-# Todo
+# CMHJ's dotfiles
 
-- Fix env var issue by moving env vars to ~/.profile
+Just clone and run `setup.sh`.
