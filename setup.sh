@@ -8,7 +8,7 @@ for p in $dirs; do
     mkdir -p "$p"
 done
 
-# symlink all config files to the appropriate spot in the home dir
+# symlink all config files to the appropriate spot in the .config dir
 files="$(find home -type f)"
 for f in $files; do
     real_path="$(realpath "$f")"
@@ -16,7 +16,7 @@ for f in $files; do
     ln -sf "$real_path" "$link_path"
 done
 
-# point .bashrc to bash config in .config
+# overwrite .bashrc to point to bash config
 bash_config_path="$(find home -name config.bash)"
 bash_config_link_path="$(echo $bash_config_path | sed 's|home|\$HOME|g')"
 cat > "$HOME/.bashrc" << EOF
