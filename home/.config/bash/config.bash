@@ -14,7 +14,7 @@ complete -cf sudo
 
 # source env vars
 env_path="$HOME/.config/shell/env"
-[ -f "$env_path" ] && . "$env_path"
+[ -f "$env_path" ] && source "$env_path"
 
 # set a fancy prompt (non-color, unless we know we "want" color)
 case "$TERM" in
@@ -74,16 +74,15 @@ mkfile() {
     touch "$@"
     "$EDITOR" "$@"
 }
-pea() { . .venv/bin/activate; } # Source python environment
+pea() { source .venv/bin/activate; } # Source python environment
 # Launch application without closing terminal
 launch() { [ -n "$@" ] && nohup "$@" >/dev/null 2>&1 & }
 # Edit this bash config file
 bash_config() {
     "$EDITOR" "$BASH_SOURCE"
-    . "$BASH_SOURCE"
+    source "$BASH_SOURCE"
     echo "$BASH_SOURCE"
 }
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }
-
