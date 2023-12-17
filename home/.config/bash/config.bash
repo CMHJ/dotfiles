@@ -1,12 +1,15 @@
 #!/bin/bash
-###############################
-# Connor's Bash Configuration #
-###############################
+#############################
+# CMHJ's Bash Configuration #
+#############################
 
+# faster keyboard repeating
 xset r rate 200 25
 
 # Set vi mode for bash
 set -o vi
+
+# enable auto-complete for sudo
 complete -cf sudo
 
 # source env vars
