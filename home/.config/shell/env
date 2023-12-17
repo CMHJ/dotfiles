@@ -5,8 +5,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_CACHE_HOME="$HOME/.cache"
 
-# add script dir in PATH variable
-export PATH="$(dirname "$(readlink -f "$HOME/.bash_config")")/scripts":$PATH
+# add script dir to PATH
 export PATH="$HOME/.local/bin:$PATH"
 
 # default Programs
@@ -40,4 +39,3 @@ fi
 export DICS="/usr/share/stardict/dic/"
 export LESS="-R"
 export LESSHISTFILE=- # disable less history file
-
