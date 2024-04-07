@@ -36,9 +36,6 @@ if ! grep -q /shell/env $HOME/.profile; then
 EOF
 fi
 
-# setup lynx config
-"$script_dir"/lynx/setup
-
 # setup Firefox
 browserdir="$HOME/.mozilla/firefox"
 profilesini="$browserdir/profiles.ini"
