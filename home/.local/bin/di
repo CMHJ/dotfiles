@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# Disk Information - short cut for listing info about system disks
+
+lsblk -o PATH,SIZE,RO,TYPE,MOUNTPOINT,UUID,MODEL
+
