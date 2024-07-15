@@ -103,5 +103,7 @@
       "after": ["\"", "+", "y"]
     }
   ],
-  "editor.cursorSurroundingLines": 8
+  "editor.cursorSurroundingLines": 8,
+  "cmake.showOptionsMovedNotification": false,
+  "editor.inlayHints.enabled": "offUnlessPressed"
 }
