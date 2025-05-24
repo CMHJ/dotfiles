@@ -105,5 +105,6 @@
   ],
   "editor.cursorSurroundingLines": 8,
   "cmake.showOptionsMovedNotification": false,
-  "editor.inlayHints.enabled": "offUnlessPressed"
+  "editor.inlayHints.enabled": "offUnlessPressed",
+  "workbench.editor.showTabs": "none"
 }
