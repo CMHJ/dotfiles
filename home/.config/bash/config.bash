@@ -31,9 +31,9 @@ color_prompt=
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\W\[\033[00m\]\$ '
+    PS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\n\[\033[00m\]\$ '
 else
-    PS1='\u@\h:\W\$ '
+    PS1='\u@\h:\w\n\$ '
 fi
 unset color_prompt
 
