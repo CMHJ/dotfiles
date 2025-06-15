@@ -6,3 +6,4 @@ sudo reflector \
     --country Australia,America,Japan \
     --save /etc/pacman.d/mirrorlist \
     --sort rate
+
