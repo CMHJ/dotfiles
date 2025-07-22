@@ -21,9 +21,9 @@ vim.opt.runtimepath:prepend(lazypath)
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
-    -- Colourscheme
-    --{ "folke/tokyonight.nvim", config = function() vim.cmd.colorscheme "tokyonight" end }
-    --{ "Mofiqul/dracula.nvim", config = function() vim.cmd.colorscheme "dracula" end }
+    -- Colourschemes
+    { "folke/tokyonight.nvim"},
+    { "Mofiqul/dracula.nvim" },
 
     -- Import plugins from `nvim/lua/config/plugins` as nvim/lua is on the runtime path
     { import = "config.plugins" },
