@@ -3,11 +3,14 @@ vim.g.mapleader = " "
 -- vim.g.maplocalleader = "\\"
 
 -- Set options
+vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.fixendofline = true
@@ -45,17 +48,29 @@ vim.keymap.set("n", "<leader>q", ":q<CR>") -- Quit
 -- Keep screen centred when moving around
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+
+-- Use ctrl keys to move between panes
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+-- TODO: Add terminal commands e.g. open terminal, run build program
+
+-- Find and replace current word under cursor
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
+-- TODO: Do one for currently hightlighted text
+
+-- Yank and Delete into the system clipboard
+--vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+--vim.keymap.set("n", "<leader>Y", [["+Y]])
 
 -- When highlighting text in Select mode (not to be confused with Visual mode),
 -- send it to the null register and replace it with what is in the default register.
 vim.keymap.set("x", "<leader>p", [["_dP]])
-
--- Yank and Delete into the system clipboard
-vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
-vim.keymap.set("n", "<leader>Y", [["+Y]])
 vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
-
--- TODO: Add rest of primeagen bindings
 
 vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
 
@@ -63,8 +78,18 @@ vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
 vim.keymap.set("n", "<leader>x", ":.lua<CR>")
 vim.keymap.set("v", "<leader>x", ":lua<CR>")
 
+-- Move highlighted text up or down with Shift-j/k
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
 -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
 vim.keymap.set("i", "<C-c>", "<Esc>")
+
+-- Maintain consistent word deletion in nvim as other GUI programs,
+-- e.g. Ctrl-Backspace deletes word backwards
+-- and Ctrl-Delete deletes word forwards.
+vim.keymap.set("i", "<C-h>", "<C-w>")
+vim.keymap.set("i", "<C-Del>", "<C-o>de")
 
 -- Install lazy nvim if it doesn't exist
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -120,7 +145,14 @@ require("lazy").setup({
           },
         }
       end
-    }
+    },
+
+    -- LSP config
+    {
+      "neovim/nvim-lspconfig",
+      config = function ()
+      end
+    },
   },
 })
 
