@@ -15,26 +15,32 @@ vim.opt.hlsearch = false
 vim.opt.incsearch = true
 vim.opt.fixendofline = true
 
+-- Remove annoying backup and swap defaults
 vim.opt.swapfile = false
 vim.opt.backup = false
-vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
-vim.opt.undofile = true
 
+-- Undo settings
+vim.opt.undofile = true
+vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
+
+-- Default indentation
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.smartindent = true
 
-vim.opt.colorcolumn = "80"
+-- Create highlighted columns in editor for line lengths
+vim.opt.colorcolumn = {"80", "120"}
 
 -- Disable Ex mode, if you know you know
+-- Doesn't seem to have this behaviour in nvim but disable anyway
 vim.keymap.set("n", "Q", "<nop>")
 
--- netrw file explorer binds
+-- netrw file explorer binds and configuration
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer net
--- TODO: Add binding for simpler file create like 'f' instead of %
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore) -- Open small file explorer net to the side
+-- TODO: Add binding for simpler file create like 'f' instead of %
 vim.g.netrw_banner = 0
 vim.g.netrw_browse_split = 0
 vim.g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
