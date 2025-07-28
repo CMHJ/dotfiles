@@ -1,101 +1,9 @@
+-- TODOs:
+-- - Remove dead code
+
 -- Set leader to space, don't know what maplocalleader is though
 vim.g.mapleader = " "
 -- vim.g.maplocalleader = "\\"
-
--- Set options
-vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
-vim.opt.termguicolors = true
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.wrap = false
-vim.opt.scrolloff = 8
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-vim.opt.fixendofline = true
-
--- Remove annoying backup and swap defaults
-vim.opt.swapfile = false
-vim.opt.backup = false
-
--- Undo settings
-vim.opt.undofile = true
-vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
-
--- Default indentation
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-vim.opt.smartindent = true
-
--- Create highlighted columns in editor for line lengths
-vim.opt.colorcolumn = {"80", "120"}
-
--- Disable Ex mode, if you know you know
--- Doesn't seem to have this behaviour in nvim but disable anyway
-vim.keymap.set("n", "Q", "<nop>")
-
--- netrw file explorer binds and configuration
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer net
--- vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore) -- Open small file explorer net to the side
--- TODO: Add binding for simpler file create like 'f' instead of %
-vim.g.netrw_banner = 0
-vim.g.netrw_browse_split = 0
-vim.g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
-vim.g.netrw_liststyle = 1 -- ls -l style view
--- vim.g.netrw_liststyle = 3 -- tree view
-vim.g.netrw_sizestyle = "h" -- human readable file size
-
-vim.keymap.set("n", "<leader>w", ":w<CR>") -- Write
-vim.keymap.set("n", "<leader>q", ":q<CR>") -- Quit
-
--- Keep screen centred when moving around
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-
--- Use ctrl keys to move between panes
-vim.keymap.set("n", "<C-j>", "<C-w>j")
-vim.keymap.set("n", "<C-k>", "<C-w>k")
-vim.keymap.set("n", "<C-h>", "<C-w>h")
-vim.keymap.set("n", "<C-l>", "<C-w>l")
-
--- TODO: Add terminal commands e.g. open terminal, run build program
-
--- Find and replace current word under cursor
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
--- TODO: Do one for currently hightlighted text
-
--- Yank and Delete into the system clipboard
---vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
---vim.keymap.set("n", "<leader>Y", [["+Y]])
-
--- When highlighting text in Select mode (not to be confused with Visual mode),
--- send it to the null register and replace it with what is in the default register.
-vim.keymap.set("x", "<leader>p", [["_dP]])
-vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
-
-vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
-
--- Run line or highlighted section in lua
-vim.keymap.set("n", "<leader>x", ":.lua<CR>")
-vim.keymap.set("v", "<leader>x", ":lua<CR>")
-
--- Move highlighted text up or down with Shift-j/k
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
--- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
-vim.keymap.set("i", "<C-c>", "<Esc>")
-
--- Maintain consistent word deletion in nvim as other GUI programs,
--- e.g. Ctrl-Backspace deletes word backwards
--- and Ctrl-Delete deletes word forwards.
-vim.keymap.set("i", "<C-h>", "<C-w>")
-vim.keymap.set("i", "<C-Del>", "<C-o>de")
 
 -- Install lazy nvim if it doesn't exist
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -127,7 +35,7 @@ require("lazy").setup({
     -- Tree-sitter configuration
     {
       "nvim-treesitter/nvim-treesitter",
-      branch = 'master',
+      branch = "master",
       lazy = false,
       build = ":TSUpdate",
       config = function()
@@ -154,11 +62,39 @@ require("lazy").setup({
     },
 
     -- LSP config
+    -- TODO: implement this properly
     {
       "neovim/nvim-lspconfig",
       config = function ()
+        require("telescope").setup {
+          extensions = {
+            fzf = {}
+          }
+        }
       end
     },
+
+    -- Telescope
+    {
+      "nvim-telescope/telescope.nvim",
+      tag = "0.1.8",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        {
+          -- "nvim-telescope/telescope-fzf-native.nvim",
+          -- Fix here: https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/120#issuecomment-2929964883
+          -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 && cmake --build build --config Release",
+        },
+      },
+      config = function()
+        require("telescope").setup({
+          defaults = {
+            sorting_strategy = "ascending"
+          },
+        })
+      end
+    },
+
   },
 })
 
@@ -166,12 +102,142 @@ require("lazy").setup({
 vim.cmd.colorscheme "dracula"
 
 -- Make background transparent
-vim.cmd([[
-    highlight Normal guibg=none
-    highlight NonText guibg=none
-    highlight Normal ctermbg=none
-    highlight NonText ctermbg=none
-]])
+-- vim.cmd([[
+--     highlight Normal guibg=none
+--     highlight NonText guibg=none
+--     highlight Normal ctermbg=none
+--     highlight NonText ctermbg=none
+-- ]])
+
+-- Set options
+vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
+vim.opt.termguicolors = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.wrap = false
+vim.opt.scrolloff = 8
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+
+-- Remove annoying backup and swap defaults
+vim.opt.swapfile = false
+vim.opt.backup = false
+
+--  -- QuitUndo settings
+vim.opt.undofile = true
+vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
+
+-- Default indentation
+vim.opt.tabstop = 4
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+vim.opt.smartindent = true
+
+-- Create highlighted columns in editor for line lengths
+vim.opt.colorcolumn = {"80", "120"}
+
+-- Disable Ex mode, if you know you know
+-- Doesn't seem to have this behaviour in nvim but disable anyway
+vim.keymap.set("n", "Q", "<nop>")
+
+-- netrw file explorer binds and configuration
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer net
+-- vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore) -- Open small file explorer net to the side
+-- TODO: Add binding for simpler file create like 'f' instead of %
+vim.g.netrw_banner = 0
+vim.g.netrw_browse_split = 0
+vim.g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
+vim.g.netrw_liststyle = 1 -- ls -l style view
+-- vim.g.netrw_liststyle = 3 -- tree view
+vim.g.netrw_sizestyle = "h" -- human readable file size
+
+vim.keymap.set("n", "<leader>w", ":w<CR>") -- Write
+vim.keymap.set("n", "<leader>q", ":q<CR>") -- Quit
+
+-- Telescope bindings
+vim.keymap.set("n", "<leader>/", function()
+  require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
+    -- winblend = 10,
+    previewer = false,
+  })
+end, { desc = "[/] Fuzzily search in current buffer" })
+vim.keymap.set("n", "<leader>ff", require("telescope.builtin").find_files, { desc = "[S]earch [F]iles" })
+vim.keymap.set("n", "<leader>fg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
+vim.keymap.set("n", "<leader>fh", require("telescope.builtin").help_tags, { desc = "[S]earch [H]elp" })
+-- find files in neovim config
+vim.keymap.set("n", "<leader>fn", function()
+  require("telescope.builtin").find_files {
+    cwd = "~/Repos/dotfiles/home/.config/nvim",
+  }
+end)
+
+vim.keymap.set("n", "<leader>fw", require("telescope.builtin").grep_string, { desc = "[F]ind Current [W]ord" })
+vim.keymap.set("n", "<leader>fk", require("telescope.builtin").keymaps, { desc = "[F]ind [K]eymaps" })
+vim.keymap.set("n", "<leader>ft", require("telescope.builtin").builtin, { desc = "[F]ind [T]elescope builtin functions" })
+vim.keymap.set("n", "<leader>fd", require("telescope.builtin").diagnostics, { desc = "[F]ind [D]iagnostics" })
+vim.keymap.set("n", "<leader>fr", require("telescope.builtin").resume, { desc = "[F]ind [R]esume" })
+vim.keymap.set("n", "<leader>fb", require("telescope.builtin").buffers, { desc = "[F]ind [B]uffers"})
+vim.keymap.set("n", "<leader>f.", require("telescope.builtin").oldfiles, { desc = "[F]ind Recent Files ('.' for repeat)" })
+
+-- Quickfix list bindings
+vim.keymap.set("n", "J", "<cmd>cnext<CR>")
+vim.keymap.set("n", "K", "<cmd>cprev<CR>")
+-- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
+-- clist - to temporarily show the quickfix list
+-- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
+
+-- Keep screen centred when moving around
+vim.keymap.set("n", "<C-d>", "<C-d>zz")
+vim.keymap.set("n", "<C-u>", "<C-u>zz")
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
+
+-- Use ctrl keys to move between panes
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+-- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
+vim.keymap.set("n", "<leader>l", function() vim.wo.relativenumber = not vim.wo.relativenumber end)
+
+-- TODO: Add terminal commands e.g. open terminal, run build program
+
+-- Find and replace current word under cursor
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
+-- Find and replace currently highlighted text
+vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]])
+
+-- Yank and Delete into the system clipboard
+--vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
+--vim.keymap.set("n", "<leader>Y", [["+Y]])
+
+-- When highlighting text in Select mode (not to be confused with Visual mode),
+-- send it to the null register and replace it with what is in the default register.
+vim.keymap.set("x", "<leader>p", [["_dP]])
+vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
+
+vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
+
+-- Run line or highlighted section in lua
+vim.keymap.set("n", "<leader>x", ":.lua<CR>")
+vim.keymap.set("v", "<leader>x", ":lua<CR>")
+
+-- Move highlighted text up or down with Shift-j/k
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+
+-- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
+vim.keymap.set("i", "<C-c>", "<Esc>")
+
+-- Maintain consistent word deletion in nvim insert mode as other GUI programs,
+-- e.g. Ctrl-Backspace deletes word backwards
+-- and Ctrl-Delete deletes word forwards.
+vim.keymap.set("i", "<C-h>", "<C-w>")
+vim.keymap.set("i", "<C-Del>", "<C-o>de")
 
 -- Filetype configurations
 
