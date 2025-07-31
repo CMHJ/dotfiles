@@ -221,6 +221,25 @@ vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
 
+-- Terminal binds
+local run_command = "./main"
+local term_job_id = 0
+
+vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
+vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
+vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
+vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
+vim.keymap.set("n", "<leader>r", function() vim.fn.chansend(term_job_id, run_command .. "\n") end)
+vim.keymap.set("n", "<leader>t", function()
+  vim.cmd.new()
+  vim.cmd.term()
+  vim.cmd.wincmd("J") -- Move terminal to bottom position
+  vim.api.nvim_win_set_height(0, 15)
+  term_job_id = vim.bo.channel
+  vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output
+  vim.cmd.wincmd("k") -- Move out of terminal
+end)
+
 -- Run line or highlighted section in lua
 vim.keymap.set("n", "<leader>x", ":.lua<CR>")
 vim.keymap.set("v", "<leader>x", ":lua<CR>")
