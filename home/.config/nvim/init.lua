@@ -229,16 +229,7 @@ vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
 local run_command = "./main"
 local term_buffer_id = 0
 
-vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
-vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
-vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
-vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
-vim.keymap.set("n", "<leader>r", function()
-  -- TODO: Add check if terminal is open first before sending
-  local term_job_id = vim.b[term_buffer_id].terminal_job_id
-  vim.fn.chansend(term_job_id, run_command .. "\n")
-end)
-vim.keymap.set("n", "<leader>t", function()
+local term_ensure_open = function()
   -- Check if terminal window is visible
   local window_visible = false
   for _, window_id in ipairs(vim.api.nvim_list_wins()) do
@@ -247,6 +238,7 @@ vim.keymap.set("n", "<leader>t", function()
     end
   end
 
+  -- If window with terminal buffer doesn't exist create it
   if window_visible == false then
     vim.cmd.new() -- Create new window
     vim.cmd.wincmd("J") -- Move terminal to bottom position
@@ -256,6 +248,7 @@ vim.keymap.set("n", "<leader>t", function()
     if vim.api.nvim_buf_is_loaded(term_buffer_id) and vim.bo[term_buffer_id].buftype == "terminal" then
       vim.api.nvim_set_current_buf(term_buffer_id)
     else
+      -- Create new terminal buffer
       vim.cmd.term()
       term_buffer_id = vim.api.nvim_get_current_buf()
     end
@@ -263,6 +256,19 @@ vim.keymap.set("n", "<leader>t", function()
     vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output
     vim.cmd.wincmd("k") -- Move out of terminal window
   end
+end
+
+vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
+vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
+vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
+vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
+vim.keymap.set("n", "<leader>r", function()
+  term_ensure_open()
+  local term_job_id = vim.b[term_buffer_id].terminal_job_id
+  vim.fn.chansend(term_job_id, run_command .. "\n")
+end)
+vim.keymap.set("n", "<leader>t", function()
+  term_ensure_open()
 end)
 
 -- Run line or highlighted section in lua
