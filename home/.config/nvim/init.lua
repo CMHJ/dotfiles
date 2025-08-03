@@ -125,7 +125,7 @@ vim.opt.incsearch = true
 vim.opt.swapfile = false
 vim.opt.backup = false
 
---  -- QuitUndo settings
+-- Undo settings
 vim.opt.undofile = true
 vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
 
