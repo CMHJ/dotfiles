@@ -282,6 +282,14 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 vim.keymap.set("i", "<C-h>", "<C-w>")
 vim.keymap.set("i", "<C-Del>", "<C-o>de")
 
+-- Use ctrl h or l to move left or right in Command line mode
+vim.keymap.set("c", "<C-l>", "<Right>")
+vim.keymap.set("c", "<C-h>", "<Left>")
+
+-- Navigate command history using Ctrl commands
+vim.keymap.set("c", "<C-k>", "<Up>") -- Previous command
+vim.keymap.set("c", "<C-j>", "<Down>") -- Next command
+
 -- Filetype configurations
 
 vim.api.nvim_create_autocmd("FileType", {
