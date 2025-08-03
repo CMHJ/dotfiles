@@ -136,6 +136,10 @@ vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.smartindent = true
 
+-- Timeout
+vim.opt.timeout = true
+vim.opt.timeoutlen = 250 -- ms
+
 -- Create highlighted columns in editor for line lengths
 vim.opt.colorcolumn = {"80", "120"}
 
