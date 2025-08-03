@@ -102,12 +102,12 @@ require("lazy").setup({
 vim.cmd.colorscheme "dracula"
 
 -- Make background transparent
--- vim.cmd([[
---     highlight Normal guibg=none
---     highlight NonText guibg=none
---     highlight Normal ctermbg=none
---     highlight NonText ctermbg=none
--- ]])
+vim.cmd([[
+    highlight Normal guibg=none
+    highlight NonText guibg=none
+    highlight Normal ctermbg=none
+    highlight NonText ctermbg=none
+]])
 
 -- Set options
 vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
