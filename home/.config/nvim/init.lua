@@ -102,18 +102,19 @@ require("lazy").setup({
 vim.cmd.colorscheme "dracula"
 
 -- Make background transparent
-vim.cmd([[
-    highlight Normal guibg=none
-    highlight NonText guibg=none
-    highlight Normal ctermbg=none
-    highlight NonText ctermbg=none
-]])
+-- vim.cmd([[
+--     highlight Normal guibg=none
+--     highlight NonText guibg=none
+--     highlight Normal ctermbg=none
+--     highlight NonText ctermbg=none
+-- ]])
 
 -- Set options
 vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
 vim.opt.termguicolors = true
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.cursorline = true
 vim.opt.wrap = false
 vim.opt.scrolloff = 8
 vim.opt.ignorecase = true
@@ -186,8 +187,8 @@ vim.keymap.set("n", "<leader>sb", require("telescope.builtin").buffers, { desc =
 vim.keymap.set("n", "<leader>s.", require("telescope.builtin").oldfiles, { desc = "[S]earch Recent Files ('.' for repeat)" })
 
 -- Quickfix list bindings
-vim.keymap.set("n", "J", "<cmd>cnext<CR>")
-vim.keymap.set("n", "K", "<cmd>cprev<CR>")
+vim.keymap.set("n", "<leader>cj", "<cmd>cnext<CR>")
+vim.keymap.set("n", "<leader>ck", "<cmd>cprev<CR>")
 -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
 -- clist - to temporarily show the quickfix list
 -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
@@ -203,6 +204,12 @@ vim.keymap.set("n", "<C-j>", "<C-w>j")
 vim.keymap.set("n", "<C-k>", "<C-w>k")
 vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+-- Resize current window using -/_ and =/+ keys
+vim.keymap.set("n", "=", [[<cmd>horizontal resize +2<cr>]])
+vim.keymap.set("n", "-", [[<cmd>horizontal resize -2<cr>]])
+vim.keymap.set("n", "+", [[<cmd>vertical resize +5<cr>]])
+vim.keymap.set("n", "_", [[<cmd>vertical resize -5<cr>]])
 
 -- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
 vim.keymap.set("n", "<leader>l", function() vim.wo.relativenumber = not vim.wo.relativenumber end)
@@ -225,8 +232,8 @@ vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
 
 vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
 
--- Terminal binds
-local run_command = "./main"
+-- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
+local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
 local term_buffer_id = 0
 
 local term_ensure_open = function()
@@ -258,6 +265,7 @@ local term_ensure_open = function()
   end
 end
 
+-- Terminal binds
 vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
 vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
 vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
@@ -285,8 +293,12 @@ vim.keymap.set("i", "<C-c>", "<Esc>")
 -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
 -- e.g. Ctrl-Backspace deletes word backwards
 -- and Ctrl-Delete deletes word forwards.
-vim.keymap.set("i", "<C-h>", "<C-w>")
+-- vim.keymap.set("i", "<C-h>", "<C-w>") -- Disable in favour of movement binds
 vim.keymap.set("i", "<C-Del>", "<C-o>de")
+
+-- Use ctrl h or l to move left or right in Insert mode
+vim.keymap.set("i", "<C-l>", "<Right>")
+vim.keymap.set("i", "<C-h>", "<Left>")
 
 -- Use ctrl h or l to move left or right in Command line mode
 vim.keymap.set("c", "<C-l>", "<Right>")
