@@ -62,7 +62,6 @@ require("lazy").setup({
     },
 
     -- LSP config
-    -- TODO: implement this properly
     {
       "neovim/nvim-lspconfig",
       config = function ()
@@ -184,11 +183,15 @@ vim.keymap.set("n", "<leader>st", require("telescope.builtin").builtin, { desc =
 vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
 vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[S]earch [R]esume" })
 vim.keymap.set("n", "<leader>sb", require("telescope.builtin").buffers, { desc = "[S]earch [B]uffers"})
+vim.keymap.set("n", "<leader>sm", function()
+    -- For some reason only the first section is searched by default.
+    require("telescope.builtin").man_pages { sections = { "ALL" } }
+end, { desc = "[S]earch [M]an Pages" })
 vim.keymap.set("n", "<leader>s.", require("telescope.builtin").oldfiles, { desc = "[S]earch Recent Files ('.' for repeat)" })
 
 -- Quickfix list bindings
-vim.keymap.set("n", "<leader>cj", "<cmd>cnext<CR>")
-vim.keymap.set("n", "<leader>ck", "<cmd>cprev<CR>")
+vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
+vim.keymap.set("n", "[q", "<cmd>cprev<CR>")
 -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
 -- clist - to temporarily show the quickfix list
 -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
@@ -210,11 +213,10 @@ vim.keymap.set("n", "=", [[<cmd>horizontal resize +2<cr>]])
 vim.keymap.set("n", "-", [[<cmd>horizontal resize -2<cr>]])
 vim.keymap.set("n", "+", [[<cmd>vertical resize +5<cr>]])
 vim.keymap.set("n", "_", [[<cmd>vertical resize -5<cr>]])
+-- TODO: Add fullscreen toggle
 
 -- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
 vim.keymap.set("n", "<leader>l", function() vim.wo.relativenumber = not vim.wo.relativenumber end)
-
--- TODO: Add terminal commands e.g. open terminal, run build program
 
 -- Find and replace current word under cursor
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
