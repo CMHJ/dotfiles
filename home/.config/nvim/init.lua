@@ -64,12 +64,71 @@ require("lazy").setup({
     -- LSP config
     {
       "neovim/nvim-lspconfig",
+      dependencies = {
+        {
+          "folke/lazydev.nvim",
+          ft = "lua", -- only load on lua files
+          opts = {
+            library = {
+              -- See the configuration section for more details
+              -- Load luvit types when the `vim.uv` word is found
+              { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+            },
+          },
+        },
+      },
       config = function ()
-        require("telescope").setup {
+        vim.lsp.config("telescope", {
           extensions = {
             fzf = {}
           }
-        }
+        })
+
+        vim.lsp.config("lua_ls", {})
+        vim.lsp.config("clangd", {})
+
+        -- TODO: Cleanup this garbage
+
+        -- Mappings.
+        -- See `:help vim.diagnostic.*` for documentation on any of the below functions
+        local opts = { noremap=true, silent=true }
+        vim.api.nvim_set_keymap('n', '<space>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
+        vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
+        vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
+        vim.api.nvim_set_keymap('n', '<space>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
+
+        -- Use an on_attach function to only map the following keys
+        -- after the language server attaches to the current buffer
+        local on_attach = function(client, bufnr)
+          -- Enable completion triggered by <c-x><c-o>
+          -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
+          vim.api.nvim_set_option_value('omnifunc', 'v:lua.vim.lsp.omnifunc', { buf = bufnr })
+
+          -- Mappings.
+          -- See `:help vim.lsp.*` for documentation on any of the below functions
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>k', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
+          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<space>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
+        end
+
+        -- Use a loop to conveniently call 'setup' on multiple servers and
+        -- map buffer local keybindings when the language server attaches
+        local servers = { 'lua_ls', 'clangd' }
+        for _, lsp in pairs(servers) do
+          require('lspconfig')[lsp].setup {
+            on_attach = on_attach,
+          }
+        end
       end
     },
 
@@ -120,6 +179,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
+vim.opt.signcolumn = true -- Stop the diagnostic column from appearing and disappearing constantly by just having it on
 
 -- Remove annoying backup and swap defaults
 vim.opt.swapfile = false
@@ -209,10 +269,10 @@ vim.keymap.set("n", "<C-h>", "<C-w>h")
 vim.keymap.set("n", "<C-l>", "<C-w>l")
 
 -- Resize current window using -/_ and =/+ keys
-vim.keymap.set("n", "=", [[<cmd>horizontal resize +2<cr>]])
-vim.keymap.set("n", "-", [[<cmd>horizontal resize -2<cr>]])
-vim.keymap.set("n", "+", [[<cmd>vertical resize +5<cr>]])
-vim.keymap.set("n", "_", [[<cmd>vertical resize -5<cr>]])
+vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
+vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
+-- vim.keymap.set("n", "+", [[<cmd>horizontal resize +5<cr>]])
+-- vim.keymap.set("n", "_", [[<cmd>vertical resize -5<cr>]])
 -- TODO: Add fullscreen toggle
 
 -- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
@@ -269,9 +329,9 @@ end
 
 -- Terminal binds
 vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
-vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
+vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("!Build command: ") end)
 vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
-vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
+vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("!Run command: ") end)
 vim.keymap.set("n", "<leader>r", function()
   term_ensure_open()
   local term_job_id = vim.b[term_buffer_id].terminal_job_id
