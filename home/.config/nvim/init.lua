@@ -1,32 +1,63 @@
-
+-- TODO
 -- - Remove dead code
--- Do a reorder of this and order stuff from most inportant to least important.
--- - Move options to the top here
 -- - Move keybinds into simple tables at the top
+-- - Add comment bind with C-/
 
--- Set leader to space, don't know what maplocalleader is though
-vim.g.mapleader = " "
--- vim.g.maplocalleader = "\\"
+-- Set global variables --
+
+local g = vim.g
+g.mapleader = " " -- Set leader to spacebar
+g.maplocalleader = " "
+
+-- netrw file explorer configuration
+g.netrw_banner = 0
+g.netrw_browse_split = 0
+g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
+g.netrw_liststyle = 1 -- ls -l style view
+-- g.netrw_liststyle = 3 -- tree view
+g.netrw_sizestyle = "h" -- human readable file size
+
+-- Set options --
+
+local opt = vim.opt
+opt.clipboard="unnamedplus" -- Use system clipboard for everything
+opt.termguicolors = true
+opt.number = true
+opt.relativenumber = true
+opt.cursorline = true
+opt.wrap = false
+opt.scrolloff = 8
+opt.ignorecase = true
+opt.smartcase = true
+opt.hlsearch = false
+opt.incsearch = true
+opt.signcolumn = "yes"-- Just keep sign column on to avoid annoying flicker
+opt.swapfile = false -- Remove annoying backup and swap defaults
+opt.backup = false
+opt.undofile = true
+opt.tabstop = 4 -- Default indentation
+opt.softtabstop = 4
+opt.shiftwidth = 4
+opt.expandtab = true
+opt.smartindent = true
+opt.timeout = true -- Timeout
+opt.timeoutlen = 400 -- ms
+opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line lengths
+
+-- Plugin Setup
 
 -- Install lazy nvim if it doesn't exist
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+  local out = vim.fn.system({ "git", "clone", "https://github.com/folke/lazy.nvim.git", "--filter=blob:none", "--branch=stable", lazypath })
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
+    vim.api.nvim_echo({ { "Failed to clone lazy.nvim:\n", "ErrorMsg" }, { out, "WarningMsg" }, { "\nPress any key to exit..." } }, true, {})
     vim.fn.getchar()
     os.exit(1)
   end
+  -- Add lazy into the runtime path for neovim so that the lazy file required later in this file can be found.
+  vim.opt.runtimepath:prepend(lazypath)
 end
-
--- Add lazy into the runtime path for neovim so that the
--- lazy file required later in this file can be found.
-vim.opt.runtimepath:prepend(lazypath)
 
 -- Setup lazy.nvim plugins
 require("lazy").setup({
@@ -111,47 +142,13 @@ require("lazy").setup({
         vim.lsp.config("lua_ls", {})
         vim.lsp.config("clangd", {})
 
-        -- TODO: Cleanup this garbage
-
-        -- Mappings.
-        -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-        local opts = { noremap=true, silent=true }
-        vim.api.nvim_set_keymap('n', '<leader>e', '<cmd>lua vim.diagnostic.open_float()<CR>', opts)
-        vim.api.nvim_set_keymap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<CR>', opts)
-        vim.api.nvim_set_keymap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<CR>', opts)
-        vim.api.nvim_set_keymap('n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opts)
-
-        -- Use an on_attach function to only map the following keys
-        -- after the language server attaches to the current buffer
-        local on_attach = function(client, bufnr)
-          -- Enable completion triggered by <c-x><c-o>
-          -- vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-          vim.api.nvim_set_option_value('omnifunc', 'v:lua.vim.lsp.omnifunc', { buf = bufnr })
-
-          -- Mappings.
-          -- See `:help vim.lsp.*` for documentation on any of the below functions
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gD', '<cmd>lua vim.lsp.buf.declaration()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gd', '<cmd>lua vim.lsp.buf.definition()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gi', '<cmd>lua vim.lsp.buf.implementation()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>k', '<cmd>lua vim.lsp.buf.signature_help()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>rn', '<cmd>lua vim.lsp.buf.rename()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>ca', '<cmd>lua vim.lsp.buf.code_action()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', opts)
-          vim.api.nvim_buf_set_keymap(bufnr, 'n', '<leader>f', '<cmd>lua vim.lsp.buf.formatting()<CR>', opts)
-        end
 
         -- Use a loop to conveniently call 'setup' on multiple servers and
         -- map buffer local keybindings when the language server attaches
         local servers = { 'lua_ls', 'clangd' }
         for _, lsp in pairs(servers) do
-          require('lspconfig')[lsp].setup {
-            on_attach = on_attach,
-          }
+          vim.lsp.enable(lsp)
+          vim.lsp.config(lsp, { on_attach = on_attach })
         end
       end
     },
@@ -188,56 +185,15 @@ require("lazy").setup({
 --     highlight NonText ctermbg=none
 -- ]])
 
--- Set options
-vim.opt.clipboard="unnamedplus" -- Use system clipboard for everything
-vim.opt.termguicolors = true
-vim.opt.number = true
-vim.opt.relativenumber = true
-vim.opt.cursorline = true
-vim.opt.wrap = false
-vim.opt.scrolloff = 8
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.hlsearch = false
-vim.opt.incsearch = true
-vim.opt.signcolumn = "yes"-- Stop the diagnostic column from appearing and disappearing constantly by just having it on
-
--- Remove annoying backup and swap defaults
-vim.opt.swapfile = false
-vim.opt.backup = false
-
--- Undo settings
-vim.opt.undofile = true
-vim.opt.undodir =  vim.fn.stdpath("data") .. "/undo"
-
--- Default indentation
-vim.opt.tabstop = 4
-vim.opt.softtabstop = 4
-vim.opt.shiftwidth = 4
-vim.opt.expandtab = true
-vim.opt.smartindent = true
-
--- Timeout
-vim.opt.timeout = true
-vim.opt.timeoutlen = 250 -- ms
-
--- Create highlighted columns in editor for line lengths
-vim.opt.colorcolumn = {"80", "120"}
 
 -- Disable Ex mode, if you know you know
 -- Doesn't seem to have this behaviour in nvim but disable anyway
 vim.keymap.set("n", "Q", "<nop>")
 
--- netrw file explorer binds and configuration
+-- netrw file explorer binds
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer net
 -- vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore) -- Open small file explorer net to the side
 -- TODO: Add binding for simpler file create like 'f' instead of %
-vim.g.netrw_banner = 0
-vim.g.netrw_browse_split = 0
-vim.g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
-vim.g.netrw_liststyle = 1 -- ls -l style view
--- vim.g.netrw_liststyle = 3 -- tree view
-vim.g.netrw_sizestyle = "h" -- human readable file size
 
 vim.keymap.set("n", "<leader>w", ":w<CR>") -- Write
 vim.keymap.set("n", "<leader>q", ":q<CR>") -- Quit
