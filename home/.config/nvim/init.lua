@@ -2,6 +2,7 @@
 -- - Remove dead code
 -- - Move keybinds into simple tables at the top
 -- - Add comment bind with C-/
+-- - Add binding for simpler file create like 'f' instead of % in netrw
 
 -- Set global variables --
 
@@ -43,6 +44,64 @@ opt.smartindent = true
 opt.timeout = true -- Timeout
 opt.timeoutlen = 400 -- ms
 opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line lengths
+
+-- Keybinds --
+
+local general_keymaps = {
+  { "Q",          "<nop>",    desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway" },
+
+  -- netrw file explorer binds
+  { "<leader>pv", vim.cmd.Ex, desc = "Open netrw file explorer." },
+  -- { "<leader>pv", vim.cmd.Lexplore, mode = "n", desc = "Open small file explorer to the side." },
+}
+
+local plugin_keymaps = {
+  -- Telescope bindings --
+  { "<leader>/", function()
+    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
+      winblend = 10,
+      previewer = false,
+    })
+    end, desc = "[/] Fuzzily search in current buffer" },
+
+  -- find files in neovim config
+  { "<leader>sf", function() require("telescope.builtin").find_files() end, desc = "[S]earch [F]iles" },
+  { "<leader>sg", function() require("telescope.builtin").live_grep() end, desc = "[S]earch by [G]rep" },
+  { "<leader>sh", function() require("telescope.builtin").help_tags() end, desc = "[S]earch [H]elp" },
+  {
+    "<leader>sn",
+    function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
+    desc = "[S]earch [N]eovim config"
+  },
+  { "<leader>sw", function() require("telescope.builtin").grep_string() end, desc = "[S]earch Current [W]ord" },
+  { "<leader>sk", function() require("telescope.builtin").keymaps() end, desc = "[S]earch [K]eymaps" },
+  { "<leader>st", function() require("telescope.builtin").builtin() end, desc = "[S]earch [T]elescope builtin functions" },
+  { "<leader>sd", function() require("telescope.builtin").diagnostics() end, desc = "[S]earch [D]iagnostics" },
+  { "<leader>sr", function() require("telescope.builtin").resume() end, desc = "[S]earch [R]esume" },
+  { "<leader>sb", function() require("telescope.builtin").buffers() end, desc = "[S]earch [B]uffers"},
+  {
+    "<leader>sm",
+    function()
+      -- For some reason only the first section is searched by default.
+      require("telescope.builtin").man_pages { sections = { "ALL" } }
+    end,
+    desc = "[S]earch [M]an Pages"
+  },
+  { "<leader>s.", function() require("telescope.builtin").oldfiles() end, desc = "[S]earch Recent Files ('.' for repeat)" },
+
+}
+
+-- Key bindings helper
+local function set_keymaps(keymaps, buffer)
+  for _, keymap in ipairs(keymaps) do
+    local mode = keymap.mode or 'n'
+    local opts = { desc = keymap.desc, buffer = buffer }
+    vim.keymap.set(mode, keymap[1], keymap[2], opts)
+  end
+end
+
+set_keymaps(general_keymaps)
+set_keymaps(plugin_keymaps)
 
 -- Plugin Setup
 
@@ -186,45 +245,6 @@ require("lazy").setup({
 -- ]])
 
 
--- Disable Ex mode, if you know you know
--- Doesn't seem to have this behaviour in nvim but disable anyway
-vim.keymap.set("n", "Q", "<nop>")
-
--- netrw file explorer binds
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex) -- Open file explorer net
--- vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore) -- Open small file explorer net to the side
--- TODO: Add binding for simpler file create like 'f' instead of %
-
-vim.keymap.set("n", "<leader>w", ":w<CR>") -- Write
-vim.keymap.set("n", "<leader>q", ":q<CR>") -- Quit
-
--- Telescope bindings
-vim.keymap.set("n", "<leader>/", function()
-  require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
-    -- winblend = 10,
-    previewer = false,
-  })
-end, { desc = "[/] Fuzzily search in current buffer" })
-vim.keymap.set("n", "<leader>sf", require("telescope.builtin").find_files, { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>sg", require("telescope.builtin").live_grep, { desc = "[S]earch by [G]rep" })
-vim.keymap.set("n", "<leader>sh", require("telescope.builtin").help_tags, { desc = "[S]earch [H]elp" })
--- find files in neovim config
-vim.keymap.set("n", "<leader>sn", function()
-  require("telescope.builtin").find_files {
-    cwd = "~/Repos/dotfiles/home/.config/nvim",
-  }
-end, { desc = "[S]earch [N]eovim config" })
-vim.keymap.set("n", "<leader>sw", require("telescope.builtin").grep_string, { desc = "[S]earch Current [W]ord" })
-vim.keymap.set("n", "<leader>sk", require("telescope.builtin").keymaps, { desc = "[S]earch [K]eymaps" })
-vim.keymap.set("n", "<leader>st", require("telescope.builtin").builtin, { desc = "[S]earch [T]elescope builtin functions" })
-vim.keymap.set("n", "<leader>sd", require("telescope.builtin").diagnostics, { desc = "[S]earch [D]iagnostics" })
-vim.keymap.set("n", "<leader>sr", require("telescope.builtin").resume, { desc = "[S]earch [R]esume" })
-vim.keymap.set("n", "<leader>sb", require("telescope.builtin").buffers, { desc = "[S]earch [B]uffers"})
-vim.keymap.set("n", "<leader>sm", function()
-    -- For some reason only the first section is searched by default.
-    require("telescope.builtin").man_pages { sections = { "ALL" } }
-end, { desc = "[S]earch [M]an Pages" })
-vim.keymap.set("n", "<leader>s.", require("telescope.builtin").oldfiles, { desc = "[S]earch Recent Files ('.' for repeat)" })
 
 -- Quickfix list bindings
 vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
@@ -253,7 +273,10 @@ vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
 -- TODO: Add fullscreen toggle
 
 -- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
-vim.keymap.set("n", "<leader>l", function() vim.wo.relativenumber = not vim.wo.relativenumber end)
+vim.keymap.set("n", "<leader>l", function()
+  vim.wo.number = not vim.wo.number
+  vim.wo.relativenumber = not vim.wo.relativenumber
+end)
 
 -- Find and replace current word under cursor
 vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
