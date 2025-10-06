@@ -55,10 +55,10 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
     vim.fn.getchar()
     os.exit(1)
   end
-  -- Add lazy into the runtime path for neovim so that the lazy file required later in this file can be found.
-  vim.opt.runtimepath:prepend(lazypath)
 end
 
+-- Add lazy into the runtime path for neovim so that the lazy can be found.
+vim.opt.runtimepath:prepend(lazypath)
 -- Setup lazy.nvim plugins
 require("lazy").setup({
   spec = {
