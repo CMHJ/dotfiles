@@ -45,6 +45,45 @@ opt.timeout = true -- Timeout
 opt.timeoutlen = 400 -- ms
 opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line lengths
 
+-- Custom Functions --
+
+-- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
+local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
+local term_buffer_id = 0
+
+local term_ensure_open = function()
+  -- Check if terminal window is visible
+  local window_visible = false
+  for _, window_id in ipairs(vim.api.nvim_list_wins()) do
+    if vim.api.nvim_win_get_buf(window_id) == term_buffer_id then
+      window_visible = true
+    end
+  end
+
+  -- TODO: Add option to leave terminal open in the case you want to check that it's open.
+  -- Maybe factor out the function above as a check?
+  -- TODO: Make this function toggle whether the terminal is open or not.
+
+  -- If window with terminal buffer doesn't exist create it
+  if window_visible == false then
+    vim.cmd.new() -- Create new window
+    vim.cmd.wincmd("J") -- Move terminal to bottom position
+    vim.api.nvim_win_set_height(0, 15)
+
+    -- Use terminal buffer if it already exists but window was closed
+    if vim.api.nvim_buf_is_loaded(term_buffer_id) and vim.bo[term_buffer_id].buftype == "terminal" then
+      vim.api.nvim_set_current_buf(term_buffer_id)
+    else
+      -- Create new terminal buffer
+      vim.cmd.term()
+      term_buffer_id = vim.api.nvim_get_current_buf()
+    end
+
+    vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output
+    vim.cmd.wincmd("k") -- Move out of terminal window
+  end
+end
+
 -- Keybinds --
 
 local general_keymaps = {
@@ -101,6 +140,45 @@ local general_keymaps = {
 
   { "<leader><leader>x", ":source %<CR>", desc = "Source current file." },
 
+  -- Terminal binds --
+  { "<leader><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
+  { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("!Build command: ") end },
+  { "<leader>b", "<cmd>make<CR>" },
+  { "<leader><leader>r", function() run_command = vim.fn.input("!Run command: ") end },
+  { "<leader>r",
+    function()
+      term_ensure_open()
+      local term_job_id = vim.b[term_buffer_id].terminal_job_id
+      vim.fn.chansend(term_job_id, run_command .. "\n")
+    end
+  },
+  { "<leader>t", function() term_ensure_open() end, desc = "Toggle terminal at the bottom." },
+
+  -- Run line or highlighted section in lua
+  { "<leader>x", ":.lua<CR>" },
+  { "<leader>x", ":lua<CR>", mode = "v" },
+
+  -- Move highlighted text up or down with Shift-j/k
+  { "J", ":m '>+1<CR>gv=gv", mode = "v" },
+  { "K", ":m '<-2<CR>gv=gv", mode = "v" },
+
+  -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
+  { "<C-c>", "<Esc>", mode = "i" },
+
+  -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
+  -- e.g. Ctrl-Backspace deletes word backwards
+  -- and Ctrl-Delete deletes word forwards.
+  -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds." },
+  { "<C-Del>", "<C-o>de", mode = "i" },
+
+  { "<C-l>", "<Right>", mode = "i", desc = "Move right while in Insert mode." },
+  { "<C-h>", "<Left>" , mode = "i", desc = "Move left while in Insert mode." },
+
+  { "<C-l>", "<Right>", mode = "c", desc = "Move right while in Command line mode." },
+  { "<C-h>", "<Left>" , mode = "c", desc = "Move left while in Command line mode."},
+
+  { "<C-k>", "<Up>", mode = "c", desc = "Select previous in command history." },
+  { "<C-j>", "<Down>", mode = "c", desc = "Select next in command history." },
 }
 
 local plugin_keymaps = {
@@ -142,6 +220,7 @@ local plugin_keymaps = {
   -- Harpoon binds --
   { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
   { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
+  { "<C-c>", function() require("harpoon").ui:close_menu() end, desc = "" },
   { "<C-h>", function() require("harpoon"):list():select(1) end, desc = "" },
   { "<C-j>", function() require("harpoon"):list():select(2) end, desc = "" },
   { "<C-k>", function() require("harpoon"):list():select(3) end, desc = "" },
@@ -302,82 +381,6 @@ require("lazy").setup({
 --     highlight Normal ctermbg=none
 --     highlight NonText ctermbg=none
 -- ]])
-
--- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
-local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
-local term_buffer_id = 0
-
-local term_ensure_open = function()
-  -- Check if terminal window is visible
-  local window_visible = false
-  for _, window_id in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(window_id) == term_buffer_id then
-      window_visible = true
-    end
-  end
-
-  -- If window with terminal buffer doesn't exist create it
-  if window_visible == false then
-    vim.cmd.new() -- Create new window
-    vim.cmd.wincmd("J") -- Move terminal to bottom position
-    vim.api.nvim_win_set_height(0, 15)
-
-    -- Use terminal buffer if it already exists but window was closed
-    if vim.api.nvim_buf_is_loaded(term_buffer_id) and vim.bo[term_buffer_id].buftype == "terminal" then
-      vim.api.nvim_set_current_buf(term_buffer_id)
-    else
-      -- Create new terminal buffer
-      vim.cmd.term()
-      term_buffer_id = vim.api.nvim_get_current_buf()
-    end
-
-    vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output
-    vim.cmd.wincmd("k") -- Move out of terminal window
-  end
-end
-
--- Terminal binds
-vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
-vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("!Build command: ") end)
-vim.keymap.set("n", "<leader>b", "<cmd>make<CR>")
-vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("!Run command: ") end)
-vim.keymap.set("n", "<leader>r", function()
-  term_ensure_open()
-  local term_job_id = vim.b[term_buffer_id].terminal_job_id
-  vim.fn.chansend(term_job_id, run_command .. "\n")
-end)
-vim.keymap.set("n", "<leader>t", function()
-  term_ensure_open()
-end)
-
--- Run line or highlighted section in lua
-vim.keymap.set("n", "<leader>x", ":.lua<CR>")
-vim.keymap.set("v", "<leader>x", ":lua<CR>")
-
--- Move highlighted text up or down with Shift-j/k
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
-
--- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
-vim.keymap.set("i", "<C-c>", "<Esc>")
-
--- Maintain consistent word deletion in nvim insert mode as other GUI programs,
--- e.g. Ctrl-Backspace deletes word backwards
--- and Ctrl-Delete deletes word forwards.
--- vim.keymap.set("i", "<C-h>", "<C-w>") -- Disable in favour of movement binds
-vim.keymap.set("i", "<C-Del>", "<C-o>de")
-
--- Use ctrl h or l to move left or right in Insert mode
-vim.keymap.set("i", "<C-l>", "<Right>")
-vim.keymap.set("i", "<C-h>", "<Left>")
-
--- Use ctrl h or l to move left or right in Command line mode
-vim.keymap.set("c", "<C-l>", "<Right>")
-vim.keymap.set("c", "<C-h>", "<Left>")
-
--- Navigate command history using Ctrl commands
-vim.keymap.set("c", "<C-k>", "<Up>") -- Previous command
-vim.keymap.set("c", "<C-j>", "<Down>") -- Next command
 
 -- Filetype configurations
 
