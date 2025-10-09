@@ -48,37 +48,88 @@ opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line
 -- Keybinds --
 
 local general_keymaps = {
-  { "Q",          "<nop>",    desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway" },
+  { "Q",          "<nop>",    desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
-  -- netrw file explorer binds
+  -- netrw file explorer binds --
   { "<leader>pv", vim.cmd.Ex, desc = "Open netrw file explorer." },
   -- { "<leader>pv", vim.cmd.Lexplore, mode = "n", desc = "Open small file explorer to the side." },
+
+  -- Quickfix list bindings --
+  { "]q", "<cmd>cnext<CR>", desc = "" },
+  { "[q", "<cmd>cprev<CR>", desc = "" },
+  -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
+  -- clist - to temporarily show the quickfix list
+  -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
+
+  -- Keep screen centred when moving around
+  { "<C-d>", "<C-d>zz", desc = "" },
+  { "<C-u>", "<C-u>zz", desc = "" },
+  { "n", "nzzzv", desc = "" },
+  { "N", "Nzzzv", desc = "" },
+
+  -- Use ctrl keys to move between panes
+  -- vim.keymap.set("n", "<C-j>", "<C-w>j")
+  -- vim.keymap.set("n", "<C-k>", "<C-w>k")
+  -- vim.keymap.set("n", "<C-h>", "<C-w>h")
+  -- vim.keymap.set("n", "<C-l>", "<C-w>l")
+
+  -- Resize current window using -/_ and =/+ keys
+  { "+", [[<cmd>horizontal resize +2<cr>]], desc = "" },
+  { "_", [[<cmd>horizontal resize -2<cr>]], desc = "" },
+  -- { "+", [[<cmd>horizontal resize +5<cr>]], desc = "" },
+  -- { "_", [[<cmd>vertical resize -5<cr>]], desc = "" },
+  -- TODO: Add fullscreen toggle
+
+  {
+    "<leader>l",
+    function()
+      vim.wo.number = not vim.wo.number
+      vim.wo.relativenumber = not vim.wo.relativenumber
+    end,
+    desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load."
+  },
+
+  { "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]], desc = "Find and replace current word under cursor." },
+  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]], desc = "Find and replace currently highlighted text." },
+
+  -- Yank and Delete into the system clipboard
+  { "<leader>y", [["+y]], mode = {"n", "v"}, desc = "" },
+  --vim.keymap.set("n", "<leader>Y", [["+Y]])
+
+  { "<leader>p", [["_dP]], mode = "x", desc = "Send highlighted text to null register and paste from default register." },
+  { "<leader>d", [["_d]], mode = {"n", "v"}, desc = "Set null register." },
+
+  { "<leader><leader>x", ":source %<CR>", desc = "Source current file." },
+
 }
 
 local plugin_keymaps = {
   -- Telescope bindings --
-  { "<leader>/", function()
-    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
-      winblend = 10,
-      previewer = false,
-    })
-    end, desc = "[/] Fuzzily search in current buffer" },
-
-  -- find files in neovim config
   { "<leader>sf", function() require("telescope.builtin").find_files() end, desc = "[S]earch [F]iles" },
   { "<leader>sg", function() require("telescope.builtin").live_grep() end, desc = "[S]earch by [G]rep" },
   { "<leader>sh", function() require("telescope.builtin").help_tags() end, desc = "[S]earch [H]elp" },
-  {
-    "<leader>sn",
-    function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
-    desc = "[S]earch [N]eovim config"
-  },
   { "<leader>sw", function() require("telescope.builtin").grep_string() end, desc = "[S]earch Current [W]ord" },
   { "<leader>sk", function() require("telescope.builtin").keymaps() end, desc = "[S]earch [K]eymaps" },
   { "<leader>st", function() require("telescope.builtin").builtin() end, desc = "[S]earch [T]elescope builtin functions" },
   { "<leader>sd", function() require("telescope.builtin").diagnostics() end, desc = "[S]earch [D]iagnostics" },
   { "<leader>sr", function() require("telescope.builtin").resume() end, desc = "[S]earch [R]esume" },
   { "<leader>sb", function() require("telescope.builtin").buffers() end, desc = "[S]earch [B]uffers"},
+  { "<leader>s.", function() require("telescope.builtin").oldfiles() end, desc = "[S]earch Recent Files ('.' for repeat)" },
+  { "<leader>su", function() require("telescope.builtin").undo() end, desc = "[S]earch [U]ndo" },
+  {
+    "<leader>/",
+    function()
+      require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
+        winblend = 10,
+        previewer = false,
+      })
+    end, desc = "[/] Fuzzily search in current buffer"
+  },
+  {
+    "<leader>sn",
+    function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
+    desc = "[S]earch [N]eovim config"
+  },
   {
     "<leader>sm",
     function()
@@ -87,8 +138,16 @@ local plugin_keymaps = {
     end,
     desc = "[S]earch [M]an Pages"
   },
-  { "<leader>s.", function() require("telescope.builtin").oldfiles() end, desc = "[S]earch Recent Files ('.' for repeat)" },
 
+  -- Harpoon binds --
+  { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
+  { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
+  { "<C-h>", function() require("harpoon"):list():select(1) end, desc = "" },
+  { "<C-j>", function() require("harpoon"):list():select(2) end, desc = "" },
+  { "<C-k>", function() require("harpoon"):list():select(3) end, desc = "" },
+  { "<C-l>", function() require("harpoon"):list():select(4) end, desc = "" },
+  { "<C-p>", function() require("harpoon"):list():prev() end, desc = "Toggle previous & next buffers stored within Harpoon list" },
+  { "<C-n>", function() require("harpoon"):list():next() end, desc = "" },
 }
 
 -- Key bindings helper
@@ -103,7 +162,7 @@ end
 set_keymaps(general_keymaps)
 set_keymaps(plugin_keymaps)
 
--- Plugin Setup
+-- Plugin Setup --
 
 -- Install lazy nvim if it doesn't exist
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -244,56 +303,6 @@ require("lazy").setup({
 --     highlight NonText ctermbg=none
 -- ]])
 
-
-
--- Quickfix list bindings
-vim.keymap.set("n", "]q", "<cmd>cnext<CR>")
-vim.keymap.set("n", "[q", "<cmd>cprev<CR>")
--- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
--- clist - to temporarily show the quickfix list
--- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
-
--- Keep screen centred when moving around
-vim.keymap.set("n", "<C-d>", "<C-d>zz")
-vim.keymap.set("n", "<C-u>", "<C-u>zz")
-vim.keymap.set("n", "n", "nzzzv")
-vim.keymap.set("n", "N", "Nzzzv")
-
--- Use ctrl keys to move between panes
--- vim.keymap.set("n", "<C-j>", "<C-w>j")
--- vim.keymap.set("n", "<C-k>", "<C-w>k")
--- vim.keymap.set("n", "<C-h>", "<C-w>h")
--- vim.keymap.set("n", "<C-l>", "<C-w>l")
-
--- Resize current window using -/_ and =/+ keys
-vim.keymap.set("n", "+", [[<cmd>horizontal resize +2<cr>]])
-vim.keymap.set("n", "_", [[<cmd>horizontal resize -2<cr>]])
--- vim.keymap.set("n", "+", [[<cmd>horizontal resize +5<cr>]])
--- vim.keymap.set("n", "_", [[<cmd>vertical resize -5<cr>]])
--- TODO: Add fullscreen toggle
-
--- Toggle relative line numbering, wo for "window option" as opt sets the option that only works on first load
-vim.keymap.set("n", "<leader>l", function()
-  vim.wo.number = not vim.wo.number
-  vim.wo.relativenumber = not vim.wo.relativenumber
-end)
-
--- Find and replace current word under cursor
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]])
--- Find and replace currently highlighted text
-vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]])
-
--- Yank and Delete into the system clipboard
---vim.keymap.set({"n", "v"}, "<leader>y", [["+y]])
---vim.keymap.set("n", "<leader>Y", [["+Y]])
-
--- When highlighting text in Select mode (not to be confused with Visual mode),
--- send it to the null register and replace it with what is in the default register.
-vim.keymap.set("x", "<leader>p", [["_dP]])
-vim.keymap.set({"n", "v"}, "<leader>d", [["_d]])
-
-vim.keymap.set("n", "<leader><leader>x", ":source %<CR>") -- Source current file
-
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
 local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
 local term_buffer_id = 0
@@ -326,17 +335,6 @@ local term_ensure_open = function()
     vim.cmd.wincmd("k") -- Move out of terminal window
   end
 end
-
--- Harpoon binds
-local harpoon = require("harpoon")
-vim.keymap.set("n", "<leader>a", function() harpoon:list():add() end)
-vim.keymap.set("n", "<leader><leader>a", function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-vim.keymap.set("n", "<C-h>", function() harpoon:list():select(1) end)
-vim.keymap.set("n", "<C-j>", function() harpoon:list():select(2) end)
-vim.keymap.set("n", "<C-k>", function() harpoon:list():select(3) end)
-vim.keymap.set("n", "<C-l>", function() harpoon:list():select(4) end)
-vim.keymap.set("n", "<C-S-P>", function() harpoon:list():prev() end) -- Toggle previous & next buffers stored within Harpoon list
-vim.keymap.set("n", "<C-S-N>", function() harpoon:list():next() end)
 
 -- Terminal binds
 vim.keymap.set("t", "<leader><C-c>", "<C-\\><C-n>") -- Escape terminal mode
