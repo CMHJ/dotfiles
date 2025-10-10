@@ -86,3 +86,11 @@ bash_config() {
 
 #export clear="[3J[H[2J" # Optimised clear function, clears the screen 5 times faster, but leaves previous frame behind, merely shifts entire screen down
 #clear() { echo -n $clear; }
+
+# Custom keybinds
+
+bind '"\C-k": previous-history'
+bind '"\C-j": next-history'
+bind '"\C-h": backward-char'
+bind '"\C-l": forward-char'
+
