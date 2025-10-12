@@ -4,6 +4,7 @@
 -- - Add comment bind with C-/
 -- - Add binding for simpler file create like 'f' instead of % in netrw
 -- - Fix shell completion for build and run commands by adding options, something like ui_prompt?
+-- - Remove desc = ""
 
 -- Set global variables --
 
@@ -45,6 +46,8 @@ opt.smartindent = true
 opt.timeout = true -- Timeout
 opt.timeoutlen = 400 -- ms
 opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line lengths
+
+vim.o.winborder = "rounded"
 
 -- Custom Functions --
 
@@ -222,12 +225,16 @@ local plugin_keymaps = {
   { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
   { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
   { "<C-c>", function() require("harpoon").ui:close_menu() end, desc = "" },
+  { "<C-p>", function() require("harpoon"):list():prev() end, desc = "Toggle previous & next buffers stored within Harpoon list" },
+  { "<C-n>", function() require("harpoon"):list():next() end, desc = "" },
   { "<C-h>", function() require("harpoon"):list():select(1) end, desc = "" },
   { "<C-j>", function() require("harpoon"):list():select(2) end, desc = "" },
   { "<C-k>", function() require("harpoon"):list():select(3) end, desc = "" },
   { "<C-l>", function() require("harpoon"):list():select(4) end, desc = "" },
-  { "<C-p>", function() require("harpoon"):list():prev() end, desc = "Toggle previous & next buffers stored within Harpoon list" },
-  { "<C-n>", function() require("harpoon"):list():next() end, desc = "" },
+  { "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, desc = "" },
+  { "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, desc = "" },
+  { "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, desc = "" },
+  { "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, desc = "" },
 }
 
 -- Key bindings helper
@@ -267,38 +274,21 @@ require("lazy").setup({
       "Mofiqul/dracula.nvim", lazy = false, priority = 1000,
       config = function()
         vim.cmd.colorscheme("dracula")
-        vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Enable transparency
+        -- vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Enable transparency
       end
     },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
     { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
     { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
-    { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = true, },
+    { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = function() require("harpoon"):setup() end, },
     {
-      "nvim-treesitter/nvim-treesitter",
-      branch = "master",
-      lazy = false,
-      build = ":TSUpdate",
+      "nvim-treesitter/nvim-treesitter", branch = "master", lazy = false, build = ":TSUpdate",
       config = function()
-        require("nvim-treesitter.configs").setup {
-          -- A list of parser names, or "all" (the listed parsers MUST always be installed)
-          ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
-          auto_install = false,
-          highlight = {
-            enable = true,
-
-            -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-            disable = function(lang, buf)
-              local max_filesize = 100 * 1024 -- 100 KB
-              local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-              if ok and stats and stats.size > max_filesize then
-                return true
-              end
-            end,
-
-            additional_vim_regex_highlighting = false,
-          },
-        }
+        require("nvim-treesitter.configs").setup({
+          modules = {}, ignore_install = {}, sync_install = false, auto_install = false,
+          ensure_installed = { "lua", "bash", "c", "cpp", "go", "rust", "python", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+          highlight = { enable = true },
+        })
       end
     },
     {
@@ -322,10 +312,6 @@ require("lazy").setup({
             fzf = {}
           }
         })
-
-        vim.lsp.config("lua_ls", {})
-        vim.lsp.config("clangd", {})
-
 
         -- Use a loop to conveniently call 'setup' on multiple servers and
         -- map buffer local keybindings when the language server attaches
