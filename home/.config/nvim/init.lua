@@ -3,6 +3,7 @@
 -- - Move keybinds into simple tables at the top
 -- - Add comment bind with C-/
 -- - Add binding for simpler file create like 'f' instead of % in netrw
+-- - Fix shell completion for build and run commands by adding options, something like ui_prompt?
 
 -- Set global variables --
 
@@ -87,7 +88,7 @@ end
 -- Keybinds --
 
 local general_keymaps = {
-  { "Q",          "<nop>",    desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
+  { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
   { "<leader>pv", vim.cmd.Ex, desc = "Open netrw file explorer." },
@@ -258,19 +259,21 @@ end
 vim.opt.runtimepath:prepend(lazypath)
 -- Setup lazy.nvim plugins
 require("lazy").setup({
+  -- change_detection = { notify = false },
   spec = {
-    -- Colourschemes
-    {
       -- "folke/tokyonight.nvim"
-      "Mofiqul/dracula.nvim",
-      lazy = false,
-      priority = 1000,
+      -- TODO: remove the lazy and priority stuff that doesn't do anything.
+    {
+      "Mofiqul/dracula.nvim", lazy = false, priority = 1000,
       config = function()
         vim.cmd.colorscheme("dracula")
+        vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Enable transparency
       end
     },
-
-    -- Tree-sitter configuration
+    { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
+    { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
+    { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
+    { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = true, },
     {
       "nvim-treesitter/nvim-treesitter",
       branch = "master",
@@ -298,22 +301,6 @@ require("lazy").setup({
         }
       end
     },
-
-    {
-      "kylechui/nvim-surround",
-      version = "*", -- * = stable
-      config = true
-    },
-
-    -- Harpoon
-    {
-	    "ThePrimeagen/harpoon",
-	    branch = "harpoon2",
-	    dependencies = { "nvim-lua/plenary.nvim" },
-      config = true,
-    },
-
-    -- LSP config
     {
       "neovim/nvim-lspconfig",
       dependencies = {
@@ -349,8 +336,6 @@ require("lazy").setup({
         end
       end
     },
-
-    -- Telescope
     {
       "nvim-telescope/telescope.nvim",
       tag = "0.1.8",
@@ -370,17 +355,8 @@ require("lazy").setup({
         })
       end
     },
-
   },
 })
-
--- Make background transparent
--- vim.cmd([[
---     highlight Normal guibg=none
---     highlight NonText guibg=none
---     highlight Normal ctermbg=none
---     highlight NonText ctermbg=none
--- ]])
 
 -- Filetype configurations
 
