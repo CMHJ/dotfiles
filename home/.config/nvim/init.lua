@@ -296,9 +296,11 @@ require("lazy").setup({
       end
     },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
+    { "brenoprata10/nvim-highlight-colors", config = function() require("nvim-highlight-colors").setup({}) end },
     { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
     { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
     { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = function() require("harpoon"):setup() end, },
+    { "tpope/vim-fugitive" },
     { "mason-org/mason.nvim", config = true },
     {
       "nvim-treesitter/nvim-treesitter", branch = "master", lazy = false, build = ":TSUpdate",
@@ -311,10 +313,23 @@ require("lazy").setup({
       end
     },
     {
-	    "ThePrimeagen/harpoon",
-	    branch = "harpoon2",
-	    dependencies = { "nvim-lua/plenary.nvim" },
-      config = true,
+      "nvim-telescope/telescope.nvim",
+      tag = "0.1.8",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        {
+          -- "nvim-telescope/telescope-fzf-native.nvim",
+          -- Fix here: https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/120#issuecomment-2929964883
+          -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 && cmake --build build --config Release",
+        },
+      },
+      config = function()
+        require("telescope").setup({
+          defaults = {
+            sorting_strategy = "ascending"
+          },
+        })
+      end
     },
     {
       "neovim/nvim-lspconfig",
@@ -345,25 +360,6 @@ require("lazy").setup({
           vim.lsp.enable(lsp)
           vim.lsp.config(lsp, { on_attach = on_attach })
         end
-      end
-    },
-    {
-      "nvim-telescope/telescope.nvim",
-      tag = "0.1.8",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        {
-          -- "nvim-telescope/telescope-fzf-native.nvim",
-          -- Fix here: https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/120#issuecomment-2929964883
-          -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 && cmake --build build --config Release",
-        },
-      },
-      config = function()
-        require("telescope").setup({
-          defaults = {
-            sorting_strategy = "ascending"
-          },
-        })
       end
     },
   },
