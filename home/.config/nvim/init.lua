@@ -292,7 +292,12 @@ require("lazy").setup({
       "Mofiqul/dracula.nvim", lazy = false, priority = 1000,
       config = function()
         vim.cmd.colorscheme("dracula")
-        -- vim.api.nvim_set_hl(0, "Normal", { bg = "none" }) -- Enable transparency
+        -- Enable transparency
+        vim.cmd('hi Directory guibg=NONE')
+        vim.cmd('hi SignColumn guibg=NONE')
+        vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+        vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
       end
     },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
@@ -313,22 +318,18 @@ require("lazy").setup({
       end
     },
     {
-      "nvim-telescope/telescope.nvim",
-      tag = "0.1.8",
-      dependencies = {
-        "nvim-lua/plenary.nvim",
-        {
-          -- "nvim-telescope/telescope-fzf-native.nvim",
-          -- Fix here: https://github.com/nvim-telescope/telescope-fzf-native.nvim/issues/120#issuecomment-2929964883
-          -- build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release -DCMAKE_POLICY_VERSION_MINIMUM=3.5 && cmake --build build --config Release",
-        },
-      },
+      "nvim-telescope/telescope.nvim", tag = "0.1.8", dependencies = { "nvim-lua/plenary.nvim", },
       config = function()
-        require("telescope").setup({
-          defaults = {
-            sorting_strategy = "ascending"
-          },
-        })
+        require("telescope").setup({ defaults = {
+          sorting_strategy = "ascending",
+          mappings = {
+            i = {
+              ["<C-k>"] = require("telescope.actions").move_selection_previous,
+              ["<C-j>"] = require("telescope.actions").move_selection_next,
+              ["<C-q>"] = require("telescope.actions").send_selected_to_qflist + require("telescope.actions").open_qflist,
+            }
+          }
+        } })
       end
     },
     {
