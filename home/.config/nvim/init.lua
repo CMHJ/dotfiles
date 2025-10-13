@@ -1,10 +1,12 @@
 -- TODO
--- - Remove dead code
--- - Move keybinds into simple tables at the top
--- - Add comment bind with C-/
--- - Add binding for simpler file create like 'f' instead of % in netrw
--- - Fix shell completion for build and run commands by adding options, something like ui_prompt?
--- - Remove desc = ""
+-- Remove dead code
+-- Move keybinds into simple tables at the top
+-- Add comment bind with C-/
+-- Add binding for simpler file create like 'f' instead of % in netrw
+-- Fix shell completion for build and run commands by adding options, something like ui_prompt?
+-- Remove desc = ""
+-- remove the lazy and priority stuff that doesn't do anything.
+-- Setup telescope with harpoon for consistent windows.
 
 -- Set global variables --
 
@@ -109,6 +111,10 @@ local general_keymaps = {
   { "<C-u>", "<C-u>zz", desc = "" },
   { "n", "nzzzv", desc = "" },
   { "N", "Nzzzv", desc = "" },
+  { "<C-i>", "<C-i>zz", desc = "Jump forward and center." },
+  { "<C-o>", "<C-o>zz", desc = "Jump back and center." },
+  { "*", "*zz", desc = "Search word under cursor and center." },
+  { "#", "#zz", desc = "Search word under cursor backwards and center." },
 
   -- Use ctrl keys to move between panes
   -- vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -133,7 +139,7 @@ local general_keymaps = {
   },
 
   { "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]], desc = "Find and replace current word under cursor." },
-  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]], desc = "Find and replace currently highlighted text." },
+  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]], mode = "x", desc = "Find and replace currently highlighted text." },
 
   -- Yank and Delete into the system clipboard
   { "<leader>y", [["+y]], mode = {"n", "v"}, desc = "" },
@@ -237,6 +243,19 @@ local plugin_keymaps = {
   { "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, desc = "" },
 }
 
+local lsp_keymaps = {
+  -- diagnostics
+  { "<leader>dp", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+  { "<leader>dn", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+  { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
+
+  -- lsp
+  { "gd", vim.lsp.buf.definition, desc = "Goto Definition" },
+  { "ga", vim.lsp.buf.code_action, desc = "Goto Action" },
+  { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
+  { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
+}
+
 -- Key bindings helper
 local function set_keymaps(keymaps, buffer)
   for _, keymap in ipairs(keymaps) do
@@ -269,7 +288,6 @@ require("lazy").setup({
   -- change_detection = { notify = false },
   spec = {
       -- "folke/tokyonight.nvim"
-      -- TODO: remove the lazy and priority stuff that doesn't do anything.
     {
       "Mofiqul/dracula.nvim", lazy = false, priority = 1000,
       config = function()
@@ -281,6 +299,7 @@ require("lazy").setup({
     { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
     { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
     { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = function() require("harpoon"):setup() end, },
+    { "mason-org/mason.nvim", config = true },
     {
       "nvim-treesitter/nvim-treesitter", branch = "master", lazy = false, build = ":TSUpdate",
       config = function()
@@ -290,6 +309,12 @@ require("lazy").setup({
           highlight = { enable = true },
         })
       end
+    },
+    {
+	    "ThePrimeagen/harpoon",
+	    branch = "harpoon2",
+	    dependencies = { "nvim-lua/plenary.nvim" },
+      config = true,
     },
     {
       "neovim/nvim-lspconfig",
