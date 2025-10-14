@@ -46,7 +46,7 @@ opt.shiftwidth = 4
 opt.expandtab = true
 opt.smartindent = true
 opt.timeout = true -- Timeout
-opt.timeoutlen = 400 -- ms
+opt.timeoutlen = 250 -- ms
 opt.colorcolumn = {"80", "120"} -- Create highlighted columns in editor for line lengths
 
 vim.o.winborder = "rounded"
@@ -57,6 +57,7 @@ vim.o.winborder = "rounded"
 local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
 local term_buffer_id = 0
 
+-- https://github.com/tonybanters/nvim/blob/master/plugin/flterm.lua - Use this instead?
 local term_ensure_open = function()
   -- Check if terminal window is visible
   local window_visible = false
@@ -311,8 +312,8 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter", branch = "master", lazy = false, build = ":TSUpdate",
       config = function()
         require("nvim-treesitter.configs").setup({
-          modules = {}, ignore_install = {}, sync_install = false, auto_install = false,
-          ensure_installed = { "lua", "bash", "c", "cpp", "go", "rust", "python", "vim", "vimdoc", "query", "markdown", "markdown_inline" },
+          modules = {}, ignore_install = {}, sync_install = false, auto_install = true,
+          ensure_installed = { "vim", "vimdoc", "lua", "bash", "c", "cpp", "go", "rust", "python", "markdown", "toml", "json" },
           highlight = { enable = true },
         })
       end
@@ -333,34 +334,34 @@ require("lazy").setup({
       end
     },
     {
-      "neovim/nvim-lspconfig",
+      "hrsh7th/nvim-cmp",
+      event = "InsertEnter",
       dependencies = {
-        {
-          "folke/lazydev.nvim",
-          ft = "lua", -- only load on lua files
-          opts = {
-            library = {
-              -- See the configuration section for more details
-              -- Load luvit types when the `vim.uv` word is found
-              { path = "${3rd}/luv/library", words = { "vim%.uv" } },
-            },
-          },
-        },
+        "hrsh7th/cmp-nvim-lsp",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-buffer",
       },
-      config = function ()
-        vim.lsp.config("telescope", {
-          extensions = {
-            fzf = {}
-          }
+      config = function()
+        local cmp = require("cmp")
+        cmp.setup({
+          preselect = cmp.PreselectMode.Item, -- preselect first item
+          completion = { completeopt = "menu,menuone,noinsert" },
+          window = { documentation = cmp.config.window.bordered() },
+          mapping = cmp.mapping.preset.insert({
+            ["<Tab>"] = cmp.mapping.confirm({ select = false }),
+            ["<C-e>"] = cmp.mapping.abort(),
+            ["<C-Space>"] = cmp.mapping.complete(), -- manual trigger if you want it
+            ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+            ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+            ["<C-d>"] = cmp.mapping.scroll_docs(4),
+            ["<C-u>"] = cmp.mapping.scroll_docs(-4)
+          }),
+          sources = {
+            { name = "nvim_lsp" },
+            { name = "path" },
+            { name = "buffer",  keyword_length = 3 },
+          },
         })
-
-        -- Use a loop to conveniently call 'setup' on multiple servers and
-        -- map buffer local keybindings when the language server attaches
-        local servers = { 'lua_ls', 'clangd' }
-        for _, lsp in pairs(servers) do
-          vim.lsp.enable(lsp)
-          vim.lsp.config(lsp, { on_attach = on_attach })
-        end
       end
     },
   },
