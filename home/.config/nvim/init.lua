@@ -7,6 +7,7 @@
 -- Remove desc = ""
 -- remove the lazy and priority stuff that doesn't do anything.
 -- Setup telescope with harpoon for consistent windows.
+-- Do lazy clean to remove unused plugins
 
 -- Set global variables --
 
@@ -320,7 +321,6 @@ require("lazy").setup({
       end,
     },
     { "tpope/vim-fugitive" },
-    { "mason-org/mason.nvim", config = true },
     {
       "nvim-treesitter/nvim-treesitter",
       branch = "master",
@@ -425,7 +425,81 @@ require("lazy").setup({
         fuzzy = { implementation = "prefer_rust_with_warning" }
       },
       opts_extend = { "sources.default" }
-    }
+    },
+    { "mason-org/mason.nvim", config = true },
+    { "neovim/nvim-lspconfig" },
+    {
+      "mason-org/mason-lspconfig.nvim",
+      dependencies = { "neovim/nvim-lspconfig", "mason-org/mason.nvim", "saghen/blink.cmp" },
+      opts = {
+        ensure_installed = {
+          "rust_analyzer",
+          "lua_ls",
+          "clangd",
+          "bashls",
+          "jsonls",
+          "pyright",
+          "taplo"
+        },
+
+        servers = {
+          rust_analyzer = {
+            settings = {
+              cargo = { features = "all" },
+              procMacro = { enable = true },
+              inlayHints = {
+                bindingModeHints = { enable = true },
+                closureCaptureHints = { enable = true },
+                closureReturnTypeHints = { enable = true },
+                expressionAdjustmentHints = { enable = true }
+              },
+              diagnostics = { enable = true },
+            },
+          },
+          lua_ls = {
+            settings = {
+              Lua = {
+                diagnostics = { globals = { 'vim' } },
+                format = { enable = true },
+                telemetry = { enable = false },
+              },
+            },
+          },
+          clangd = {},
+          bashls = {},
+          jsonls = {},
+          pyright = {},
+          taplo = {},
+        },
+      },
+      config = function(_, opts)
+        -- local lspconfig = require('lspconfig')
+
+        local on_attach = function(_, bufnr)
+          set_keymaps(lsp_keymaps, bufnr)
+
+          vim.cmd('autocmd BufWritePre * lua vim.lsp.buf.format()')
+          if vim.lsp.inlay_hint then
+            vim.lsp.inlay_hint.enable(true, { 0 })
+          end
+        end
+
+        local capabilities = vim.tbl_deep_extend(
+          "force",
+          {},
+          vim.lsp.protocol.make_client_capabilities(),
+          require('blink.cmp').get_lsp_capabilities()
+        )
+        -- require("cmp_nvim_lsp").default_capabilities()
+
+        for server, config in pairs(opts.servers) do
+          config.capabilities = capabilities
+          config.on_attach = on_attach
+          vim.lsp.config[server] = config
+          vim.lsp.enable(server)
+        end
+      end
+    },
   },
 })
 
@@ -454,81 +528,82 @@ vim.diagnostic.config({
     },
   },
 })
--- put early in lsp.lua
-local orig = vim.lsp.util.open_floating_preview
----@diagnostic disable-next-line: duplicate-set-field
-function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-  opts            = opts or {}
-  opts.border     = opts.border or 'rounded'
-  opts.max_width  = opts.max_width or 80
-  opts.max_height = opts.max_height or 24
-  opts.wrap       = opts.wrap ~= false
-  return orig(contents, syntax, opts, ...)
-end
+
+-- -- put early in lsp.lua
+-- local orig = vim.lsp.util.open_floating_preview
+-- ---@diagnostic disable-next-line: duplicate-set-field
+-- function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+--   opts            = opts or {}
+--   opts.border     = opts.border or 'rounded'
+--   opts.max_width  = opts.max_width or 80
+--   opts.max_height = opts.max_height or 24
+--   opts.wrap       = opts.wrap ~= false
+--   return orig(contents, syntax, opts, ...)
+-- end
 
 -- 4) Per-buffer behavior on LSP attach (keymaps, auto-format, completion)
 -- See :help LspAttach for the recommended pattern
-vim.api.nvim_create_autocmd('LspAttach', {
-  group = vim.api.nvim_create_augroup('my.lsp', {}),
-  callback = function(args)
-    local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
-    local buf    = args.buf
-    local map    = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
-
-    -- Keymaps (use builtin LSP buffer functions)
-    map('n', 'K', vim.lsp.buf.hover)
-    map('n', 'gd', vim.lsp.buf.definition)
-    map('n', 'gD', vim.lsp.buf.declaration)
-    map('n', 'gi', vim.lsp.buf.implementation)
-    map('n', 'go', vim.lsp.buf.type_definition)
-    map('n', 'gr', vim.lsp.buf.references)
-    map('n', 'gs', vim.lsp.buf.signature_help)
-    map('n', 'gl', vim.diagnostic.open_float)
-    map('n', '<F2>', vim.lsp.buf.rename)
-    map({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end)
-    map('n', '<F4>', vim.lsp.buf.code_action)
-
-    -- Put near your LSP on_attach
-    local excluded_filetypes = { php = true }
-
-    -- Auto-format on save (only if server can't do WillSaveWaitUntil)
-    if not client:supports_method('textDocument/willSaveWaitUntil')
-        and client:supports_method('textDocument/formatting')
-        and not excluded_filetypes[vim.bo[buf].filetype]
-    then
-      vim.api.nvim_create_autocmd('BufWritePre', {
-        group = vim.api.nvim_create_augroup('my.lsp.format', { clear = false }),
-        buffer = buf,
-        callback = function()
-          vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
-        end,
-      })
-    end
-  end,
-})
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   group = vim.api.nvim_create_augroup('my.lsp', {}),
+--   callback = function(args)
+--     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+--     local buf    = args.buf
+--     local map    = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
+--
+--     -- Keymaps (use builtin LSP buffer functions)
+--     map('n', 'K', vim.lsp.buf.hover)
+--     map('n', 'gd', vim.lsp.buf.definition)
+--     map('n', 'gD', vim.lsp.buf.declaration)
+--     map('n', 'gi', vim.lsp.buf.implementation)
+--     map('n', 'go', vim.lsp.buf.type_definition)
+--     map('n', 'gr', vim.lsp.buf.references)
+--     map('n', 'gs', vim.lsp.buf.signature_help)
+--     map('n', 'gl', vim.diagnostic.open_float)
+--     map('n', '<F2>', vim.lsp.buf.rename)
+--     map({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end)
+--     map('n', '<F4>', vim.lsp.buf.code_action)
+--
+--     -- Put near your LSP on_attach
+--     local excluded_filetypes = { php = true }
+--
+--     -- Auto-format on save (only if server can't do WillSaveWaitUntil)
+--     if not client:supports_method('textDocument/willSaveWaitUntil')
+--         and client:supports_method('textDocument/formatting')
+--         and not excluded_filetypes[vim.bo[buf].filetype]
+--     then
+--       vim.api.nvim_create_autocmd('BufWritePre', {
+--         group = vim.api.nvim_create_augroup('my.lsp.format', { clear = false }),
+--         buffer = buf,
+--         callback = function()
+--           vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
+--         end,
+--       })
+--     end
+--   end,
+-- })
 
 -- 5) Define the Lua language server config (no mason/lspconfig)
 -- See :help lsp-new-config and :help vim.lsp.config()
-local caps = require('blink.cmp').get_lsp_capabilities()
-vim.lsp.config['luals'] = {
-  cmd = { 'lua-language-server' },
-  filetypes = { 'lua' },
-  root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
-  capabilities = caps,
-  settings = {
-    Lua = {
-      runtime = { version = 'LuaJIT' },
-      diagnostics = { globals = { 'vim' } },
-      workspace = {
-        checkThirdParty = false,
-        library = vim.api.nvim_get_runtime_file('', true),
-      },
-      telemetry = { enable = false },
-    },
-  },
-}
-
-vim.lsp.enable('luals')
+-- local caps = require('blink.cmp').get_lsp_capabilities()
+-- vim.lsp.config['luals'] = {
+--   cmd = { 'lua-language-server' },
+--   filetypes = { 'lua' },
+--   root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
+--   capabilities = caps,
+--   settings = {
+--     Lua = {
+--       runtime = { version = 'LuaJIT' },
+--       diagnostics = { globals = { 'vim' } },
+--       workspace = {
+--         checkThirdParty = false,
+--         library = vim.api.nvim_get_runtime_file('', true),
+--       },
+--       telemetry = { enable = false },
+--     },
+--   },
+-- }
+--
+-- vim.lsp.enable('luals')
 
 -- Filetype configurations
 
