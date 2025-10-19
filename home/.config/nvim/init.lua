@@ -26,6 +26,7 @@ g.netrw_sizestyle = "h" -- human readable file size
 -- Set options --
 
 local opt = vim.opt
+opt.winborder = "rounded"
 opt.clipboard = "unnamedplus" -- Use system clipboard for everything
 opt.termguicolors = true
 opt.number = true
@@ -248,12 +249,16 @@ local plugin_keymaps = {
 
 local lsp_keymaps = {
   -- diagnostics
+  -- TODO: Fix this
+  -- • *vim.diagnostic.goto_next()*	Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
+  -- • *vim.diagnostic.goto_prev()*	Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
   { "<leader>dp", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
   { "<leader>dn", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
   { "<leader>do", vim.diagnostic.open_float,                                                             desc = "Open floating diagnostic message" },
 
   -- lsp
   { "gd",         vim.lsp.buf.definition,                                                                desc = "Goto Definition" },
+  { "gD",         vim.lsp.buf.declaration,                                                                desc = "Goto Declaration" },
   { "ga",         vim.lsp.buf.code_action,                                                               desc = "Goto Action" },
   { "<leader>rn", vim.lsp.buf.rename,                                                                    desc = "ReName" },
   { "K",          vim.lsp.buf.hover,                                                                     desc = "Hover Documentation" },
@@ -400,134 +405,107 @@ require("lazy").setup({
     --     signature = { enabled = true }
     --   },
     -- },
+    -- {
+    --   'saghen/blink.cmp',
+    --   dependencies = { 'rafamadriz/friendly-snippets' },
+    --   version = '1.*',
+    --   opts = {
+    --     -- TODO: Delete this when done
+    --     -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+    --     -- 'super-tab' for mappings similar to vscode (tab to accept)
+    --     -- 'enter' for enter to accept
+    --     -- 'none' for no mappings
+    --     -- See :h blink-cmp-config-keymap for defining your own keymap
+    --     keymap = { preset = 'default' },
+    --     appearance = {
+    --       nerd_font_variant = "mono"
+    --     },
+    --     signature = { enabled = true },
+    --   },
+    -- },
+
     {
-      "saghen/blink.cmp",
-      dependencies = { "rafamadriz/friendly-snippets" },
-      version = "1.*",
-      opts = {
-        -- C-space: Open menu or open docs if already open
-        -- C-n/C-p or Up/Down: Select next/previous item
-        -- C-e: Hide menu
-        -- C-k: Toggle signature help (if signature.enabled = true)
-        -- See :h blink-cmp-config-keymap for defining your own keymap
-        keymap = {
-          preset = "default",
-          ["<Tab>"] = {
-            function(cmp)
-              cmp.accept()
-              cmp.show_signature()
-            end, "fallback" },
+        "neovim/nvim-lspconfig",
+        dependencies = {
+          -- Automatically configure the lua LSP.
+          { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } },
         },
-        appearance = { nerd_font_variant = "normal" },
-        signature = { enabled = true },
-        completion = { documentation = { auto_show = true } },
-        sources = { default = { "lsp", "path", "snippets", "buffer" }, },
-        fuzzy = { implementation = "prefer_rust_with_warning" }
-      },
-      opts_extend = { "sources.default" }
+        config = function()
+          vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
+          vim.lsp.config("lua_ls", {})
+        end
     },
-    { "mason-org/mason.nvim", config = true },
-    { "neovim/nvim-lspconfig" },
     {
       "mason-org/mason-lspconfig.nvim",
-      dependencies = { "neovim/nvim-lspconfig", "mason-org/mason.nvim", "saghen/blink.cmp" },
-      opts = {
-        ensure_installed = {
-          "rust_analyzer",
-          "lua_ls",
-          "clangd",
-          "bashls",
-          "jsonls",
-          "pyright",
-          "taplo"
-        },
-
-        servers = {
-          rust_analyzer = {
-            settings = {
-              cargo = { features = "all" },
-              procMacro = { enable = true },
-              inlayHints = {
-                bindingModeHints = { enable = true },
-                closureCaptureHints = { enable = true },
-                closureReturnTypeHints = { enable = true },
-                expressionAdjustmentHints = { enable = true }
-              },
-              diagnostics = { enable = true },
-            },
-          },
-          lua_ls = {
-            settings = {
-              Lua = {
-                diagnostics = { globals = { 'vim' } },
-                format = { enable = true },
-                telemetry = { enable = false },
-              },
-            },
-          },
-          clangd = {},
-          bashls = {},
-          jsonls = {},
-          pyright = {},
-          taplo = {},
-        },
+      dependencies = {
+        { "mason-org/mason.nvim", config = true },
+        "neovim/nvim-lspconfig",
       },
-      config = function(_, opts)
-        -- local lspconfig = require('lspconfig')
-
-        local on_attach = function(_, bufnr)
-          set_keymaps(lsp_keymaps, bufnr)
-
-          vim.cmd('autocmd BufWritePre * lua vim.lsp.buf.format()')
-          if vim.lsp.inlay_hint then
-            vim.lsp.inlay_hint.enable(true, { 0 })
-          end
-        end
-
-        local capabilities = vim.tbl_deep_extend(
-          "force",
-          {},
-          vim.lsp.protocol.make_client_capabilities(),
-          require('blink.cmp').get_lsp_capabilities()
-        )
-        -- require("cmp_nvim_lsp").default_capabilities()
-
-        for server, config in pairs(opts.servers) do
-          config.capabilities = capabilities
-          config.on_attach = on_attach
-          vim.lsp.config[server] = config
-          vim.lsp.enable(server)
-        end
-      end
+      opts = {
+        ensure_installed = { "lua_ls", "clangd", "rust_analyzer" },
+        automatic_enable = true,
+      },
     },
+
   },
 })
 
--- LSP Config
+-- vim.lsp.config('*', {
+--   root_markers = { '.git' },
+-- })
+-- vim.lsp.config["lua_ls"] = {
+--   cmd = { "lua-language-server" },
+--   root_markers = { ".git", ".luarc.json" },
+--   filetypes = { "lua" },
+--   settings = {
+--     Lua = {
+--       runtime = { version = 'LuaJIT' },
+--       diagnostics = { globals = { 'vim' } },
+--       workspace = {
+--         checkThirdParty = false,
+--         library = vim.api.nvim_get_runtime_file('', true),
+--       },
+--       telemetry = { enable = false },
+--     },
+--   },
+-- }
+-- vim.lsp.enable("lua_ls")
+--
+-- vim.api.nvim_create_autocmd('LspAttach', {
+--   callback = function(ev)
+--     local client = vim.lsp.get_client_by_id(ev.data.client_id)
+--     if client:supports_method('textDocument/completion') then
+--       vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+--     end
+--   end,
+-- })
+--
+-- vim.cmd("set completeopt+=noselect")
+-- vim.o.winborder = "rounded"
 
-vim.lsp.config('*', {
-  root_markers = { '.git' },
-})
-
-vim.diagnostic.config({
-  virtual_text  = true,
-  severity_sort = true,
-  float         = {
-    style  = 'minimal',
-    border = 'rounded',
-    source = 'if_many',
-    header = '',
-    prefix = '',
-  },
-  signs         = {
-    text = {
-      [vim.diagnostic.severity.ERROR] = '✘',
-      [vim.diagnostic.severity.WARN]  = '▲',
-      [vim.diagnostic.severity.HINT]  = '⚑',
-      [vim.diagnostic.severity.INFO]  = '»',
-    },
-  },
-})
+-- vim.lsp.config('*', {
+--   root_markers = { '.git' },
+-- })
+--
+-- vim.diagnostic.config({
+--   virtual_text  = true,
+--   severity_sort = true,
+--   float         = {
+--     style  = 'minimal',
+--     border = 'rounded',
+--     source = 'if_many',
+--     header = '',
+--     prefix = '',
+--   },
+--   signs         = {
+--     text = {
+--       [vim.diagnostic.severity.ERROR] = '✘',
+--       [vim.diagnostic.severity.WARN]  = '▲',
+--       [vim.diagnostic.severity.HINT]  = '⚑',
+--       [vim.diagnostic.severity.INFO]  = '»',
+--     },
+--   },
+-- })
 
 -- -- put early in lsp.lua
 -- local orig = vim.lsp.util.open_floating_preview
@@ -645,3 +623,4 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     vim.fn.setpos(".", save_cursor)
   end,
 })
+
