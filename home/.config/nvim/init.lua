@@ -393,18 +393,23 @@ require("lazy").setup({
     --     })
     --   end
     -- },
-    -- {
-    --   "saghen/blink.cmp",
-    --   dependencies = "rafamadriz/friendly-snippets",
-    --   version = "v1.*",
-    --   opts = {
-    --     keymap = { preset = "default" },
-    --     appearance = {
-    --       nerd_font_variant = "normal"
-    --     },
-    --     signature = { enabled = true }
-    --   },
-    -- },
+    {
+      "saghen/blink.cmp",
+      dependencies = "rafamadriz/friendly-snippets",
+      version = "v1.*",
+      opts = {
+        keymap = { preset = "super-tab" },
+        appearance = {
+          nerd_font_variant = "normal"
+        },
+        -- Disable bracket insertion, as this seems to break the signature showing after selection.
+        completion = { accept = { auto_brackets = { enabled = false } } },
+        signature = {
+          enabled = true, -- Show function signatures
+          window = { show_documentation = true } -- Also show documentation
+        }
+      },
+    },
     -- {
     --   'saghen/blink.cmp',
     --   dependencies = { 'rafamadriz/friendly-snippets' },
@@ -430,9 +435,20 @@ require("lazy").setup({
           -- Automatically configure the lua LSP.
           { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } },
         },
-        config = function()
+        opts = {
+          servers = {
+            lua_ls = {},
+            clangd = {},
+            rust_analyzer = {}
+          }
+        },
+        config = function(_, opts)
           vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
-          vim.lsp.config("lua_ls", {})
+
+          for server, config in pairs(opts.servers) do
+            config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
+            vim.lsp.config[server] = config
+          end
         end
     },
     {
