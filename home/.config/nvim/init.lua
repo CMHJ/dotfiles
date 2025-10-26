@@ -18,8 +18,8 @@ g.maplocalleader = " "
 -- netrw file explorer configuration
 g.netrw_banner = 0
 g.netrw_browse_split = 0
-g.netrw_winsize = 25    -- When using netrw with Lexplore set the window size
-g.netrw_liststyle = 1   -- ls -l style view
+g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
+g.netrw_liststyle = 1 -- ls -l style view
 -- g.netrw_liststyle = 3 -- tree view
 g.netrw_sizestyle = "h" -- human readable file size
 
@@ -41,7 +41,7 @@ opt.smartcase = true
 opt.hlsearch = false
 opt.incsearch = true
 opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker
-opt.swapfile = false   -- Remove annoying backup and swap defaults
+opt.swapfile = false -- Remove annoying backup and swap defaults
 opt.backup = false
 opt.undofile = true
 opt.tabstop = 4 -- Default indentation
@@ -49,8 +49,8 @@ opt.softtabstop = 4
 opt.shiftwidth = 4
 opt.expandtab = true
 opt.smartindent = true
-opt.timeout = true                -- Timeout
-opt.timeoutlen = 250              -- ms
+opt.timeout = true -- Timeout
+opt.timeoutlen = 250 -- ms
 opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths
 
 vim.o.winborder = "rounded"
@@ -102,29 +102,29 @@ end
 -- Keybinds --
 
 local general_keymaps = {
-  { "<leader>q",          "<cmd>qa<CR>", desc = "Quit all buffers." },
-  { "Q",          "<nop>",                           desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
+  { "<leader>q", "<cmd>qa<CR>", desc = "Quit all buffers." },
+  { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
-  { "<leader>pv", vim.cmd.Ex,                        desc = "Open netrw file explorer." },
+  { "<leader>pv", vim.cmd.Ex, desc = "Open netrw file explorer." },
   -- { "<leader>pv", vim.cmd.Lexplore, mode = "n", desc = "Open small file explorer to the side." },
 
   -- Quickfix list bindings --
-  { "]q",         "<cmd>cnext<CR>",                  desc = "" },
-  { "[q",         "<cmd>cprev<CR>",                  desc = "" },
+  { "]q", "<cmd>cnext<CR>", desc = "" },
+  { "[q", "<cmd>cprev<CR>", desc = "" },
   -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
   -- clist - to temporarily show the quickfix list
   -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
 
   -- Keep screen centred when moving around
-  { "<C-d>",      "<C-d>zz",                         desc = "" },
-  { "<C-u>",      "<C-u>zz",                         desc = "" },
-  { "n",          "nzzzv",                           desc = "" },
-  { "N",          "Nzzzv",                           desc = "" },
-  { "<C-i>",      "<C-i>zz",                         desc = "Jump forward and center." },
-  { "<C-o>",      "<C-o>zz",                         desc = "Jump back and center." },
-  { "*",          "*zz",                             desc = "Search word under cursor and center." },
-  { "#",          "#zz",                             desc = "Search word under cursor backwards and center." },
+  { "<C-d>", "<C-d>zz", desc = "" },
+  { "<C-u>", "<C-u>zz", desc = "" },
+  { "n", "nzzzv", desc = "" },
+  { "N", "Nzzzv", desc = "" },
+  { "<C-i>", "<C-i>zz", desc = "Jump forward and center." },
+  { "<C-o>", "<C-o>zz", desc = "Jump back and center." },
+  { "*", "*zz", desc = "Search word under cursor and center." },
+  { "#", "#zz", desc = "Search word under cursor backwards and center." },
 
   -- Use ctrl keys to move between panes
   -- vim.keymap.set("n", "<C-j>", "<C-w>j")
@@ -133,8 +133,8 @@ local general_keymaps = {
   -- vim.keymap.set("n", "<C-l>", "<C-w>l")
 
   -- Resize current window using -/_ and =/+ keys
-  { "+",          [[<cmd>horizontal resize +2<cr>]], desc = "" },
-  { "_",          [[<cmd>horizontal resize -2<cr>]], desc = "" },
+  { "+", [[<cmd>horizontal resize +2<cr>]], desc = "" },
+  { "_", [[<cmd>horizontal resize -2<cr>]], desc = "" },
   -- { "+", [[<cmd>horizontal resize +5<cr>]], desc = "" },
   -- { "_", [[<cmd>vertical resize -5<cr>]], desc = "" },
   -- TODO: Add fullscreen toggle
@@ -148,22 +148,22 @@ local general_keymaps = {
     desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load."
   },
 
-  { "<leader>s",         [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]],                  desc = "Find and replace current word under cursor." },
-  { "<leader>s",         [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]],                             mode = "x",                                          desc = "Find and replace currently highlighted text." },
+  { "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]], desc = "Find and replace current word under cursor." },
+  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]], mode = "x", desc = "Find and replace currently highlighted text." },
 
   -- Yank and Delete into the system clipboard
-  { "<leader>y",         [["+y]],                                                          mode = { "n", "v" },                                 desc = "" },
+  { "<leader>y", [["+y]], mode = { "n", "v" }, desc = "" },
   --vim.keymap.set("n", "<leader>Y", [["+Y]])
 
-  { "<leader>p",         [["_dP]],                                                         mode = "x",                                          desc = "Send highlighted text to null register and paste from default register." },
-  { "<leader>d",         [["_d]],                                                          mode = { "n", "v" },                                 desc = "Set null register." },
+  { "<leader>p", [["_dP]], mode = "x", desc = "Send highlighted text to null register and paste from default register." },
+  { "<leader>d", [["_d]], mode = { "n", "v" }, desc = "Set null register." },
 
-  { "<leader><leader>x", ":source %<CR>",                                                  desc = "Source current file." },
+  { "<leader><leader>x", ":source %<CR>", desc = "Source current file." },
 
   -- Terminal binds --
-  { "<leader><C-c>",     "<C-\\><C-n>",                                                    mode = "t",                                          desc = "Escape terminal mode." },
+  { "<leader><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
-  { "<leader>b",         "<cmd>make<CR>" },
+  { "<leader>b", "<cmd>make<CR>" },
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
   { "<leader>r",
     function()
@@ -176,44 +176,44 @@ local general_keymaps = {
 
   -- Run line or highlighted section in lua
   { "<leader>x", ":.lua<CR>" },
-  { "<leader>x", ":lua<CR>",                        mode = "v" },
+  { "<leader>x", ":lua<CR>", mode = "v" },
 
   -- Move highlighted text up or down with Shift-j/k
-  { "J",         ":m '>+1<CR>gv=gv",                mode = "v" },
-  { "K",         ":m '<-2<CR>gv=gv",                mode = "v" },
+  { "J", ":m '>+1<CR>gv=gv", mode = "v" },
+  { "K", ":m '<-2<CR>gv=gv", mode = "v" },
 
   -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
-  { "<C-c>",     "<Esc>",                           mode = "i" },
+  { "<C-c>", "<Esc>", mode = "i" },
 
   -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
   -- e.g. Ctrl-Backspace deletes word backwards
   -- and Ctrl-Delete deletes word forwards.
   -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds." },
-  { "<C-Del>",   "<C-o>de",                         mode = "i" },
+  { "<C-Del>", "<C-o>de", mode = "i" },
 
-  { "<C-l>",     "<Right>",                         mode = "i",                             desc = "Move right while in Insert mode." },
-  { "<C-h>",     "<Left>",                          mode = "i",                             desc = "Move left while in Insert mode." },
+  { "<C-l>", "<Right>", mode = "i", desc = "Move right while in Insert mode." },
+  { "<C-h>", "<Left>", mode = "i", desc = "Move left while in Insert mode." },
 
-  { "<C-l>",     "<Right>",                         mode = "c",                             desc = "Move right while in Command line mode." },
-  { "<C-h>",     "<Left>",                          mode = "c",                             desc = "Move left while in Command line mode." },
+  { "<C-l>", "<Right>", mode = "c", desc = "Move right while in Command line mode." },
+  { "<C-h>", "<Left>", mode = "c", desc = "Move left while in Command line mode." },
 
-  { "<C-k>",     "<Up>",                            mode = "c",                             desc = "Select previous in command history." },
-  { "<C-j>",     "<Down>",                          mode = "c",                             desc = "Select next in command history." },
+  { "<C-k>", "<Up>", mode = "c", desc = "Select previous in command history." },
+  { "<C-j>", "<Down>", mode = "c", desc = "Select next in command history." },
 }
 
 local plugin_keymaps = {
   -- Telescope bindings --
-  { "<leader>sf", function() require("telescope.builtin").find_files() end,  desc = "[S]earch [F]iles" },
-  { "<leader>sg", function() require("telescope.builtin").live_grep() end,   desc = "[S]earch by [G]rep" },
-  { "<leader>sh", function() require("telescope.builtin").help_tags() end,   desc = "[S]earch [H]elp" },
+  { "<leader>sf", function() require("telescope.builtin").find_files() end, desc = "[S]earch [F]iles" },
+  { "<leader>sg", function() require("telescope.builtin").live_grep() end, desc = "[S]earch by [G]rep" },
+  { "<leader>sh", function() require("telescope.builtin").help_tags() end, desc = "[S]earch [H]elp" },
   { "<leader>sw", function() require("telescope.builtin").grep_string() end, desc = "[S]earch Current [W]ord" },
-  { "<leader>sk", function() require("telescope.builtin").keymaps() end,     desc = "[S]earch [K]eymaps" },
-  { "<leader>st", function() require("telescope.builtin").builtin() end,     desc = "[S]earch [T]elescope builtin functions" },
+  { "<leader>sk", function() require("telescope.builtin").keymaps() end, desc = "[S]earch [K]eymaps" },
+  { "<leader>st", function() require("telescope.builtin").builtin() end, desc = "[S]earch [T]elescope builtin functions" },
   { "<leader>sd", function() require("telescope.builtin").diagnostics() end, desc = "[S]earch [D]iagnostics" },
-  { "<leader>sr", function() require("telescope.builtin").resume() end,      desc = "[S]earch [R]esume" },
-  { "<leader>sb", function() require("telescope.builtin").buffers() end,     desc = "[S]earch [B]uffers" },
-  { "<leader>s.", function() require("telescope.builtin").oldfiles() end,    desc = "[S]earch Recent Files ('.' for repeat)" },
-  { "<leader>su", function() require("telescope.builtin").undo() end,        desc = "[S]earch [U]ndo" },
+  { "<leader>sr", function() require("telescope.builtin").resume() end, desc = "[S]earch [R]esume" },
+  { "<leader>sb", function() require("telescope.builtin").buffers() end, desc = "[S]earch [B]uffers" },
+  { "<leader>s.", function() require("telescope.builtin").oldfiles() end, desc = "[S]earch Recent Files ('.' for repeat)" },
+  { "<leader>su", function() require("telescope.builtin").undo() end, desc = "[S]earch [U]ndo" },
   {
     "<leader>/",
     function()
@@ -239,36 +239,36 @@ local plugin_keymaps = {
   },
 
   -- Harpoon binds --
-  { "<leader>a",     function() require("harpoon"):list():add() end,                                    desc = "" },
-  { "<leader>h",     function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
-  { "<C-c>",         function() require("harpoon").ui:close_menu() end,                                 desc = "" },
-  { "<C-p>",         function() require("harpoon"):list():prev() end,                                   desc = "Toggle previous & next buffers stored within Harpoon list" },
-  { "<C-n>",         function() require("harpoon"):list():next() end,                                   desc = "" },
-  { "<C-h>",         function() require("harpoon"):list():select(1) end,                                desc = "" },
-  { "<C-j>",         function() require("harpoon"):list():select(2) end,                                desc = "" },
-  { "<C-k>",         function() require("harpoon"):list():select(3) end,                                desc = "" },
-  { "<C-l>",         function() require("harpoon"):list():select(4) end,                                desc = "" },
-  { "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end,                            desc = "" },
-  { "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end,                            desc = "" },
-  { "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end,                            desc = "" },
-  { "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end,                            desc = "" },
+  { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
+  { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
+  { "<C-c>", function() require("harpoon").ui:close_menu() end, desc = "" },
+  { "<C-p>", function() require("harpoon"):list():prev() end, desc = "Toggle previous & next buffers stored within Harpoon list" },
+  { "<C-n>", function() require("harpoon"):list():next() end, desc = "" },
+  { "<C-h>", function() require("harpoon"):list():select(1) end, desc = "" },
+  { "<C-j>", function() require("harpoon"):list():select(2) end, desc = "" },
+  { "<C-k>", function() require("harpoon"):list():select(3) end, desc = "" },
+  { "<C-l>", function() require("harpoon"):list():select(4) end, desc = "" },
+  { "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, desc = "" },
+  { "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, desc = "" },
+  { "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, desc = "" },
+  { "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, desc = "" },
 }
 
 local lsp_keymaps = {
   -- diagnostics
   -- TODO: Fix this
-  -- • *vim.diagnostic.goto_next()*	Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
-  -- • *vim.diagnostic.goto_prev()*	Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
+  -- • *vim.diagnostic.goto_next()* Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
+  -- • *vim.diagnostic.goto_prev()* Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
   { "<leader>dp", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
   { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
-  { "<leader>do", vim.diagnostic.open_float,                                                             desc = "Open floating diagnostic message" },
+  { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
 
   -- lsp
-  { "gd",         vim.lsp.buf.definition,                                                                desc = "Goto Definition" },
-  { "gD",         vim.lsp.buf.declaration,                                                                desc = "Goto Declaration" },
-  { "ga",         vim.lsp.buf.code_action,                                                               desc = "Goto Action" },
-  { "<leader>rn", vim.lsp.buf.rename,                                                                    desc = "ReName" },
-  { "K",          vim.lsp.buf.hover,                                                                     desc = "Hover Documentation" },
+  { "gd", vim.lsp.buf.definition, desc = "Goto Definition" },
+  { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
+  { "ga", vim.lsp.buf.code_action, desc = "Goto Action" },
+  { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
+  { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
 }
 
 -- Key bindings helper
@@ -291,9 +291,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local out = vim.fn.system({ "git", "clone", "https://github.com/folke/lazy.nvim.git", "--filter=blob:none",
     "--branch=stable", lazypath })
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo(
-      { { "Failed to clone lazy.nvim:\n", "ErrorMsg" }, { out, "WarningMsg" }, { "\nPress any key to exit..." } }, true,
-      {})
+    vim.api.nvim_echo( { { "Failed to clone lazy.nvim:\n", "ErrorMsg" }, { out, "WarningMsg" }, { "\nPress any key to exit..." } }, true, {})
     vim.fn.getchar()
     os.exit(1)
   end
@@ -320,10 +318,10 @@ require("lazy").setup({
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
       end
     },
-    { "nvim-lualine/lualine.nvim",          dependencies = { "nvim-tree/nvim-web-devicons", },                 opts = { theme = "dracula" }, },
+    { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
     { "brenoprata10/nvim-highlight-colors", config = function() require("nvim-highlight-colors").setup({}) end },
-    { "windwp/nvim-autopairs",              event = "InsertEnter",                                             config = true },
-    { "kylechui/nvim-surround",             version = "*",                                                     config = true }, -- * = stable
+    { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
+    { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
     {
       "ThePrimeagen/harpoon",
       branch = "harpoon2",
@@ -370,35 +368,35 @@ require("lazy").setup({
       end
     },
     -- {
-    --   "hrsh7th/nvim-cmp",
-    --   event = "InsertEnter",
-    --   dependencies = {
-    --     "hrsh7th/cmp-nvim-lsp",
-    --     "hrsh7th/cmp-path",
-    --     "hrsh7th/cmp-buffer",
-    --   },
-    --   config = function()
-    --     local cmp = require("cmp")
-    --     cmp.setup({
-    --       preselect = cmp.PreselectMode.Item, -- preselect first item
-    --       completion = { completeopt = "menu,menuone,noinsert" },
-    --       window = { documentation = cmp.config.window.bordered() },
-    --       mapping = cmp.mapping.preset.insert({
-    --         ["<Tab>"] = cmp.mapping.confirm({ select = false }),
-    --         ["<C-e>"] = cmp.mapping.abort(),
-    --         ["<C-Space>"] = cmp.mapping.complete(), -- manual trigger if you want it
-    --         ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-    --         ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-    --         ["<C-d>"] = cmp.mapping.scroll_docs(4),
-    --         ["<C-u>"] = cmp.mapping.scroll_docs(-4)
-    --       }),
-    --       sources = {
-    --         { name = "nvim_lsp" },
-    --         { name = "path" },
-    --         { name = "buffer",  keyword_length = 3 },
-    --       },
-    --     })
-    --   end
+    -- "hrsh7th/nvim-cmp",
+    -- event = "InsertEnter",
+    -- dependencies = {
+    -- "hrsh7th/cmp-nvim-lsp",
+    -- "hrsh7th/cmp-path",
+    -- "hrsh7th/cmp-buffer",
+    -- },
+    -- config = function()
+    -- local cmp = require("cmp")
+    -- cmp.setup({
+    -- preselect = cmp.PreselectMode.Item, -- preselect first item
+    -- completion = { completeopt = "menu,menuone,noinsert" },
+    -- window = { documentation = cmp.config.window.bordered() },
+    -- mapping = cmp.mapping.preset.insert({
+    -- ["<Tab>"] = cmp.mapping.confirm({ select = false }),
+    -- ["<C-e>"] = cmp.mapping.abort(),
+    -- ["<C-Space>"] = cmp.mapping.complete(), -- manual trigger if you want it
+    -- ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
+    -- ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
+    -- ["<C-d>"] = cmp.mapping.scroll_docs(4),
+    -- ["<C-u>"] = cmp.mapping.scroll_docs(-4)
+    -- }),
+    -- sources = {
+    -- { name = "nvim_lsp" },
+    -- { name = "path" },
+    -- { name = "buffer", keyword_length = 3 },
+    -- },
+    -- })
+    -- end
     -- },
     {
       "saghen/blink.cmp",
@@ -418,22 +416,22 @@ require("lazy").setup({
       },
     },
     -- {
-    --   'saghen/blink.cmp',
-    --   dependencies = { 'rafamadriz/friendly-snippets' },
-    --   version = '1.*',
-    --   opts = {
-    --     -- TODO: Delete this when done
-    --     -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-    --     -- 'super-tab' for mappings similar to vscode (tab to accept)
-    --     -- 'enter' for enter to accept
-    --     -- 'none' for no mappings
-    --     -- See :h blink-cmp-config-keymap for defining your own keymap
-    --     keymap = { preset = 'default' },
-    --     appearance = {
-    --       nerd_font_variant = "mono"
-    --     },
-    --     signature = { enabled = true },
-    --   },
+    -- 'saghen/blink.cmp',
+    -- dependencies = { 'rafamadriz/friendly-snippets' },
+    -- version = '1.*',
+    -- opts = {
+    -- -- TODO: Delete this when done
+    -- -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
+    -- -- 'super-tab' for mappings similar to vscode (tab to accept)
+    -- -- 'enter' for enter to accept
+    -- -- 'none' for no mappings
+    -- -- See :h blink-cmp-config-keymap for defining your own keymap
+    -- keymap = { preset = 'default' },
+    -- appearance = {
+    -- nerd_font_variant = "mono"
+    -- },
+    -- signature = { enabled = true },
+    -- },
     -- },
 
     {
@@ -474,134 +472,134 @@ require("lazy").setup({
 })
 
 -- vim.lsp.config('*', {
---   root_markers = { '.git' },
+-- root_markers = { '.git' },
 -- })
 -- vim.lsp.config["lua_ls"] = {
---   cmd = { "lua-language-server" },
---   root_markers = { ".git", ".luarc.json" },
---   filetypes = { "lua" },
---   settings = {
---     Lua = {
---       runtime = { version = 'LuaJIT' },
---       diagnostics = { globals = { 'vim' } },
---       workspace = {
---         checkThirdParty = false,
---         library = vim.api.nvim_get_runtime_file('', true),
---       },
---       telemetry = { enable = false },
---     },
---   },
+-- cmd = { "lua-language-server" },
+-- root_markers = { ".git", ".luarc.json" },
+-- filetypes = { "lua" },
+-- settings = {
+-- Lua = {
+-- runtime = { version = 'LuaJIT' },
+-- diagnostics = { globals = { 'vim' } },
+-- workspace = {
+-- checkThirdParty = false,
+-- library = vim.api.nvim_get_runtime_file('', true),
+-- },
+-- telemetry = { enable = false },
+-- },
+-- },
 -- }
 -- vim.lsp.enable("lua_ls")
 --
 -- vim.api.nvim_create_autocmd('LspAttach', {
---   callback = function(ev)
---     local client = vim.lsp.get_client_by_id(ev.data.client_id)
---     if client:supports_method('textDocument/completion') then
---       vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
---     end
---   end,
+-- callback = function(ev)
+-- local client = vim.lsp.get_client_by_id(ev.data.client_id)
+-- if client:supports_method('textDocument/completion') then
+-- vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
+-- end
+-- end,
 -- })
 --
 -- vim.cmd("set completeopt+=noselect")
 -- vim.o.winborder = "rounded"
 
 -- vim.lsp.config('*', {
---   root_markers = { '.git' },
+-- root_markers = { '.git' },
 -- })
 --
 -- vim.diagnostic.config({
---   virtual_text  = true,
---   severity_sort = true,
---   float         = {
---     style  = 'minimal',
---     border = 'rounded',
---     source = 'if_many',
---     header = '',
---     prefix = '',
---   },
---   signs         = {
---     text = {
---       [vim.diagnostic.severity.ERROR] = '✘',
---       [vim.diagnostic.severity.WARN]  = '▲',
---       [vim.diagnostic.severity.HINT]  = '⚑',
---       [vim.diagnostic.severity.INFO]  = '»',
---     },
---   },
+-- virtual_text = true,
+-- severity_sort = true,
+-- float = {
+-- style = 'minimal',
+-- border = 'rounded',
+-- source = 'if_many',
+-- header = '',
+-- prefix = '',
+-- },
+-- signs = {
+-- text = {
+-- [vim.diagnostic.severity.ERROR] = '✘',
+-- [vim.diagnostic.severity.WARN] = '▲',
+-- [vim.diagnostic.severity.HINT] = '⚑',
+-- [vim.diagnostic.severity.INFO] = '»',
+-- },
+-- },
 -- })
 
 -- -- put early in lsp.lua
 -- local orig = vim.lsp.util.open_floating_preview
 -- ---@diagnostic disable-next-line: duplicate-set-field
 -- function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
---   opts            = opts or {}
---   opts.border     = opts.border or 'rounded'
---   opts.max_width  = opts.max_width or 80
---   opts.max_height = opts.max_height or 24
---   opts.wrap       = opts.wrap ~= false
---   return orig(contents, syntax, opts, ...)
+-- opts = opts or {}
+-- opts.border = opts.border or 'rounded'
+-- opts.max_width = opts.max_width or 80
+-- opts.max_height = opts.max_height or 24
+-- opts.wrap = opts.wrap ~= false
+-- return orig(contents, syntax, opts, ...)
 -- end
 
 -- 4) Per-buffer behavior on LSP attach (keymaps, auto-format, completion)
 -- See :help LspAttach for the recommended pattern
 -- vim.api.nvim_create_autocmd('LspAttach', {
---   group = vim.api.nvim_create_augroup('my.lsp', {}),
---   callback = function(args)
---     local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
---     local buf    = args.buf
---     local map    = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
+-- group = vim.api.nvim_create_augroup('my.lsp', {}),
+-- callback = function(args)
+-- local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
+-- local buf = args.buf
+-- local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
 --
---     -- Keymaps (use builtin LSP buffer functions)
---     map('n', 'K', vim.lsp.buf.hover)
---     map('n', 'gd', vim.lsp.buf.definition)
---     map('n', 'gD', vim.lsp.buf.declaration)
---     map('n', 'gi', vim.lsp.buf.implementation)
---     map('n', 'go', vim.lsp.buf.type_definition)
---     map('n', 'gr', vim.lsp.buf.references)
---     map('n', 'gs', vim.lsp.buf.signature_help)
---     map('n', 'gl', vim.diagnostic.open_float)
---     map('n', '<F2>', vim.lsp.buf.rename)
---     map({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end)
---     map('n', '<F4>', vim.lsp.buf.code_action)
+-- -- Keymaps (use builtin LSP buffer functions)
+-- map('n', 'K', vim.lsp.buf.hover)
+-- map('n', 'gd', vim.lsp.buf.definition)
+-- map('n', 'gD', vim.lsp.buf.declaration)
+-- map('n', 'gi', vim.lsp.buf.implementation)
+-- map('n', 'go', vim.lsp.buf.type_definition)
+-- map('n', 'gr', vim.lsp.buf.references)
+-- map('n', 'gs', vim.lsp.buf.signature_help)
+-- map('n', 'gl', vim.diagnostic.open_float)
+-- map('n', '<F2>', vim.lsp.buf.rename)
+-- map({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end)
+-- map('n', '<F4>', vim.lsp.buf.code_action)
 --
---     -- Put near your LSP on_attach
---     local excluded_filetypes = { php = true }
+-- -- Put near your LSP on_attach
+-- local excluded_filetypes = { php = true }
 --
---     -- Auto-format on save (only if server can't do WillSaveWaitUntil)
---     if not client:supports_method('textDocument/willSaveWaitUntil')
---         and client:supports_method('textDocument/formatting')
---         and not excluded_filetypes[vim.bo[buf].filetype]
---     then
---       vim.api.nvim_create_autocmd('BufWritePre', {
---         group = vim.api.nvim_create_augroup('my.lsp.format', { clear = false }),
---         buffer = buf,
---         callback = function()
---           vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
---         end,
---       })
---     end
---   end,
+-- -- Auto-format on save (only if server can't do WillSaveWaitUntil)
+-- if not client:supports_method('textDocument/willSaveWaitUntil')
+-- and client:supports_method('textDocument/formatting')
+-- and not excluded_filetypes[vim.bo[buf].filetype]
+-- then
+-- vim.api.nvim_create_autocmd('BufWritePre', {
+-- group = vim.api.nvim_create_augroup('my.lsp.format', { clear = false }),
+-- buffer = buf,
+-- callback = function()
+-- vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
+-- end,
+-- })
+-- end
+-- end,
 -- })
 
 -- 5) Define the Lua language server config (no mason/lspconfig)
 -- See :help lsp-new-config and :help vim.lsp.config()
 -- local caps = require('blink.cmp').get_lsp_capabilities()
 -- vim.lsp.config['luals'] = {
---   cmd = { 'lua-language-server' },
---   filetypes = { 'lua' },
---   root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
---   capabilities = caps,
---   settings = {
---     Lua = {
---       runtime = { version = 'LuaJIT' },
---       diagnostics = { globals = { 'vim' } },
---       workspace = {
---         checkThirdParty = false,
---         library = vim.api.nvim_get_runtime_file('', true),
---       },
---       telemetry = { enable = false },
---     },
---   },
+-- cmd = { 'lua-language-server' },
+-- filetypes = { 'lua' },
+-- root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
+-- capabilities = caps,
+-- settings = {
+-- Lua = {
+-- runtime = { version = 'LuaJIT' },
+-- diagnostics = { globals = { 'vim' } },
+-- workspace = {
+-- checkThirdParty = false,
+-- library = vim.api.nvim_get_runtime_file('', true),
+-- },
+-- telemetry = { enable = false },
+-- },
+-- },
 -- }
 --
 -- vim.lsp.enable('luals')
