@@ -64,16 +64,11 @@ local floating_win = {
   win = -1
 }
 
-local create_floating_win = function(opts)
+local function create_floating_win(opts)
   opts = opts or { buf = -1 }
-  local width = opts.width or math.floor(vim.o.columns * 0.8)
-  local height = opts.height or math.floor(vim.o.lines * 0.8)
 
-  -- Calculate the position to centre the window
-  local col = math.floor((vim.o.columns - width) / 2)
-  local row = math.floor((vim.o.lines - height) / 2)
+  local height = opts.height or math.min(math.floor(vim.o.lines * 0.25), 15)
 
-  -- Create the buffer
   local buf = nil
   if vim.api.nvim_buf_is_valid(opts.buf) then
     buf = opts.buf
@@ -81,16 +76,7 @@ local create_floating_win = function(opts)
     buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
   end
 
-  local win_config = {
-    relative = "editor",
-    width = width,
-    height = height,
-    col = col,
-    row = row,
-    style = "minimal",
-    border = "rounded"
-  }
-  local win = vim.api.nvim_open_win(buf, true, win_config)
+  local win = vim.api.nvim_open_win(buf, true, { split = "below", height = height, })
 
   return { buf = buf, win = win }
 end
@@ -105,7 +91,7 @@ local function terminal_toggle(args)
       vim.cmd.terminal()
     end
   elseif show then
-    -- Do nothing as window is already value
+    -- Do nothing as window is already open
   else
     vim.api.nvim_win_hide(floating_win.win)
   end
