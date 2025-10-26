@@ -155,9 +155,9 @@ local general_keymaps = {
 
   -- Terminal binds --
   { "<leader><C-c>",     "<C-\\><C-n>",                                                    mode = "t",                                          desc = "Escape terminal mode." },
-  { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("!Build command: ") end },
+  { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
   { "<leader>b",         "<cmd>make<CR>" },
-  { "<leader><leader>r", function() run_command = vim.fn.input("!Run command: ") end },
+  { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
   { "<leader>r",
     function()
       term_ensure_open()
@@ -252,8 +252,8 @@ local lsp_keymaps = {
   -- TODO: Fix this
   -- • *vim.diagnostic.goto_next()*	Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
   -- • *vim.diagnostic.goto_prev()*	Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
-  { "<leader>dp", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
-  { "<leader>dn", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+  { "<leader>dp", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+  { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
   { "<leader>do", vim.diagnostic.open_float,                                                             desc = "Open floating diagnostic message" },
 
   -- lsp
