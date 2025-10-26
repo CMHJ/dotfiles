@@ -102,6 +102,7 @@ end
 -- Keybinds --
 
 local general_keymaps = {
+  { "<leader>q",          "<cmd>qa<CR>", desc = "Quit all buffers." },
   { "Q",          "<nop>",                           desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
