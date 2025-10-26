@@ -29,6 +29,8 @@ local opt = vim.opt
 opt.winborder = "rounded"
 opt.clipboard = "unnamedplus" -- Use system clipboard for everything
 opt.termguicolors = true
+opt.splitright = true
+opt.splitbelow = true
 opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
@@ -57,39 +59,55 @@ vim.o.winborder = "rounded"
 
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
 local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
-local term_buffer_id = 0
+local floating_win = {
+  buf = -1,
+  win = -1
+}
 
--- https://github.com/tonybanters/nvim/blob/master/plugin/flterm.lua - Use this instead?
-local term_ensure_open = function()
-  -- Check if terminal window is visible
-  local window_visible = false
-  for _, window_id in ipairs(vim.api.nvim_list_wins()) do
-    if vim.api.nvim_win_get_buf(window_id) == term_buffer_id then
-      window_visible = true
-    end
+local create_floating_win = function(opts)
+  opts = opts or { buf = -1 }
+  local width = opts.width or math.floor(vim.o.columns * 0.8)
+  local height = opts.height or math.floor(vim.o.lines * 0.8)
+
+  -- Calculate the position to centre the window
+  local col = math.floor((vim.o.columns - width) / 2)
+  local row = math.floor((vim.o.lines - height) / 2)
+
+  -- Create the buffer
+  local buf = nil
+  if vim.api.nvim_buf_is_valid(opts.buf) then
+    buf = opts.buf
+  else
+    buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
   end
 
-  -- TODO: Add option to leave terminal open in the case you want to check that it's open.
-  -- Maybe factor out the function above as a check?
-  -- TODO: Make this function toggle whether the terminal is open or not.
+  local win_config = {
+    relative = "editor",
+    width = width,
+    height = height,
+    col = col,
+    row = row,
+    style = "minimal",
+    border = "rounded"
+  }
+  local win = vim.api.nvim_open_win(buf, true, win_config)
 
-  -- If window with terminal buffer doesn't exist create it
-  if window_visible == false then
-    vim.cmd.new()       -- Create new window
-    vim.cmd.wincmd("J") -- Move terminal to bottom position
-    vim.api.nvim_win_set_height(0, 15)
+  return { buf = buf, win = win }
+end
 
-    -- Use terminal buffer if it already exists but window was closed
-    if vim.api.nvim_buf_is_loaded(term_buffer_id) and vim.bo[term_buffer_id].buftype == "terminal" then
-      vim.api.nvim_set_current_buf(term_buffer_id)
-    else
-      -- Create new terminal buffer
-      vim.cmd.term()
-      term_buffer_id = vim.api.nvim_get_current_buf()
+local function terminal_toggle(args)
+  args = args or {}
+  local show = args.show or false
+
+  if vim.api.nvim_win_is_valid(floating_win.win) == false then
+    floating_win = create_floating_win { buf = floating_win.buf }
+    if vim.bo[floating_win.buf].buftype ~= "terminal" then
+      vim.cmd.terminal()
     end
-
-    vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output
-    vim.cmd.wincmd("k")  -- Move out of terminal window
+  elseif show then
+    -- Do nothing as window is already value
+  else
+    vim.api.nvim_win_hide(floating_win.win)
   end
 end
 
@@ -160,12 +178,12 @@ local general_keymaps = {
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
   { "<leader>r",
     function()
-      term_ensure_open()
-      local term_job_id = vim.b[term_buffer_id].terminal_job_id
-      vim.fn.chansend(term_job_id, run_command .. "\n")
+      terminal_toggle({ show = true })
+      local term_job_id = vim.b[floating_win.buf].terminal_job_id
+      vim.fn.chansend(term_job_id, run_command .. "\r\n")
     end
   },
-  { "<leader>t", function() term_ensure_open() end, desc = "Toggle terminal at the bottom." },
+  { "<leader>t", terminal_toggle, desc = "Toggle terminal." },
 
   -- Run line or highlighted section in lua
   { "<leader>x", ":.lua<CR>" },
