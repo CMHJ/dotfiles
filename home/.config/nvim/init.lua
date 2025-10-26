@@ -73,10 +73,10 @@ local function create_floating_win(opts)
   if vim.api.nvim_buf_is_valid(opts.buf) then
     buf = opts.buf
   else
-    buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer
+    buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer.
   end
 
-  local win = vim.api.nvim_open_win(buf, true, { split = "below", height = height, })
+  local win = vim.api.nvim_open_win(buf, true, { split = "below", height = height })
 
   return { buf = buf, win = win }
 end
@@ -89,9 +89,11 @@ local function terminal_toggle(args)
     floating_win = create_floating_win { buf = floating_win.buf }
     if vim.bo[floating_win.buf].buftype ~= "terminal" then
       vim.cmd.terminal()
+      vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be race conditions.
+      vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
     end
   elseif show then
-    -- Do nothing as window is already open
+    -- Do nothing as window is already open.
   else
     vim.api.nvim_win_hide(floating_win.win)
   end
