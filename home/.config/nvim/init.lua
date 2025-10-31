@@ -13,7 +13,7 @@
 
 local g = vim.g
 g.mapleader = " " -- Set leader to spacebar
-g.maplocalleader = " "
+g.maplocalleader = "\\"
 
 -- netrw file explorer configuration
 g.netrw_banner = 0
@@ -259,8 +259,8 @@ local lsp_keymaps = {
   -- TODO: Fix this
   -- • *vim.diagnostic.goto_next()* Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
   -- • *vim.diagnostic.goto_prev()* Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
-  { "<leader>dp", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
   { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+  { "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
   { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
 
   -- lsp
@@ -367,94 +367,149 @@ require("lazy").setup({
         })
       end
     },
+
     -- {
-    -- "hrsh7th/nvim-cmp",
-    -- event = "InsertEnter",
-    -- dependencies = {
-    -- "hrsh7th/cmp-nvim-lsp",
-    -- "hrsh7th/cmp-path",
-    -- "hrsh7th/cmp-buffer",
+    --   "saghen/blink.cmp",
+    --   dependencies = "rafamadriz/friendly-snippets",
+    --   version = "v1.*",
+    --   opts = {
+    --     keymap = { preset = "default" },
+    --     appearance = {
+    --       nerd_font_variant = "normal"
+    --     },
+    --     -- Disable bracket insertion, as this seems to break the signature showing after selection.
+    --     completion = { accept = { auto_brackets = { enabled = false } } },
+    --     signature = {
+    --       enabled = true, -- Show function signatures
+    --       window = { show_documentation = true } -- Also show documentation
+    --     }
+    --   },
     -- },
-    -- config = function()
-    -- local cmp = require("cmp")
-    -- cmp.setup({
-    -- preselect = cmp.PreselectMode.Item, -- preselect first item
-    -- completion = { completeopt = "menu,menuone,noinsert" },
-    -- window = { documentation = cmp.config.window.bordered() },
-    -- mapping = cmp.mapping.preset.insert({
-    -- ["<Tab>"] = cmp.mapping.confirm({ select = false }),
-    -- ["<C-e>"] = cmp.mapping.abort(),
-    -- ["<C-Space>"] = cmp.mapping.complete(), -- manual trigger if you want it
-    -- ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Select }),
-    -- ["<C-p>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Select }),
-    -- ["<C-d>"] = cmp.mapping.scroll_docs(4),
-    -- ["<C-u>"] = cmp.mapping.scroll_docs(-4)
-    -- }),
-    -- sources = {
-    -- { name = "nvim_lsp" },
-    -- { name = "path" },
-    -- { name = "buffer", keyword_length = 3 },
-    -- },
-    -- })
-    -- end
-    -- },
+
     {
-      "saghen/blink.cmp",
-      dependencies = "rafamadriz/friendly-snippets",
-      version = "v1.*",
+      'hrsh7th/nvim-cmp',
+      dependencies = {
+        'hrsh7th/cmp-buffer',
+        'hrsh7th/cmp-path',
+        'hrsh7th/cmp-nvim-lsp',
+        "hrsh7th/cmp-nvim-lsp-signature-help",
+        'saadparwaiz1/cmp_luasnip',
+        'rafamadriz/friendly-snippets',
+        { 'L3MON4D3/LuaSnip', config = function() require("luasnip.loaders.from_vscode").lazy_load() end },
+      },
+      config = function()
+        local cmp = require("cmp")
+        local luasnip = require('luasnip')
+
+        cmp.setup({
+          sources = {
+            { name = 'nvim_lsp' },
+            { name = 'luasnip' },
+            { name = 'nvim_lsp_signature_help' },
+            { name = 'nvim_lsp_document_symbol' },
+            { name = 'buffer' },
+          },
+          snippet = {
+            expand = function(args)
+              luasnip.lsp_expand(args.body)
+            end,
+          },
+          view = { docs = { auto_open = true }},
+          mapping = cmp.mapping.preset.insert({
+            ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+            ['<C-d>'] = cmp.mapping.scroll_docs(4),
+            ['<C-Space>'] = cmp.mapping.complete(),
+            ['<Tab>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+              elseif luasnip.expand_or_locally_jumpable() then
+                luasnip.expand_or_jump()
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+            ['<S-Tab>'] = cmp.mapping(function(fallback)
+              if luasnip.locally_jumpable(-1) then
+                luasnip.jump(-1)
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+            ['<C-n>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_next_item()
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+            ['<C-p>'] = cmp.mapping(function(fallback)
+              if cmp.visible() then
+                cmp.select_prev_item()
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+            ['<C-k>'] = cmp.mapping(function(fallback)
+              if cmp.visible_docs() then
+                cmp.close_docs()
+              elseif cmp.visible() then
+                cmp.open_docs()
+              else
+                fallback()
+              end
+            end, { 'i', 's' }),
+          }),
+        })
+      end
+    },
+
+    {
+      "neovim/nvim-lspconfig",
+      dependencies = {
+        -- Automatically configure the lua LSP.
+        { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } },
+        'hrsh7th/nvim-cmp',
+        -- 'saghen/blink.cmp',
+      },
       opts = {
-        keymap = { preset = "super-tab" },
-        appearance = {
-          nerd_font_variant = "normal"
-        },
-        -- Disable bracket insertion, as this seems to break the signature showing after selection.
-        completion = { accept = { auto_brackets = { enabled = false } } },
-        signature = {
-          enabled = true, -- Show function signatures
-          window = { show_documentation = true } -- Also show documentation
+        servers = {
+          lua_ls = {},
+          clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
+          rust_analyzer = {
+            settings = {
+              cargo = { features = "all" },
+              procMacro = { enable = true },
+              inlayHints = {
+                bindingModeHints = { enable = true },
+                closureCaptureHints = { enable = true },
+                closureReturnTypeHints = { enable = true },
+                expressionAdjustmentHints = { enable = true }
+              },
+              diagnostics = { enable = true }
+            }
+          }
         }
       },
-    },
-    -- {
-    -- 'saghen/blink.cmp',
-    -- dependencies = { 'rafamadriz/friendly-snippets' },
-    -- version = '1.*',
-    -- opts = {
-    -- -- TODO: Delete this when done
-    -- -- 'default' (recommended) for mappings similar to built-in completions (C-y to accept)
-    -- -- 'super-tab' for mappings similar to vscode (tab to accept)
-    -- -- 'enter' for enter to accept
-    -- -- 'none' for no mappings
-    -- -- See :h blink-cmp-config-keymap for defining your own keymap
-    -- keymap = { preset = 'default' },
-    -- appearance = {
-    -- nerd_font_variant = "mono"
-    -- },
-    -- signature = { enabled = true },
-    -- },
-    -- },
+      config = function(_, opts)
+        vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
 
-    {
-        "neovim/nvim-lspconfig",
-        dependencies = {
-          -- Automatically configure the lua LSP.
-          { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } },
-        },
-        opts = {
-          servers = {
-            lua_ls = {},
-            clangd = {},
-            rust_analyzer = {}
-          }
-        },
-        config = function(_, opts)
-          vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
-
-          for server, config in pairs(opts.servers) do
-            config.capabilities = require('blink.cmp').get_lsp_capabilities(config.capabilities)
-            vim.lsp.config[server] = config
-          end
+        local function on_attach(_, bufnr)
         end
+
+        local capabilities = vim.tbl_deep_extend(
+          "force",
+          {},
+          vim.lsp.protocol.make_client_capabilities(),
+          require("cmp_nvim_lsp").default_capabilities()
+          -- require('blink.cmp').get_lsp_capabilities()
+        )
+
+        for server, config in pairs(opts.servers) do
+          config.on_attach = on_attach
+          config.capabilities = capabilities
+          vim.lsp.config[server] = config
+        end
+      end
     },
     {
       "mason-org/mason-lspconfig.nvim",
