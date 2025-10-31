@@ -473,7 +473,7 @@ require("lazy").setup({
       },
       opts = {
         servers = {
-          lua_ls = {},
+          lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
           clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
           rust_analyzer = {
             settings = {
