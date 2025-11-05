@@ -59,10 +59,7 @@ vim.o.winborder = "rounded"
 
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
 local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
-local floating_win = {
-  buf = -1,
-  win = -1
-}
+local floating_win = { buf = -1, win = -1 }
 
 local function create_floating_win(opts)
   opts = opts or { buf = -1 }
@@ -119,7 +116,7 @@ local general_keymaps = {
   -- clist - to temporarily show the quickfix list
   -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
 
-  -- diagnostics
+  -- Diagnostics
   { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
   { "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
   { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
@@ -133,12 +130,6 @@ local general_keymaps = {
   { "<C-o>", "<C-o>zz", desc = "Jump back and center." },
   { "*", "*zz", desc = "Search word under cursor and center." },
   { "#", "#zz", desc = "Search word under cursor backwards and center." },
-
-  -- Use ctrl keys to move between panes
-  -- vim.keymap.set("n", "<C-j>", "<C-w>j")
-  -- vim.keymap.set("n", "<C-k>", "<C-w>k")
-  -- vim.keymap.set("n", "<C-h>", "<C-w>h")
-  -- vim.keymap.set("n", "<C-l>", "<C-w>l")
 
   -- TODO: Bind these to the arrow keys
   -- Resize current window using -/_ and =/+ keys
@@ -171,7 +162,7 @@ local general_keymaps = {
 
   { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
 
-  -- Terminal binds --
+  -- Terminal binds
   { "<C-c><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
   { "<leader>b", "<cmd>make<CR>" },
@@ -194,8 +185,7 @@ local general_keymaps = {
   { "K", ":m '<-2<CR>gv=gv", mode = "v" },
 
   -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
-  -- e.g. Ctrl-Backspace deletes word backwards
-  -- and Ctrl-Delete deletes word forwards.
+  -- e.g. Ctrl-Backspace deletes word backwards and Ctrl-Delete deletes word forwards.
   -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds." },
   { "<C-Del>", "<C-o>de", mode = "i" },
 
@@ -210,7 +200,7 @@ local general_keymaps = {
 }
 
 local plugin_keymaps = {
-  -- Telescope bindings --
+  -- Telescope bindings
   { "<leader>sf", function() require("telescope.builtin").find_files() end, desc = "[S]earch [F]iles" },
   { "<leader>sg", function() require("telescope.builtin").live_grep() end, desc = "[S]earch by [G]rep" },
   { "<leader>sh", function() require("telescope.builtin").help_tags() end, desc = "[S]earch [H]elp" },
@@ -246,7 +236,7 @@ local plugin_keymaps = {
     desc = "[S]earch [M]an Pages"
   },
 
-  -- Harpoon binds --
+  -- Harpoon binds
   { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
   { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
   { "<C-c>", function() require("harpoon").ui:close_menu() end, desc = "" },
@@ -289,6 +279,7 @@ set_keymaps(general_keymaps)
 set_keymaps(plugin_keymaps)
 
 -- LSP Server Configuration --
+
 local lsp_servers = {
   lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
   clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
@@ -328,9 +319,7 @@ end
 
 -- Add lazy into the runtime path for neovim so that the lazy can be found.
 vim.opt.runtimepath:prepend(lazypath)
--- Setup lazy.nvim plugins
 require("lazy").setup({
-  -- change_detection = { notify = false },
   spec = {
     {
       -- "folke/tokyonight.nvim",
@@ -399,23 +388,6 @@ require("lazy").setup({
         })
       end
     },
-    -- {
-    --   "saghen/blink.cmp",
-    --   dependencies = "rafamadriz/friendly-snippets",
-    --   version = "v1.*",
-    --   opts = {
-    --     keymap = { preset = "default" },
-    --     appearance = {
-    --       nerd_font_variant = "normal"
-    --     },
-    --     -- Disable bracket insertion, as this seems to break the signature showing after selection.
-    --     completion = { accept = { auto_brackets = { enabled = false } } },
-    --     signature = {
-    --       enabled = true, -- Show function signatures
-    --       window = { show_documentation = true } -- Also show documentation
-    --     }
-    --   },
-    -- },
     {
       'hrsh7th/nvim-cmp',
       dependencies = {
@@ -451,42 +423,30 @@ require("lazy").setup({
             ['<C-d>'] = cmp.mapping.scroll_docs(4),
             ['<C-Space>'] = cmp.mapping.complete(),
             ['<Tab>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
-              elseif luasnip.expand_or_locally_jumpable() then
-                luasnip.expand_or_jump()
-              else
-                fallback()
+              if cmp.visible() then cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+              elseif luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump()
+              else fallback()
               end
             end, { 'i', 's' }),
             ['<S-Tab>'] = cmp.mapping(function(fallback)
-              if luasnip.locally_jumpable(-1) then
-                luasnip.jump(-1)
-              else
-                fallback()
+              if luasnip.locally_jumpable(-1) then luasnip.jump(-1)
+              else fallback()
               end
             end, { 'i', 's' }),
             ['<C-n>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                cmp.select_next_item()
-              else
-                fallback()
+              if cmp.visible() then cmp.select_next_item()
+              else fallback()
               end
             end, { 'i', 's' }),
             ['<C-p>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then
-                cmp.select_prev_item()
-              else
-                fallback()
+              if cmp.visible() then cmp.select_prev_item()
+              else fallback()
               end
             end, { 'i', 's' }),
             ['<C-k>'] = cmp.mapping(function(fallback)
-              if cmp.visible_docs() then
-                cmp.close_docs()
-              elseif cmp.visible() then
-                cmp.open_docs()
-              else
-                fallback()
+              if cmp.visible_docs() then cmp.close_docs()
+              elseif cmp.visible() then cmp.open_docs()
+              else fallback()
               end
             end, { 'i', 's' }),
           }),
@@ -496,14 +456,10 @@ require("lazy").setup({
     {
       "neovim/nvim-lspconfig",
       dependencies = {
-        -- Automatically configure the lua LSP.
-        { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } },
+        { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } }, -- Automatically configure the lua LSP.
         'hrsh7th/nvim-cmp',
-        -- 'saghen/blink.cmp',
       },
-      opts = {
-        servers = lsp_servers
-      },
+      opts = { servers = lsp_servers },
       config = function(_, opts)
         vim.diagnostic.config({
           virtual_text = true, -- Enable inline diagnostics
@@ -522,13 +478,7 @@ require("lazy").setup({
           set_keymaps(lsp_keymaps, bufnr)
         end
 
-        local capabilities = vim.tbl_deep_extend(
-          "force",
-          {},
-          vim.lsp.protocol.make_client_capabilities(),
-          require("cmp_nvim_lsp").default_capabilities()
-          -- require('blink.cmp').get_lsp_capabilities()
-        )
+        local capabilities = vim.tbl_deep_extend( "force", {}, vim.lsp.protocol.make_client_capabilities(), require("cmp_nvim_lsp").default_capabilities())
 
         for server, config in pairs(opts.servers) do
           config.on_attach = on_attach
@@ -539,16 +489,13 @@ require("lazy").setup({
     },
     {
       "mason-org/mason-lspconfig.nvim",
-      dependencies = {
-        { "mason-org/mason.nvim", config = true },
-        "neovim/nvim-lspconfig",
-      },
+      dependencies = { { "mason-org/mason.nvim", config = true }, "neovim/nvim-lspconfig", },
       opts = { ensure_installed = lsp_server_names, automatic_enable = true, }
     }
   }
 })
 
--- Filetype configurations
+-- Filetype configurations --
 
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "lua",
@@ -560,7 +507,8 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Save autocmds
+-- Save autocmds --
+
 vim.api.nvim_create_autocmd("BufWritePre", {
   pattern = "*",
   callback = function()
