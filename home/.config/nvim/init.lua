@@ -169,6 +169,8 @@ local general_keymaps = {
 
   { "<leader><leader>x", ":source %<CR>", desc = "Source current file." },
 
+  { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+
   -- Terminal binds --
   { "<leader><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
@@ -357,7 +359,12 @@ require("lazy").setup({
         require("harpoon"):setup()
       end,
     },
-    { "tpope/vim-fugitive" },
+    {
+      "kdheepak/lazygit.nvim",
+      cmd = { "LazyGit", "LazyGitConfig", "LazyGitCurrentFile", "LazyGitFilter", "LazyGitFilterCurrentFile", },
+      config = function() vim.g.lazygit_floating_window_scaling_factor = 1.0 end,
+      dependencies = { "nvim-lua/plenary.nvim", },
+    },
     {
       "nvim-treesitter/nvim-treesitter",
       branch = "master",
