@@ -285,6 +285,30 @@ end
 set_keymaps(general_keymaps)
 set_keymaps(plugin_keymaps)
 
+-- LSP Server Configuration --
+local lsp_servers = {
+  lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
+  clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
+  rust_analyzer = {
+    settings = {
+      cargo = { features = "all" },
+      procMacro = { enable = true },
+      inlayHints = {
+        bindingModeHints = { enable = true },
+        closureCaptureHints = { enable = true },
+        closureReturnTypeHints = { enable = true },
+        expressionAdjustmentHints = { enable = true }
+      },
+      diagnostics = { enable = true }
+    }
+  }
+}
+
+local lsp_server_names = {}
+for server_name, _ in pairs(lsp_servers) do
+  table.insert(lsp_server_names, server_name)
+end
+
 -- Plugin Setup --
 
 -- Install lazy nvim if it doesn't exist
@@ -474,23 +498,7 @@ require("lazy").setup({
         -- 'saghen/blink.cmp',
       },
       opts = {
-        servers = {
-          lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
-          clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
-          rust_analyzer = {
-            settings = {
-              cargo = { features = "all" },
-              procMacro = { enable = true },
-              inlayHints = {
-                bindingModeHints = { enable = true },
-                closureCaptureHints = { enable = true },
-                closureReturnTypeHints = { enable = true },
-                expressionAdjustmentHints = { enable = true }
-              },
-              diagnostics = { enable = true }
-            }
-          }
-        }
+        servers = lsp_servers
       },
       config = function(_, opts)
         vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
@@ -520,13 +528,9 @@ require("lazy").setup({
         { "mason-org/mason.nvim", config = true },
         "neovim/nvim-lspconfig",
       },
-      opts = {
-        ensure_installed = { "lua_ls", "clangd", "rust_analyzer" },
-        automatic_enable = true,
-      },
-    },
-
-  },
+      opts = { ensure_installed = lsp_server_names, automatic_enable = true, }
+    }
+  }
 })
 
 -- vim.lsp.config('*', {
