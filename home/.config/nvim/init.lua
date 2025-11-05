@@ -332,13 +332,11 @@ vim.opt.runtimepath:prepend(lazypath)
 require("lazy").setup({
   -- change_detection = { notify = false },
   spec = {
-    -- "folke/tokyonight.nvim"
     {
+      -- "folke/tokyonight.nvim",
       "Mofiqul/dracula.nvim",
-      lazy = false,
-      priority = 1000,
-      config = function()
-        vim.cmd.colorscheme("dracula")
+      config = function(opts)
+        vim.cmd.colorscheme(opts.name:match("[^.]+")) -- Automatically set theme based on plugin name.
         -- Enable transparency
         vim.cmd('hi Directory guibg=NONE')
         vim.cmd('hi SignColumn guibg=NONE')
