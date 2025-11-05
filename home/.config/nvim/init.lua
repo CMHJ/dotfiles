@@ -1,7 +1,7 @@
 -- TODO
 -- Remove dead code
 -- Move keybinds into simple tables at the top
--- Add comment bind with C-/
+-- Add comment bind with C-/ or otherwise for gcc in normal mode and gc in highlight mode
 -- Add binding for simpler file create like 'f' instead of % in netrw
 -- Fix shell completion for build and run commands by adding options, something like ui_prompt?
 -- Remove desc = ""
@@ -140,6 +140,7 @@ local general_keymaps = {
   -- vim.keymap.set("n", "<C-h>", "<C-w>h")
   -- vim.keymap.set("n", "<C-l>", "<C-w>l")
 
+  -- TODO: Bind these to the arrow keys
   -- Resize current window using -/_ and =/+ keys
   { "+", [[<cmd>horizontal resize +2<cr>]], desc = "" },
   { "_", [[<cmd>horizontal resize -2<cr>]], desc = "" },
@@ -383,6 +384,7 @@ require("lazy").setup({
             sorting_strategy = "ascending",
             mappings = {
               i = {
+                -- TODO: Move these bindings to the top.
                 ["<C-k>"] = require("telescope.actions").move_selection_previous,
                 ["<C-j>"] = require("telescope.actions").move_selection_next,
                 ["<C-q>"] = require("telescope.actions").send_selected_to_qflist +
@@ -393,7 +395,6 @@ require("lazy").setup({
         })
       end
     },
-
     -- {
     --   "saghen/blink.cmp",
     --   dependencies = "rafamadriz/friendly-snippets",
@@ -411,7 +412,6 @@ require("lazy").setup({
     --     }
     --   },
     -- },
-
     {
       'hrsh7th/nvim-cmp',
       dependencies = {
@@ -441,6 +441,7 @@ require("lazy").setup({
             end,
           },
           view = { docs = { auto_open = true }},
+          -- TODO: Move these bindings.
           mapping = cmp.mapping.preset.insert({
             ['<C-u>'] = cmp.mapping.scroll_docs(-4),
             ['<C-d>'] = cmp.mapping.scroll_docs(4),
@@ -488,7 +489,6 @@ require("lazy").setup({
         })
       end
     },
-
     {
       "neovim/nvim-lspconfig",
       dependencies = {
@@ -532,139 +532,6 @@ require("lazy").setup({
     }
   }
 })
-
--- vim.lsp.config('*', {
--- root_markers = { '.git' },
--- })
--- vim.lsp.config["lua_ls"] = {
--- cmd = { "lua-language-server" },
--- root_markers = { ".git", ".luarc.json" },
--- filetypes = { "lua" },
--- settings = {
--- Lua = {
--- runtime = { version = 'LuaJIT' },
--- diagnostics = { globals = { 'vim' } },
--- workspace = {
--- checkThirdParty = false,
--- library = vim.api.nvim_get_runtime_file('', true),
--- },
--- telemetry = { enable = false },
--- },
--- },
--- }
--- vim.lsp.enable("lua_ls")
---
--- vim.api.nvim_create_autocmd('LspAttach', {
--- callback = function(ev)
--- local client = vim.lsp.get_client_by_id(ev.data.client_id)
--- if client:supports_method('textDocument/completion') then
--- vim.lsp.completion.enable(true, client.id, ev.buf, { autotrigger = true })
--- end
--- end,
--- })
---
--- vim.cmd("set completeopt+=noselect")
--- vim.o.winborder = "rounded"
-
--- vim.lsp.config('*', {
--- root_markers = { '.git' },
--- })
---
--- vim.diagnostic.config({
--- virtual_text = true,
--- severity_sort = true,
--- float = {
--- style = 'minimal',
--- border = 'rounded',
--- source = 'if_many',
--- header = '',
--- prefix = '',
--- },
--- signs = {
--- text = {
--- [vim.diagnostic.severity.ERROR] = '✘',
--- [vim.diagnostic.severity.WARN] = '▲',
--- [vim.diagnostic.severity.HINT] = '⚑',
--- [vim.diagnostic.severity.INFO] = '»',
--- },
--- },
--- })
-
--- -- put early in lsp.lua
--- local orig = vim.lsp.util.open_floating_preview
--- ---@diagnostic disable-next-line: duplicate-set-field
--- function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
--- opts = opts or {}
--- opts.border = opts.border or 'rounded'
--- opts.max_width = opts.max_width or 80
--- opts.max_height = opts.max_height or 24
--- opts.wrap = opts.wrap ~= false
--- return orig(contents, syntax, opts, ...)
--- end
-
--- 4) Per-buffer behavior on LSP attach (keymaps, auto-format, completion)
--- See :help LspAttach for the recommended pattern
--- vim.api.nvim_create_autocmd('LspAttach', {
--- group = vim.api.nvim_create_augroup('my.lsp', {}),
--- callback = function(args)
--- local client = assert(vim.lsp.get_client_by_id(args.data.client_id))
--- local buf = args.buf
--- local map = function(mode, lhs, rhs) vim.keymap.set(mode, lhs, rhs, { buffer = buf }) end
---
--- -- Keymaps (use builtin LSP buffer functions)
--- map('n', 'K', vim.lsp.buf.hover)
--- map('n', 'gd', vim.lsp.buf.definition)
--- map('n', 'gD', vim.lsp.buf.declaration)
--- map('n', 'gi', vim.lsp.buf.implementation)
--- map('n', 'go', vim.lsp.buf.type_definition)
--- map('n', 'gr', vim.lsp.buf.references)
--- map('n', 'gs', vim.lsp.buf.signature_help)
--- map('n', 'gl', vim.diagnostic.open_float)
--- map('n', '<F2>', vim.lsp.buf.rename)
--- map({ 'n', 'x' }, '<F3>', function() vim.lsp.buf.format({ async = true }) end)
--- map('n', '<F4>', vim.lsp.buf.code_action)
---
--- -- Put near your LSP on_attach
--- local excluded_filetypes = { php = true }
---
--- -- Auto-format on save (only if server can't do WillSaveWaitUntil)
--- if not client:supports_method('textDocument/willSaveWaitUntil')
--- and client:supports_method('textDocument/formatting')
--- and not excluded_filetypes[vim.bo[buf].filetype]
--- then
--- vim.api.nvim_create_autocmd('BufWritePre', {
--- group = vim.api.nvim_create_augroup('my.lsp.format', { clear = false }),
--- buffer = buf,
--- callback = function()
--- vim.lsp.buf.format({ bufnr = buf, id = client.id, timeout_ms = 1000 })
--- end,
--- })
--- end
--- end,
--- })
-
--- 5) Define the Lua language server config (no mason/lspconfig)
--- See :help lsp-new-config and :help vim.lsp.config()
--- local caps = require('blink.cmp').get_lsp_capabilities()
--- vim.lsp.config['luals'] = {
--- cmd = { 'lua-language-server' },
--- filetypes = { 'lua' },
--- root_markers = { { '.luarc.json', '.luarc.jsonc' }, '.git' },
--- capabilities = caps,
--- settings = {
--- Lua = {
--- runtime = { version = 'LuaJIT' },
--- diagnostics = { globals = { 'vim' } },
--- workspace = {
--- checkThirdParty = false,
--- library = vim.api.nvim_get_runtime_file('', true),
--- },
--- telemetry = { enable = false },
--- },
--- },
--- }
---
--- vim.lsp.enable('luals')
 
 -- Filetype configurations
 
