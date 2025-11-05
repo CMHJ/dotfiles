@@ -172,7 +172,7 @@ local general_keymaps = {
   { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
 
   -- Terminal binds --
-  { "<leader><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
+  { "<C-c><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
   { "<leader>b", "<cmd>make<CR>" },
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
