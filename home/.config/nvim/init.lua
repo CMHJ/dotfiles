@@ -102,6 +102,9 @@ end
 -- Keybinds --
 
 local general_keymaps = {
+  -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
+  { "<C-c>", "<Esc>", mode = "i" },
+
   { "<leader>q", "<cmd>qa<CR>", desc = "Quit all buffers." },
   { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
@@ -115,6 +118,11 @@ local general_keymaps = {
   -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
   -- clist - to temporarily show the quickfix list
   -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
+
+  -- diagnostics
+  { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
+  { "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
+  { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
 
   -- Keep screen centred when moving around
   { "<C-d>", "<C-d>zz", desc = "" },
@@ -181,9 +189,6 @@ local general_keymaps = {
   -- Move highlighted text up or down with Shift-j/k
   { "J", ":m '>+1<CR>gv=gv", mode = "v" },
   { "K", ":m '<-2<CR>gv=gv", mode = "v" },
-
-  -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
-  { "<C-c>", "<Esc>", mode = "i" },
 
   -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
   -- e.g. Ctrl-Backspace deletes word backwards
@@ -255,20 +260,17 @@ local plugin_keymaps = {
 }
 
 local lsp_keymaps = {
-  -- diagnostics
-  -- TODO: Fix this
-  -- • *vim.diagnostic.goto_next()* Use |vim.diagnostic.jump()| with `{count=1, float=true}` instead.
-  -- • *vim.diagnostic.goto_prev()* Use |vim.diagnostic.jump()| with `{count=-1, float=true}` instead.
-  { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
-  { "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to previous error" },
-  { "<leader>do", vim.diagnostic.open_float, desc = "Open floating diagnostic message" },
-
-  -- lsp
+  { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
+  { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
+  { '<F2>', vim.lsp.buf.rename, desc = "Rename with windows style binding"},
   { "gd", vim.lsp.buf.definition, desc = "Goto Definition" },
   { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
   { "ga", vim.lsp.buf.code_action, desc = "Goto Action" },
-  { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
-  { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
+  { 'gi', vim.lsp.buf.implementation, desc = "Goto Implementation" },
+  { 'go', vim.lsp.buf.type_definition, },
+  { 'gr', vim.lsp.buf.references, },
+  { 'gs', vim.lsp.buf.signature_help, },
+  { '<leader>f',  function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
 }
 
 -- Key bindings helper
@@ -494,6 +496,7 @@ require("lazy").setup({
         vim.diagnostic.config({ virtual_text = true, }) -- Enable inline diagnostics
 
         local function on_attach(_, bufnr)
+          set_keymaps(lsp_keymaps, bufnr)
         end
 
         local capabilities = vim.tbl_deep_extend(
