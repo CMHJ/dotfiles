@@ -88,6 +88,7 @@ local function terminal_toggle(args)
       vim.cmd.terminal()
       vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be race conditions.
       vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
+      vim.cmd("wincmd k")
     end
   elseif show then
     -- Do nothing as window is already open.
