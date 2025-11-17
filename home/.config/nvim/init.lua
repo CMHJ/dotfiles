@@ -264,8 +264,9 @@ local lsp_keymaps = {
   { 'go', vim.lsp.buf.type_definition, },
   { 'gr', vim.lsp.buf.references, },
   { 'gs', vim.lsp.buf.signature_help, },
-  { '<leader>f',  function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
+  { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
 }
+
 
 -- Key bindings helper
 local function set_keymaps(keymaps, buffer)
@@ -278,12 +279,13 @@ end
 
 set_keymaps(general_keymaps)
 set_keymaps(plugin_keymaps)
+vim.api.nvim_create_autocmd("LspAttach", { callback = function(event) set_keymaps(lsp_keymaps, event.buf) end })
 
 -- LSP Server Configuration --
 
 local lsp_servers = {
   lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
-  clangd = { init_options = { fallbackFlags = { '--std=c99' } } },
+  clangd = {},
   rust_analyzer = {
     settings = {
       cargo = { features = "all" },
@@ -476,14 +478,9 @@ require("lazy").setup({
           }
         })
 
-        local function on_attach(_, bufnr)
-          set_keymaps(lsp_keymaps, bufnr)
-        end
-
         local capabilities = vim.tbl_deep_extend( "force", {}, vim.lsp.protocol.make_client_capabilities(), require("cmp_nvim_lsp").default_capabilities())
 
         for server, config in pairs(opts.servers) do
-          config.on_attach = on_attach
           config.capabilities = capabilities
           vim.lsp.config[server] = config
         end
