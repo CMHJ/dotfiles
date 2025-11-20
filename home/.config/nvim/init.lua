@@ -83,17 +83,25 @@ local function terminal_toggle(args)
   local show = args.show or false
 
   if vim.api.nvim_win_is_valid(floating_win.win) == false then
-    floating_win = create_floating_win { buf = floating_win.buf }
+    floating_win = create_floating_win({ buf = floating_win.buf })
     if vim.bo[floating_win.buf].buftype ~= "terminal" then
       vim.cmd.terminal()
       vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be race conditions.
       vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
-      vim.cmd("wincmd k")
+      vim.cmd("wincmd k") -- Move back into window above.
     end
   elseif show then
     -- Do nothing as window is already open.
   else
-    vim.api.nvim_win_hide(floating_win.win)
+    -- Handle case where terminal was closed but window wasn't and user attempts to open another one.
+    local buf = vim.api.nvim_win_get_buf(floating_win.win)
+    if vim.bo[buf].buftype ~= "terminal" then
+      floating_win = { buf = -1, win = -1 } -- Reset state as it is wrong.
+      terminal_toggle()
+    else
+      -- Otherwise hide terminal window normally.
+      vim.api.nvim_win_hide(floating_win.win)
+    end
   end
 end
 
