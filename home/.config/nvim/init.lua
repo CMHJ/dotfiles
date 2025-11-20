@@ -41,6 +41,7 @@ opt.smartcase = true
 opt.hlsearch = false
 opt.incsearch = true
 opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker
+opt.autoread = true
 opt.swapfile = false -- Remove annoying backup and swap defaults
 opt.backup = false
 opt.undofile = true
