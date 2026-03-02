@@ -56,6 +56,12 @@ opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for li
 
 vim.o.winborder = "rounded"
 
+-- Set neovide settings
+vim.o.guifont = "FantasqueSansM Nerd Font Mono:h10"
+vim.g.neovide_opacity = 0.9
+vim.g.neovide_normal_opacity = 0.9
+vim.g.neovide_cursor_trail_size = 0.0
+
 -- Custom Functions --
 
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
@@ -337,7 +343,6 @@ require("lazy").setup({
       -- "folke/tokyonight.nvim",
       "Mofiqul/dracula.nvim",
       config = function(opts)
-        vim.cmd.colorscheme(opts.name:match("[^.]+")) -- Automatically set theme based on plugin name.
         -- Enable transparency
         vim.cmd('hi Directory guibg=NONE')
         vim.cmd('hi SignColumn guibg=NONE')
@@ -345,6 +350,8 @@ require("lazy").setup({
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
         vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
+
+        vim.cmd.colorscheme(opts.name:match("[^.]+")) -- Automatically set theme based on plugin name.
       end
     },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
