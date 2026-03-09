@@ -11,6 +11,8 @@
 
 -- Set global variables --
 
+local theme = "default"
+
 local g = vim.g
 g.mapleader = " " -- Set leader to spacebar
 g.maplocalleader = "\\"
@@ -288,7 +290,6 @@ local lsp_keymaps = {
   { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
 }
 
-
 -- Key bindings helper
 local function set_keymaps(keymaps, buffer)
   for _, keymap in ipairs(keymaps) do
@@ -349,6 +350,9 @@ require("lazy").setup({
       -- "folke/tokyonight.nvim",
       "Mofiqul/dracula.nvim",
       config = function(opts)
+        theme = opts.name:match("[^.]+")
+        vim.cmd.colorscheme(theme) -- Automatically set theme based on plugin name.
+
         -- Enable transparency
         vim.cmd('hi Directory guibg=NONE')
         vim.cmd('hi SignColumn guibg=NONE')
@@ -356,8 +360,6 @@ require("lazy").setup({
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
         vim.api.nvim_set_hl(0, "TelescopeNormal", { bg = "none" })
-
-        vim.cmd.colorscheme(opts.name:match("[^.]+")) -- Automatically set theme based on plugin name.
       end
     },
     { "nvim-lualine/lualine.nvim", dependencies = { "nvim-tree/nvim-web-devicons", }, opts = { theme = "dracula" }, },
@@ -557,4 +559,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     vim.fn.setpos(".", save_cursor)
   end,
 })
+
+if vim.g.neovide then vim.cmd.colorscheme(theme) end -- Fix issue with neovide not setting colours correctly.
 
