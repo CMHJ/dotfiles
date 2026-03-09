@@ -147,12 +147,11 @@ local general_keymaps = {
   { "*", "*zz", desc = "Search word under cursor and center." },
   { "#", "#zz", desc = "Search word under cursor backwards and center." },
 
-  -- TODO: Bind these to the arrow keys
   -- Resize current window using -/_ and =/+ keys
-  { "+", [[<cmd>horizontal resize +2<cr>]], desc = "" },
-  { "_", [[<cmd>horizontal resize -2<cr>]], desc = "" },
-  -- { "+", [[<cmd>horizontal resize +5<cr>]], desc = "" },
-  -- { "_", [[<cmd>vertical resize -5<cr>]], desc = "" },
+  { "<Up", [[<cmd>horizontal resize -2<cr>]], desc = "" },
+  { "<Down>", [[<cmd>horizontal resize +2<cr>]], desc = "" },
+  { "<Left>", [[<cmd>vertical resize -5<cr>]], desc = "" },
+  { "<Right>", [[<cmd>vertical resize +5<cr>]], desc = "" },
   -- TODO: Add fullscreen toggle
 
   {
@@ -174,12 +173,18 @@ local general_keymaps = {
   { "<leader>p", [["_dP]], mode = "x", desc = "Send highlighted text to null register and paste from default register." },
   { "<leader>d", [["_d]], mode = { "n", "v" }, desc = "Set null register." },
 
-  { "<leader><leader>x", ":source %<CR>", desc = "Source current file." },
+  { "<leader><leader>x", "<cmd>source %<cr>", desc = "Source current file." },
 
   { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
+  { "<leader>db",
+    function()
+      vim.cmd("!gf2 " .. run_command)
+    end,
+    desc = "Run gf2 debugger"
+  },
 
   -- Terminal binds
-  { "<C-c><C-c>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
+  { "<C-o>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
   { "<leader>b", "<cmd>make<CR>" },
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
@@ -205,12 +210,13 @@ local general_keymaps = {
   -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds." },
   { "<C-Del>", "<C-o>de", mode = "i" },
 
-  { "<C-l>", "<Right>", mode = "i", desc = "Move right while in Insert mode." },
   { "<C-h>", "<Left>", mode = "i", desc = "Move left while in Insert mode." },
+  { "<C-l>", "<Right>", mode = "i", desc = "Move right while in Insert mode." },
+  { "<C-k>", "<Up>", mode = "i", desc = "Move up while in Insert mode." },
+  { "<C-j>", "<Down>", mode = "i", desc = "Move down while in Insert mode." },
 
-  { "<C-l>", "<Right>", mode = "c", desc = "Move right while in Command line mode." },
   { "<C-h>", "<Left>", mode = "c", desc = "Move left while in Command line mode." },
-
+  { "<C-l>", "<Right>", mode = "c", desc = "Move right while in Command line mode." },
   { "<C-k>", "<Up>", mode = "c", desc = "Select previous in command history." },
   { "<C-j>", "<Down>", mode = "c", desc = "Select next in command history." },
 }
