@@ -60,9 +60,11 @@ vim.o.winborder = "rounded"
 
 -- Set neovide settings
 vim.o.guifont = "FantasqueSansM Nerd Font Mono:h10"
+vim.g.neovide_remember_window_size = true
 vim.g.neovide_opacity = 0.9
 vim.g.neovide_normal_opacity = 0.9
-vim.g.neovide_cursor_trail_size = 0.0
+vim.g.neovide_cursor_animation_length = 0.02
+vim.g.neovide_cursor_trail_size = 0.05
 
 -- Custom Functions --
 
