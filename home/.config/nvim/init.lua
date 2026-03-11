@@ -182,7 +182,7 @@ local general_keymaps = {
   { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
   { "<leader>db",
     function()
-      vim.cmd("!gf2 " .. run_command)
+      vim.cmd("silent !gf2 " .. run_command .. " &")
     end,
     desc = "Run gf2 debugger"
   },
