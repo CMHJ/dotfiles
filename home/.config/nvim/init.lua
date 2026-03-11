@@ -58,14 +58,6 @@ opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for li
 
 vim.o.winborder = "rounded"
 
--- Set neovide settings
-vim.o.guifont = "FantasqueSansM Nerd Font Mono:h10"
-vim.g.neovide_remember_window_size = true
-vim.g.neovide_opacity = 0.9
-vim.g.neovide_normal_opacity = 0.9
-vim.g.neovide_cursor_animation_length = 0.02
-vim.g.neovide_cursor_trail_size = 0.05
-
 -- Custom Functions --
 
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
@@ -122,7 +114,7 @@ local general_keymaps = {
   -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
   { "<C-c>", "<Esc>", mode = "i" },
 
-  { "<leader>q", "<cmd>qa<CR>", desc = "Quit all buffers." },
+  { "<leader>q", "<cmd>wa<CR><cmd>qa<CR>", desc = "Save and quit all buffers." },
   { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
@@ -172,10 +164,10 @@ local general_keymaps = {
 
   -- Yank and Delete into the system clipboard
   { "<leader>y", [["+y]], mode = { "n", "v" }, desc = "" },
-  --vim.keymap.set("n", "<leader>Y", [["+Y]])
-
-  { "<leader>p", [["_dP]], mode = "x", desc = "Send highlighted text to null register and paste from default register." },
   { "<leader>d", [["_d]], mode = { "n", "v" }, desc = "Set null register." },
+  { "<leader>p", [["_dP]], mode = "x", desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." },
+  { "<C-v>", [[<C-o>p]], mode = "i", desc = "Paste from system clipboard in insert mode." },
+  { "<C-v>", [[<C-r>"]], mode = "c", desc = "Paste from system clipboard in console mode." },
 
   { "<leader><leader>x", "<cmd>source %<cr>", desc = "Source current file." },
 
@@ -562,5 +554,13 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
-if vim.g.neovide then vim.cmd.colorscheme(theme) end -- Fix issue with neovide not setting colours correctly.
+if vim.g.neovide then
+  vim.g.neovide_remember_window_size = true
+  vim.g.neovide_opacity = 0.9
+  vim.g.neovide_normal_opacity = 0.9
+  vim.g.neovide_cursor_animation_length = 0.02
+  vim.g.neovide_cursor_trail_size = 0.05
+
+  vim.cmd.colorscheme(theme) -- Fix issue with neovide not setting colours correctly.
+end
 
