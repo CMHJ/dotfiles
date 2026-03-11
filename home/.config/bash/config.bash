@@ -46,6 +46,7 @@ fi
 
 # Custom Aliases
 #unalias -a
+alias ll='ls -lAh --group-directories-first'
 alias c='clear'
 alias p='paru'
 alias auu='sudo apt update && sudo apt upgrade -y'
