@@ -8,6 +8,7 @@
 -- remove the lazy and priority stuff that doesn't do anything.
 -- Setup telescope with harpoon for consistent windows.
 -- Do lazy clean to remove unused plugins
+-- Revert list of keybinds
 
 -- Set global variables --
 
@@ -55,18 +56,26 @@ opt.smartindent = true
 opt.timeout = true -- Timeout
 opt.timeoutlen = 250 -- ms
 opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths.
-vim.opt.formatoptions:remove({ "r", "o" }) -- Disable newline comments.
 
 vim.o.winborder = "rounded"
+
+-- Disable comment continuation on newline.
+vim.api.nvim_create_autocmd("FileType", { pattern = "*", callback = function() vim.opt_local.formatoptions:remove({ 'r', 'o' }) end })
+
+-- Automatically jump to last position in file and unfold lines when opened again.
+vim.api.nvim_create_autocmd("BufReadPost", { pattern = "*", command = 'silent! normal! g`"zv' })
 
 -- Custom Functions --
 
 -- If the first argument is a directory, cd to that directory
-local function is_dir(path) local stat = vim.loop.fs_stat(path) return (stat ~= nil) and stat.type == "directory" end
+local function is_dir(path) local stat = (vim.uv or vim.loop).fs_stat(path) return (stat ~= nil) and stat.type == "directory" end
 if vim.fn.argc() > 0 and is_dir(vim.fn.argv(0)) then vim.cmd.cd(vim.fn.argv(0)) end
 
--- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
-local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
+-- Set default run command to build.sh or "build/<dir>", assumes that output binary is same name as directory.
+-- TODO(CMHJ): Revert this, this is a run command not a build command.
+local run_command = nil
+if vim.fn.executable("./build.sh") == 1 then print("Hello there") run_command = "./build.sh" else run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd()) end
+
 local floating_win = { buf = -1, win = -1 }
 
 local function create_floating_win(opts)
@@ -113,6 +122,12 @@ local function terminal_toggle(args)
   end
 end
 
+local function get_first_term_buf_id()
+end
+
+local function get_first_term_job_id()
+end
+
 -- Keybinds --
 
 local general_keymaps = {
@@ -121,17 +136,6 @@ local general_keymaps = {
 
   { "<leader>w", "<CMD>wa<CR>", desc = "Save all buffers." },
   { "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", desc = "Save and quit all buffers." },
-  { "<leader>q",
-    function()
-      local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
-      if quickfix_list_open then
-        vim.cmd("cclose")
-      else
-        vim.cmd("copen")
-      end
-    end,
-    desc = "Toggle Quickfix list."
-  },
   { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
@@ -139,6 +143,13 @@ local general_keymaps = {
   -- { "<leader>pv", vim.cmd.Lexplore, mode = "n", desc = "Open small file explorer to the side." },
 
   -- Quickfix list bindings --
+  { "<leader>q",
+    function()
+      local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
+      if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
+    end,
+    desc = "Toggle Quickfix list."
+  },
   { "]q", "<CMD>cnext<CR>", desc = "" },
   { "[q", "<CMD>cprev<CR>", desc = "" },
   -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
@@ -181,8 +192,8 @@ local general_keymaps = {
     desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load."
   },
 
-  { "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/g<Left><Left>]], desc = "Find and replace current word under cursor." },
-  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/g<Left><Left>]], mode = "x", desc = "Find and replace currently highlighted text." },
+  { "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left>]], desc = "Find and replace current word under cursor." },
+  { "<leader>s", [[y:%s/<C-r>"/<C-r>"/gc<Left><Left>]], mode = "x", desc = "Find and replace currently highlighted text." },
 
   -- Yank and Delete into the system clipboard
   { "<leader>y", [["+y]], mode = { "n", "v" }, desc = "" },
@@ -208,6 +219,7 @@ local general_keymaps = {
       vim.fn.chansend(term_job_id, run_command .. "\r\n")
     end
   },
+  -- { "<leader>t", terminal_toggle, desc = "Toggle terminal." },
   { "<leader>t",
     function()
       -- Search for existing term buffer and show it.
@@ -236,7 +248,7 @@ local general_keymaps = {
 
   -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
   -- e.g. Ctrl-Backspace deletes word backwards and Ctrl-Delete deletes word forwards.
-  -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds." },
+  -- { "<C-h>", "<C-w>", mode = "i", desc = "Disable in favour of movement binds as <C-w> can just be used." },
   { "<C-Del>", "<C-o>de", mode = "i" },
 
   { "<C-h>", "<Left>", mode = "i", desc = "Move left while in Insert mode." },
@@ -587,6 +599,7 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
+-- Neovide configuration --
 if vim.g.neovide then
   vim.g.neovide_remember_window_size = true
   vim.g.neovide_opacity = 0.9
@@ -594,6 +607,6 @@ if vim.g.neovide then
   vim.g.neovide_cursor_animation_length = 0.02
   vim.g.neovide_cursor_trail_size = 0.05
 
-  vim.cmd.colorscheme(theme) -- Fix issue with neovide not setting colours correctly.
+  vim.cmd.colorscheme(theme) -- Fix issue with neovide not setting colours correctly the first time.
 end
 
