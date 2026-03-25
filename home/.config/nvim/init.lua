@@ -14,13 +14,13 @@
 local theme = "default"
 
 local g = vim.g
-g.mapleader = " " -- Set leader to spacebar
+g.mapleader = " " -- Set leader to spacebar.
 g.maplocalleader = "\\"
 
 -- netrw file explorer configuration
 g.netrw_banner = 0
 g.netrw_browse_split = 0
-g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size
+g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size.
 g.netrw_liststyle = 1 -- ls -l style view
 -- g.netrw_liststyle = 3 -- tree view
 g.netrw_sizestyle = "h" -- human readable file size
@@ -29,7 +29,7 @@ g.netrw_sizestyle = "h" -- human readable file size
 
 local opt = vim.opt
 opt.winborder = "rounded"
-opt.clipboard = "unnamedplus" -- Use system clipboard for everything
+opt.clipboard = "unnamedplus" -- Use system clipboard for everything.
 opt.termguicolors = true
 opt.splitright = true
 opt.splitbelow = true
@@ -42,23 +42,28 @@ opt.ignorecase = true
 opt.smartcase = true
 opt.hlsearch = false
 opt.incsearch = true
-opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker
+opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker.
 opt.autoread = true
-opt.swapfile = false -- Remove annoying backup and swap defaults
+opt.swapfile = false -- Remove annoying backup and swap defaults.
 opt.backup = false
 opt.undofile = true
-opt.tabstop = 4 -- Default indentation
+opt.tabstop = 4 -- Default indentation.
 opt.softtabstop = 4
 opt.shiftwidth = 4
 opt.expandtab = true
 opt.smartindent = true
 opt.timeout = true -- Timeout
 opt.timeoutlen = 250 -- ms
-opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths
+opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths.
+vim.opt.formatoptions:remove({ "r", "o" }) -- Disable newline comments.
 
 vim.o.winborder = "rounded"
 
 -- Custom Functions --
+
+-- If the first argument is a directory, cd to that directory
+local function is_dir(path) local stat = vim.loop.fs_stat(path) return (stat ~= nil) and stat.type == "directory" end
+if vim.fn.argc() > 0 and is_dir(vim.fn.argv(0)) then vim.cmd.cd(vim.fn.argv(0)) end
 
 -- Set default run command to "build/<dir>", assumes that output binary is same name as directory.
 local run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd())
@@ -114,7 +119,19 @@ local general_keymaps = {
   -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
   { "<C-c>", "<Esc>", mode = "i" },
 
-  { "<leader>q", "<cmd>wa<CR><cmd>qa<CR>", desc = "Save and quit all buffers." },
+  { "<leader>w", "<CMD>wa<CR>", desc = "Save all buffers." },
+  { "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", desc = "Save and quit all buffers." },
+  { "<leader>q",
+    function()
+      local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
+      if quickfix_list_open then
+        vim.cmd("cclose")
+      else
+        vim.cmd("copen")
+      end
+    end,
+    desc = "Toggle Quickfix list."
+  },
   { "Q", "<nop>", desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." },
 
   -- netrw file explorer binds --
@@ -122,11 +139,11 @@ local general_keymaps = {
   -- { "<leader>pv", vim.cmd.Lexplore, mode = "n", desc = "Open small file explorer to the side." },
 
   -- Quickfix list bindings --
-  { "]q", "<cmd>cnext<CR>", desc = "" },
-  { "[q", "<cmd>cprev<CR>", desc = "" },
+  { "]q", "<CMD>cnext<CR>", desc = "" },
+  { "[q", "<CMD>cprev<CR>", desc = "" },
   -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
   -- clist - to temporarily show the quickfix list
-  -- cdo <cmd> - apply command to all items in the quickfix list like a sub cmd
+  -- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
 
   -- Diagnostics
   { "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, desc = "Go to next error" },
@@ -143,11 +160,16 @@ local general_keymaps = {
   { "*", "*zz", desc = "Search word under cursor and center." },
   { "#", "#zz", desc = "Search word under cursor backwards and center." },
 
+  { "]b", "<CMD>bnext<CR>", mode = "n", desc = "Split horizontally." },
+  { "[b", "<CMD>bprev<CR>", mode = "n", desc = "Split vertically." },
+  { "<leader>g", "<CMD>split<CR>", mode = "n", desc = "Split horizontally." },
+  { "<leader>v", "<CMD>vsplit<CR>", mode = "n", desc = "Split vertically." },
+
   -- Resize current window using -/_ and =/+ keys
-  { "<Up", [[<cmd>horizontal resize -2<cr>]], desc = "" },
-  { "<Down>", [[<cmd>horizontal resize +2<cr>]], desc = "" },
-  { "<Left>", [[<cmd>vertical resize -5<cr>]], desc = "" },
-  { "<Right>", [[<cmd>vertical resize +5<cr>]], desc = "" },
+  { "<Up>", [[<CMD>horizontal resize -2<CR>]], desc = "" },
+  { "<Down>", [[<CMD>horizontal resize +2<CR>]], desc = "" },
+  { "<Left>", [[<CMD>vertical resize -5<CR>]], desc = "" },
+  { "<Right>", [[<CMD>vertical resize +5<CR>]], desc = "" },
   -- TODO: Add fullscreen toggle
 
   {
@@ -164,25 +186,20 @@ local general_keymaps = {
 
   -- Yank and Delete into the system clipboard
   { "<leader>y", [["+y]], mode = { "n", "v" }, desc = "" },
+  { "<leader>p", [["+p]], mode = { "n", "v" }, desc = "" },
   { "<leader>d", [["_d]], mode = { "n", "v" }, desc = "Set null register." },
   { "<leader>p", [["_dP]], mode = "x", desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." },
-  { "<C-v>", [[<C-o>p]], mode = "i", desc = "Paste from system clipboard in insert mode." },
-  { "<C-v>", [[<C-r>"]], mode = "c", desc = "Paste from system clipboard in console mode." },
+  { "<C-v>", [[<C-r>+]], mode = { "i", "c" }, desc = "Paste from system clipboard." },
 
-  { "<leader><leader>x", "<cmd>source %<cr>", desc = "Source current file." },
+  { "<leader><leader>x", "<CMD>source %<CR>", desc = "Source current file." },
 
-  { "<leader>lg", "<cmd>LazyGit<cr>", desc = "LazyGit" },
-  { "<leader>db",
-    function()
-      vim.cmd("silent !gf2 " .. run_command .. " &")
-    end,
-    desc = "Run gf2 debugger"
-  },
+  { "<leader>lg", "<CMD>LazyGit<CR>", desc = "LazyGit" },
+  { "<leader>db", function() vim.cmd("silent !gf2 " .. run_command .. " &") end, desc = "Run gf2 debugger" },
 
   -- Terminal binds
   { "<C-o>", "<C-\\><C-n>", mode = "t", desc = "Escape terminal mode." },
   { "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end },
-  { "<leader>b", "<cmd>make<CR>" },
+  { "<leader>b", "<CMD>make!<CR>" }, -- ! prevents auto jumping to first issue in makeprg output.
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
   { "<leader>r",
     function()
@@ -191,7 +208,23 @@ local general_keymaps = {
       vim.fn.chansend(term_job_id, run_command .. "\r\n")
     end
   },
-  { "<leader>t", terminal_toggle, desc = "Toggle terminal." },
+  { "<leader>t",
+    function()
+      -- Search for existing term buffer and show it.
+      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
+          if vim.bo[buf].buftype == "terminal" then
+            local win = vim.api.nvim_get_current_win()
+            vim.api.nvim_win_set_buf(win, buf)
+            return
+          end
+        end
+      end
+      -- If terminal buffer doesn't exist create one.
+      vim.cmd("term")
+    end,
+    desc = "Go to Terminal."
+  },
 
   -- Run line or highlighted section in lua
   { "<leader>x", ":.lua<CR>" },
@@ -301,7 +334,7 @@ vim.api.nvim_create_autocmd("LspAttach", { callback = function(event) set_keymap
 
 local lsp_servers = {
   lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
-  clangd = {},
+  clangd = { cmd = { "clangd", "--header-insertion=never"}},
   rust_analyzer = {
     settings = {
       cargo = { features = "all" },
