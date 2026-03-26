@@ -196,71 +196,64 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
 --vim.keymap.set("i", "<C-h>", "<C-w>", { desc = "Delete work backwards in insert mode. Disable in favour of movement binds as <C-w> can just be used." },
-vim.keymap.set("i", "<C-Del>", "<C-o>de", { desc = "Delete word forwards in insert mode." });
+vim.keymap.set("i", "<C-Del>", "<C-o>de", { desc = "Delete word forwards in insert mode." })
 
-vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move left while in Insert mode." });
-vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right while in Insert mode." });
-vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move up while in Insert mode." });
-vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move down while in Insert mode." });
+vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move left while in Insert mode." })
+vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right while in Insert mode." })
+vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move up while in Insert mode." })
+vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move down while in Insert mode." })
 
-vim.keymap.set("c", "<C-h>", "<Left>", { desc = "Move left while in Command line mode." });
-vim.keymap.set("c", "<C-l>", "<Right>", { desc = "Move right while in Command line mode." });
-vim.keymap.set("c", "<C-k>", "<Up>", { desc = "Select previous in command history." });
-vim.keymap.set("c", "<C-j>", "<Down>", { desc = "Select next in command history." });
+vim.keymap.set("c", "<C-h>", "<Left>", { desc = "Move left while in Command line mode." })
+vim.keymap.set("c", "<C-l>", "<Right>", { desc = "Move right while in Command line mode." })
+vim.keymap.set("c", "<C-k>", "<Up>", { desc = "Select previous in command history." })
+vim.keymap.set("c", "<C-j>", "<Down>", { desc = "Select next in command history." })
 
-local plugin_keymaps = {
-  -- Telescope bindings
-  { "<leader>sf", function() require("telescope.builtin").find_files() end, desc = "[S]earch [F]iles" },
-  { "<leader>sg", function() require("telescope.builtin").live_grep() end, desc = "[S]earch by [G]rep" },
-  { "<leader>sh", function() require("telescope.builtin").help_tags() end, desc = "[S]earch [H]elp" },
-  { "<leader>sw", function() require("telescope.builtin").grep_string() end, desc = "[S]earch Current [W]ord" },
-  { "<leader>sk", function() require("telescope.builtin").keymaps() end, desc = "[S]earch [K]eymaps" },
-  { "<leader>st", function() require("telescope.builtin").builtin() end, desc = "[S]earch [T]elescope builtin functions" },
-  { "<leader>sd", function() require("telescope.builtin").diagnostics() end, desc = "[S]earch [D]iagnostics" },
-  { "<leader>sr", function() require("telescope.builtin").resume() end, desc = "[S]earch [R]esume" },
-  { "<leader>sb", function() require("telescope.builtin").buffers() end, desc = "[S]earch [B]uffers" },
-  { "<leader>s.", function() require("telescope.builtin").oldfiles() end, desc = "[S]earch Recent Files ('.' for repeat)" },
-  { "<leader>su", function() require("telescope.builtin").undo() end, desc = "[S]earch [U]ndo" },
-  {
-    "<leader>/",
-    function()
-      require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
-        winblend = 10,
-        previewer = false,
-      })
-    end,
-    desc = "[/] Fuzzily search in current buffer"
-  },
-  {
-    "<leader>sn",
-    function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
-    desc = "[S]earch [N]eovim config"
-  },
-  {
-    "<leader>sm",
-    function()
-      -- For some reason only the first section is searched by default.
-      require("telescope.builtin").man_pages { sections = { "ALL" } }
-    end,
-    desc = "[S]earch [M]an Pages"
-  },
+-- Telescope bindings
+vim.keymap.set("n", "<leader>sf", function() require("telescope.builtin").find_files() end, { desc = "[S]earch [F]iles" })
+vim.keymap.set("n", "<leader>sg", function() require("telescope.builtin").live_grep() end, { desc = "[S]earch by [G]rep" })
+vim.keymap.set("n", "<leader>sh", function() require("telescope.builtin").help_tags() end, { desc = "[S]earch [H]elp" })
+vim.keymap.set("n", "<leader>sw", function() require("telescope.builtin").grep_string() end, { desc = "[S]earch Current [W]ord" })
+vim.keymap.set("n", "<leader>sk", function() require("telescope.builtin").keymaps() end, { desc = "[S]earch [K]eymaps" })
+vim.keymap.set("n", "<leader>st", function() require("telescope.builtin").builtin() end, { desc = "[S]earch [T]elescope builtin functions" })
+vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics() end, { desc = "[S]earch [D]iagnostics" })
+vim.keymap.set("n", "<leader>sr", function() require("telescope.builtin").resume() end, { desc = "[S]earch [R]esume" })
+vim.keymap.set("n", "<leader>sb", function() require("telescope.builtin").buffers() end, { desc = "[S]earch [B]uffers" })
+vim.keymap.set("n", "<leader>s.", function() require("telescope.builtin").oldfiles() end, { desc = "[S]earch Recent Files ('.' for repeat)" })
+vim.keymap.set("n", "<leader>su", function() require("telescope.builtin").undo() end, { desc = "[S]earch [U]ndo" })
+vim.keymap.set("n", "<leader>/",
+  function()
+    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
+      winblend = 10,
+      previewer = false,
+    })
+  end,
+  { desc = "[/] Fuzzily search in current buffer" })
+vim.keymap.set("n", "<leader>sn",
+  function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
+  { desc = "[S]earch [N]eovim config" })
+vim.keymap.set("n", "<leader>sm",
+  function()
+    -- For some reason only the first section is searched by default.
+    require("telescope.builtin").man_pages { sections = { "ALL" } }
+  end,
+  { desc = "[S]earch [M]an Pages" })
 
-  -- Harpoon binds
-  { "<leader>a", function() require("harpoon"):list():add() end, desc = "" },
-  { "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, desc = "" },
-  { "<C-c>", function() require("harpoon").ui:close_menu() end, desc = "" },
-  { "<C-p>", function() require("harpoon"):list():prev() end, desc = "Toggle previous & next buffers stored within Harpoon list" },
-  { "<C-n>", function() require("harpoon"):list():next() end, desc = "" },
-  { "<C-h>", function() require("harpoon"):list():select(1) end, desc = "" },
-  { "<C-j>", function() require("harpoon"):list():select(2) end, desc = "" },
-  { "<C-k>", function() require("harpoon"):list():select(3) end, desc = "" },
-  { "<C-l>", function() require("harpoon"):list():select(4) end, desc = "" },
-  { "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, desc = "" },
-  { "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, desc = "" },
-  { "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, desc = "" },
-  { "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, desc = "" },
-}
+-- Harpoon binds
+vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end, { desc = "" })
+vim.keymap.set("n", "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, { desc = "" })
+vim.keymap.set("n", "<C-c>", function() require("harpoon").ui:close_menu() end, { desc = "" })
+vim.keymap.set("n", "<C-p>", function() require("harpoon"):list():prev() end, { desc = "Toggle previous & next buffers stored within Harpoon list" })
+vim.keymap.set("n", "<C-n>", function() require("harpoon"):list():next() end, { desc = "" })
+vim.keymap.set("n", "<C-h>", function() require("harpoon"):list():select(1) end, { desc = "" })
+vim.keymap.set("n", "<C-j>", function() require("harpoon"):list():select(2) end, { desc = "" })
+vim.keymap.set("n", "<C-k>", function() require("harpoon"):list():select(3) end, { desc = "" })
+vim.keymap.set("n", "<C-l>", function() require("harpoon"):list():select(4) end, { desc = "" })
+vim.keymap.set("n", "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, { desc = "" })
+vim.keymap.set("n", "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, { desc = "" })
+vim.keymap.set("n", "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, { desc = "" })
+vim.keymap.set("n", "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, { desc = "" })
 
+-- LSP Keybinds
 local lsp_keymaps = {
   { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
   { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
@@ -275,7 +268,6 @@ local lsp_keymaps = {
   { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
 }
 
--- Key bindings helper
 local function set_keymaps(keymaps, buffer)
   for _, keymap in ipairs(keymaps) do
     local mode = keymap.mode or 'n'
@@ -284,7 +276,7 @@ local function set_keymaps(keymaps, buffer)
   end
 end
 
-set_keymaps(plugin_keymaps)
+-- Keybinds have to be set after the LSP is initialised.
 vim.api.nvim_create_autocmd("LspAttach", { callback = function(event) set_keymaps(lsp_keymaps, event.buf) end })
 
 -- LSP Server Configuration --
