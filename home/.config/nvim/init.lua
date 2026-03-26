@@ -83,12 +83,6 @@ local function get_first_term_buf_id()
   return nil
 end
 
-local function get_first_term_job_id(buf_id)
-  local term_buf_id = buf_id or get_first_term_buf_id()
-  if term_buf_id then return vim.b[term_buf_id].terminal_job_id end
-  return nil
-end
-
 -- Keybinds --
 
 local general_keymaps = {
@@ -174,13 +168,14 @@ local general_keymaps = {
   { "<leader>r",
     function()
       -- Ensure terminal buffer exists.
-      if get_first_term_buf_id() == nil then
+      local term_buf = get_first_term_buf_id()
+      if term_buf == nil then
         vim.cmd.terminal()
         vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be a race condition when starting a terminal.
         vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
+        term_buf = vim.api.nvim_get_current_buf()
       end
-      local first_term_job = get_first_term_job_id()
-      if first_term_job then vim.fn.chansend(first_term_job, run_command .. "\r\n") end
+      vim.fn.chansend(vim.bo[term_buf].channel, run_command .. "\r\n")
     end
   },
   { "<leader>t",
