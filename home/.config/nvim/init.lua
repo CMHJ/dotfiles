@@ -71,60 +71,22 @@ if vim.fn.argc() > 0 and is_dir(vim.fn.argv(0)) then vim.cmd.cd(vim.fn.argv(0)) 
 
 -- Set default run command to run.sh or "build/<dir>", assumes that output binary is same name as directory.
 local run_command = nil
-if vim.fn.executable("./build.sh") == 1 then print("Hello there") run_command = "./build.sh" else run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd()) end
-
-local floating_win = { buf = -1, win = -1 }
-
-local function create_floating_win(opts)
-  opts = opts or { buf = -1 }
-
-  local height = opts.height or math.min(math.floor(vim.o.lines * 0.25), 15)
-
-  local buf = nil
-  if vim.api.nvim_buf_is_valid(opts.buf) then
-    buf = opts.buf
-  else
-    buf = vim.api.nvim_create_buf(false, true) -- No file, scratch buffer.
-  end
-
-  local win = vim.api.nvim_open_win(buf, true, { split = "below", height = height })
-
-  return { buf = buf, win = win }
-end
-
-local function terminal_toggle(args)
-  args = args or {}
-  local show = args.show or false
-
-  if vim.api.nvim_win_is_valid(floating_win.win) == false then
-    floating_win = create_floating_win({ buf = floating_win.buf })
-    if vim.bo[floating_win.buf].buftype ~= "terminal" then
-      vim.cmd.terminal()
-      vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be race conditions.
-      vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
-      vim.cmd("wincmd k") -- Move back into window above.
-    end
-  elseif show then
-    -- Do nothing as window is already open.
-  else
-    -- Handle case where terminal was closed but window wasn't and user attempts to open another one.
-    local buf = vim.api.nvim_win_get_buf(floating_win.win)
-    if vim.bo[buf].buftype ~= "terminal" then
-      floating_win = { buf = -1, win = -1 } -- Reset state as it is wrong.
-      terminal_toggle()
-    else
-      -- Otherwise hide terminal window normally.
-      vim.api.nvim_win_hide(floating_win.win)
-    end
-  end
-end
 if vim.fn.executable("./run.sh") == 1 then run_command = "./run.sh" else run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd()) end
 if vim.fn.executable("./build.sh") == 1 then vim.opt.makeprg = "./build.sh" end
 
 local function get_first_term_buf_id()
+  for _, buf in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(buf) and
+    vim.api.nvim_buf_is_loaded(buf) and
+    vim.bo[buf].buftype == "terminal" then return buf end
+  end
+  return nil
 end
 
-local function get_first_term_job_id()
+local function get_first_term_job_id(buf_id)
+  local term_buf_id = buf_id or get_first_term_buf_id()
+  if term_buf_id then return vim.b[term_buf_id].terminal_job_id end
+  return nil
 end
 
 -- Keybinds --
@@ -211,26 +173,25 @@ local general_keymaps = {
   { "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end },
   { "<leader>r",
     function()
-      terminal_toggle({ show = true })
-      local term_job_id = vim.b[floating_win.buf].terminal_job_id
-      vim.fn.chansend(term_job_id, run_command .. "\r\n")
+      -- Ensure terminal buffer exists.
+      if get_first_term_buf_id() == nil then
+        vim.cmd.terminal()
+        vim.cmd.sleep("50ms") -- Sleep a little bit before use, there appears to be a race condition when starting a terminal.
+        vim.cmd("normal! G") -- Move to the end of the terminal so that it scrolls with the output.
+      end
+      local first_term_job = get_first_term_job_id()
+      if first_term_job then vim.fn.chansend(first_term_job, run_command .. "\r\n") end
     end
   },
-  -- { "<leader>t", terminal_toggle, desc = "Toggle terminal." },
   { "<leader>t",
     function()
       -- Search for existing term buffer and show it.
-      for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-        if vim.api.nvim_buf_is_valid(buf) and vim.api.nvim_buf_is_loaded(buf) then
-          if vim.bo[buf].buftype == "terminal" then
-            local win = vim.api.nvim_get_current_win()
-            vim.api.nvim_win_set_buf(win, buf)
-            return
-          end
-        end
+      local term_buf = get_first_term_buf_id()
+      if term_buf then
+        vim.api.nvim_win_set_buf(vim.api.nvim_get_current_win(), term_buf)
+      else
+        vim.cmd.terminal() -- If terminal buffer doesn't exist create one.
       end
-      -- If terminal buffer doesn't exist create one.
-      vim.cmd("term")
     end,
     desc = "Go to Terminal."
   },
