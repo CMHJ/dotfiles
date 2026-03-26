@@ -89,13 +89,13 @@ end
 -- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
 vim.keymap.set("i", "<C-c>", "<Esc>")
 
-vim.keymap.set("n", "<leader>w", "<CMD>wa<CR>", { desc = "Save all buffers." });
-vim.keymap.set("n", "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", { desc = "Save and quit all buffers." });
-vim.keymap.set("n", "Q", "<nop>", { desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." });
+vim.keymap.set("n", "<leader>w", "<CMD>wa<CR>", { desc = "Save all buffers." })
+vim.keymap.set("n", "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", { desc = "Save and quit all buffers." })
+vim.keymap.set("n", "Q", "<nop>", { desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." })
 
 -- netrw file explorer binds --
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open netrw file explorer." });
---vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore, { desc = "Open small file explorer to the side." });
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open netrw file explorer." })
+--vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore, { desc = "Open small file explorer to the side." })
 
 -- Quickfix list bindings --
 vim.keymap.set("n", "<leader>q",
@@ -103,36 +103,36 @@ vim.keymap.set("n", "<leader>q",
     local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
     if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
   end,
-  { desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense." });
-vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "" });
-vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "" });
+  { desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense." })
+vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "" })
+vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "" })
 -- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
 
 -- Diagnostics
-vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error" });
-vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error" });
-vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" });
+vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error" })
+vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error" })
+vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
 
 -- Keep screen centred when moving around
-vim.keymap.set("n","<C-d>", "<C-d>zz", { desc = "" });
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "" });
-vim.keymap.set("n", "n", "nzzzv", { desc = "" });
-vim.keymap.set("n", "N", "Nzzzv", { desc = "" });
-vim.keymap.set("n", "<C-i>", "<C-i>zz", { desc = "Jump forward and center." });
-vim.keymap.set("n", "<C-o>", "<C-o>zz", { desc = "Jump back and center." });
-vim.keymap.set("n", "*", "*zz", { desc = "Search word under cursor and center." });
-vim.keymap.set("n", "#", "#zz", { desc = "Search word under cursor backwards and center." });
+vim.keymap.set("n","<C-d>", "<C-d>zz", { desc = "" })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "" })
+vim.keymap.set("n", "n", "nzzzv", { desc = "" })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "" })
+vim.keymap.set("n", "<C-i>", "<C-i>zz", { desc = "Jump forward and center." })
+vim.keymap.set("n", "<C-o>", "<C-o>zz", { desc = "Jump back and center." })
+vim.keymap.set("n", "*", "*zz", { desc = "Search word under cursor and center." })
+vim.keymap.set("n", "#", "#zz", { desc = "Search word under cursor backwards and center." })
 
-vim.keymap.set("n", "]b", "<CMD>bnext<CR>", { desc = "Split horizontally." });
-vim.keymap.set("n", "[b", "<CMD>bprev<CR>", { desc = "Split vertically." });
-vim.keymap.set("n", "<leader>g", "<CMD>split<CR>", { desc = "Split horizontally." });
-vim.keymap.set("n", "<leader>v", "<CMD>vsplit<CR>", { desc = "Split vertically." });
+vim.keymap.set("n", "]b", "<CMD>bnext<CR>", { desc = "Split horizontally." })
+vim.keymap.set("n", "[b", "<CMD>bprev<CR>", { desc = "Split vertically." })
+vim.keymap.set("n", "<leader>g", "<CMD>split<CR>", { desc = "Split horizontally." })
+vim.keymap.set("n", "<leader>v", "<CMD>vsplit<CR>", { desc = "Split vertically." })
 
 -- Resize current window using -/_ and =/+ keys
-vim.keymap.set("n", "<Up>", [[<CMD>horizontal resize -2<CR>]], { desc = "" });
-vim.keymap.set("n", "<Down>", [[<CMD>horizontal resize +2<CR>]], { desc = "" });
-vim.keymap.set("n", "<Left>", [[<CMD>vertical resize -5<CR>]], { desc = "" });
-vim.keymap.set("n", "<Right>", [[<CMD>vertical resize +5<CR>]], { desc = "" });
+vim.keymap.set("n", "<Up>", [[<CMD>horizontal resize -2<CR>]], { desc = "" })
+vim.keymap.set("n", "<Down>", [[<CMD>horizontal resize +2<CR>]], { desc = "" })
+vim.keymap.set("n", "<Left>", [[<CMD>vertical resize -5<CR>]], { desc = "" })
+vim.keymap.set("n", "<Right>", [[<CMD>vertical resize +5<CR>]], { desc = "" })
 -- TODO: Add fullscreen toggle
 
 vim.keymap.set("n", "<leader>l",
@@ -140,28 +140,28 @@ vim.keymap.set("n", "<leader>l",
     vim.wo.number = not vim.wo.number
     vim.wo.relativenumber = not vim.wo.relativenumber
   end,
-  { desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load." });
+  { desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load." })
 
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left>]], { desc = "Find and replace current word under cursor." });
-vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/gc<Left><Left>]], { desc = "Find and replace currently highlighted text." });
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left>]], { desc = "Find and replace current word under cursor." })
+vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/gc<Left><Left>]], { desc = "Find and replace currently highlighted text." })
 
 -- Yank and Delete into the system clipboard
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "" });
-vim.keymap.set({ "n", "v" }, "<leader>p", [["+p]], { desc = "" });
-vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Set null register." });
-vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." });
-vim.keymap.set({ "i", "c" }, "<C-v>", [[<C-r>+]], { desc = "Paste from system clipboard." });
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "" })
+vim.keymap.set({ "n", "v" }, "<leader>p", [["+p]], { desc = "" })
+vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Set null register." })
+vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." })
+vim.keymap.set({ "i", "c" }, "<C-v>", [[<C-r>+]], { desc = "Paste from system clipboard." })
 
-vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." });
+vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." })
 
-vim.keymap.set("n", "<leader>lg", "<CMD>LazyGit<CR>", { desc = "LazyGit" });
-vim.keymap.set("n", "<leader>db", function() vim.cmd("silent !gf2 " .. run_command .. " &") end, { desc = "Run gf2 debugger" });
+vim.keymap.set("n", "<leader>lg", "<CMD>LazyGit<CR>", { desc = "LazyGit" })
+vim.keymap.set("n", "<leader>db", function() vim.cmd("silent !gf2 " .. run_command .. " &") end, { desc = "Run gf2 debugger" })
 
 -- Terminal binds
-vim.keymap.set("t", "<C-o>", "<C-\\><C-n>", { desc = "Escape terminal mode." });
-vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end);
-vim.keymap.set("n", "<leader>b", "<CMD>make!<CR>"); -- ! prevents auto jumping to first issue in makeprg output.
-vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end);
+vim.keymap.set("t", "<C-o>", "<C-\\><C-n>", { desc = "Escape terminal mode." })
+vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
+vim.keymap.set("n", "<leader>b", "<CMD>make!<CR>") -- ! prevents auto jumping to first issue in makeprg output.
+vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
 vim.keymap.set("n", "<leader>r",
   function()
     -- Ensure terminal buffer exists.
@@ -173,7 +173,7 @@ vim.keymap.set("n", "<leader>r",
       term_buf = vim.api.nvim_get_current_buf()
     end
     vim.fn.chansend(vim.bo[term_buf].channel, run_command .. "\r\n")
-  end);
+  end)
 vim.keymap.set("n", "<leader>t",
   function()
     -- Search for existing term buffer and show it.
@@ -184,15 +184,15 @@ vim.keymap.set("n", "<leader>t",
       vim.cmd.terminal() -- If terminal buffer doesn't exist create one.
     end
   end,
-  { desc = "Go to Terminal." });
+  { desc = "Go to Terminal." })
 
 -- Run line or highlighted section in lua
-vim.keymap.set("n", "<leader>x", ":.lua<CR>");
-vim.keymap.set("v", "<leader>x", ":lua<CR>");
+vim.keymap.set("n", "<leader>x", ":.lua<CR>")
+vim.keymap.set("v", "<leader>x", ":lua<CR>")
 
 -- Move highlighted text up or down with Shift-j/k
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv");
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv");
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
 --vim.keymap.set("i", "<C-h>", "<C-w>", { desc = "Delete work backwards in insert mode. Disable in favour of movement binds as <C-w> can just be used." },
