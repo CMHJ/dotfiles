@@ -14,48 +14,46 @@
 
 local theme = "default"
 
-local g = vim.g
-g.mapleader = " " -- Set leader to spacebar.
-g.maplocalleader = "\\"
+vim.g.mapleader = " " -- Set leader to spacebar.
+vim.g.maplocalleader = "\\"
 
 -- netrw file explorer configuration
-g.netrw_banner = 0
-g.netrw_browse_split = 0
-g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size.
-g.netrw_liststyle = 1 -- ls -l style view
--- g.netrw_liststyle = 3 -- tree view
-g.netrw_sizestyle = "h" -- human readable file size
+vim.g.netrw_banner = 0
+vim.g.netrw_browse_split = 0
+vim.g.netrw_winsize = 25 -- When using netrw with Lexplore set the window size.
+vim.g.netrw_liststyle = 1 -- ls -l style view
+-- vim.g.netrw_liststyle = 3 -- tree view
+vim.g.netrw_sizestyle = "h" -- human readable file size
 
 -- Set options --
 
-local opt = vim.opt
-opt.winborder = "rounded"
-opt.clipboard = "unnamedplus" -- Use system clipboard for everything.
-opt.termguicolors = true
-opt.splitright = true
-opt.splitbelow = true
-opt.number = true
-opt.relativenumber = true
-opt.cursorline = true
-opt.wrap = false
-opt.scrolloff = 8
-opt.ignorecase = true
-opt.smartcase = true
-opt.hlsearch = false
-opt.incsearch = true
-opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker.
-opt.autoread = true
-opt.swapfile = false -- Remove annoying backup and swap defaults.
-opt.backup = false
-opt.undofile = true
-opt.tabstop = 4 -- Default indentation.
-opt.softtabstop = 4
-opt.shiftwidth = 4
-opt.expandtab = true
-opt.smartindent = true
-opt.timeout = true -- Timeout
-opt.timeoutlen = 250 -- ms
-opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths.
+vim.opt.winborder = "rounded"
+vim.opt.clipboard = "unnamedplus" -- Use system clipboard for everything.
+vim.opt.termguicolors = true
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+vim.opt.number = true
+vim.opt.relativenumber = true
+vim.opt.cursorline = true
+vim.opt.wrap = false
+vim.opt.scrolloff = 8
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
+vim.opt.hlsearch = false
+vim.opt.incsearch = true
+vim.opt.signcolumn = "yes" -- Just keep sign column on to avoid annoying flicker.
+vim.opt.autoread = true
+vim.opt.swapfile = false -- Remove annoying backup and swap defaults.
+vim.opt.backup = false
+vim.opt.undofile = true
+vim.opt.tabstop = 4 -- Default indentation.
+vim.opt.softtabstop = 4
+vim.opt.shiftwidth = 4
+vim.opt.expandtab = true
+vim.opt.smartindent = true
+vim.opt.timeout = true -- Timeout
+vim.opt.timeoutlen = 250 -- ms
+vim.opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths.
 
 vim.o.winborder = "rounded"
 
@@ -71,8 +69,7 @@ vim.api.nvim_create_autocmd("BufReadPost", { pattern = "*", command = 'silent! n
 local function is_dir(path) local stat = (vim.uv or vim.loop).fs_stat(path) return (stat ~= nil) and stat.type == "directory" end
 if vim.fn.argc() > 0 and is_dir(vim.fn.argv(0)) then vim.cmd.cd(vim.fn.argv(0)) end
 
--- Set default run command to build.sh or "build/<dir>", assumes that output binary is same name as directory.
--- TODO(CMHJ): Revert this, this is a run command not a build command.
+-- Set default run command to run.sh or "build/<dir>", assumes that output binary is same name as directory.
 local run_command = nil
 if vim.fn.executable("./build.sh") == 1 then print("Hello there") run_command = "./build.sh" else run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd()) end
 
@@ -121,6 +118,8 @@ local function terminal_toggle(args)
     end
   end
 end
+if vim.fn.executable("./run.sh") == 1 then run_command = "./run.sh" else run_command = "./build/" .. vim.fs.basename(vim.fn.getcwd()) end
+if vim.fn.executable("./build.sh") == 1 then vim.opt.makeprg = "./build.sh" end
 
 local function get_first_term_buf_id()
 end
@@ -148,12 +147,10 @@ local general_keymaps = {
       local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
       if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
     end,
-    desc = "Toggle Quickfix list."
+    desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense."
   },
   { "]q", "<CMD>cnext<CR>", desc = "" },
   { "[q", "<CMD>cprev<CR>", desc = "" },
-  -- copen - to open quickfix list, because 'c' is for quickfix... it makes sense
-  -- clist - to temporarily show the quickfix list
   -- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
 
   -- Diagnostics
