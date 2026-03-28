@@ -66,6 +66,8 @@ alias yt='yt-dlp -i --add-metadata'
 alias tmux='tmux -f $XDG_CONFIG_HOME/tmux/tmux.conf'
 alias pie='perl -p -i -e' # Useful for running substitute commands on files in dir.
 # example: pie 's/replace-text/with-this-text/g' ./*.txt
+alias redshift-on='redshift -O 4000'
+alias redshift-off='redshift -x'
 
 cs() { cd "$@" && ls -lAFh; }
 mkcd() { mkdir -p "$@" && cd "$@"; }
