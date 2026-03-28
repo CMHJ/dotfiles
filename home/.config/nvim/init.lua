@@ -238,7 +238,45 @@ vim.keymap.set("n", "<leader><C-j>", function() require("harpoon"):list():replac
 vim.keymap.set("n", "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, { desc = "Replace third entry in harpoon list with current buffer." })
 vim.keymap.set("n", "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, { desc = "Replace fourth entry in harpoon list with current buffer." })
 
--- LSP Keybinds
+-- Nvim cmp keymaps --
+
+local function nvim_cmp_maps(cmp, luasnip)
+  return {
+    ['<C-u>'] = cmp.mapping.scroll_docs(-4),
+    ['<C-d>'] = cmp.mapping.scroll_docs(4),
+    ['<C-Space>'] = cmp.mapping.complete(),
+    ['<Tab>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
+      elseif luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump()
+      else fallback()
+      end
+    end, { 'i', 's' }),
+    ['<S-Tab>'] = cmp.mapping(function(fallback)
+      if luasnip.locally_jumpable(-1) then luasnip.jump(-1)
+      else fallback()
+      end
+    end, { 'i', 's' }),
+    ['<C-n>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.select_next_item()
+      else fallback()
+      end
+    end, { 'i', 's' }),
+    ['<C-p>'] = cmp.mapping(function(fallback)
+      if cmp.visible() then cmp.select_prev_item()
+      else fallback()
+      end
+    end, { 'i', 's' }),
+    ['<C-k>'] = cmp.mapping(function(fallback)
+      if cmp.visible_docs() then cmp.close_docs()
+      elseif cmp.visible() then cmp.open_docs()
+      else fallback()
+      end
+    end, { 'i', 's' }),
+  }
+end
+
+-- LSP Keymaps --
+
 local lsp_keymaps = {
   { "K", vim.lsp.buf.hover, desc = "Hover documentation." },
   { "<leader>rn", vim.lsp.buf.rename, desc = "Rename." },
@@ -376,55 +414,18 @@ require("lazy").setup({
       },
       config = function()
         local cmp = require("cmp")
-        local luasnip = require('luasnip')
-
+        local luasnip = require("luasnip")
         cmp.setup({
           sources = {
-            { name = 'nvim_lsp' },
-            { name = 'luasnip' },
-            { name = 'nvim_lsp_signature_help' },
-            { name = 'nvim_lsp_document_symbol' },
-            { name = 'buffer' },
+            { name = "nvim_lsp" },
+            { name = "luasnip" },
+            { name = "nvim_lsp_signature_help" },
+            { name = "nvim_lsp_document_symbol" },
+            { name = "buffer" },
           },
-          snippet = {
-            expand = function(args)
-              luasnip.lsp_expand(args.body)
-            end,
-          },
+          snippet = { expand = function(args) luasnip.lsp_expand(args.body) end, },
           view = { docs = { auto_open = true }},
-          -- TODO: Move these bindings.
-          mapping = cmp.mapping.preset.insert({
-            ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-            ['<C-d>'] = cmp.mapping.scroll_docs(4),
-            ['<C-Space>'] = cmp.mapping.complete(),
-            ['<Tab>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
-              elseif luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump()
-              else fallback()
-              end
-            end, { 'i', 's' }),
-            ['<S-Tab>'] = cmp.mapping(function(fallback)
-              if luasnip.locally_jumpable(-1) then luasnip.jump(-1)
-              else fallback()
-              end
-            end, { 'i', 's' }),
-            ['<C-n>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_next_item()
-              else fallback()
-              end
-            end, { 'i', 's' }),
-            ['<C-p>'] = cmp.mapping(function(fallback)
-              if cmp.visible() then cmp.select_prev_item()
-              else fallback()
-              end
-            end, { 'i', 's' }),
-            ['<C-k>'] = cmp.mapping(function(fallback)
-              if cmp.visible_docs() then cmp.close_docs()
-              elseif cmp.visible() then cmp.open_docs()
-              else fallback()
-              end
-            end, { 'i', 's' }),
-          }),
+          mapping = cmp.mapping.preset.insert(nvim_cmp_maps(cmp, luasnip))
         })
       end
     },
