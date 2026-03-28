@@ -4,11 +4,8 @@
 -- Add comment bind with C-/ or otherwise for gcc in normal mode and gc in highlight mode
 -- Add binding for simpler file create like 'f' instead of % in netrw
 -- Fix shell completion for build and run commands by adding options, something like ui_prompt?
--- Remove desc = ""
 -- remove the lazy and priority stuff that doesn't do anything.
--- Setup telescope with harpoon for consistent windows.
 -- Do lazy clean to remove unused plugins
--- Revert list of keybinds
 
 -- Set global variables --
 
@@ -65,7 +62,7 @@ vim.api.nvim_create_autocmd("BufReadPost", { pattern = "*", command = 'silent! n
 
 -- Custom Functions --
 
--- If the first argument is a directory, cd to that directory
+-- If the first argument is a directory, cd to that directory.
 local function is_dir(path) local stat = (vim.uv or vim.loop).fs_stat(path) return (stat ~= nil) and stat.type == "directory" end
 if vim.fn.argc() > 0 and is_dir(vim.fn.argv(0)) then vim.cmd.cd(vim.fn.argv(0)) end
 
@@ -86,9 +83,7 @@ end
 -- Keybinds --
 -- General Keybinds --
 
--- Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit
-vim.keymap.set("i", "<C-c>", "<Esc>")
-
+vim.keymap.set("i", "<C-c>", "<Esc>", { desc = "Return to normal mode. Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit." })
 vim.keymap.set("n", "<leader>w", "<CMD>wa<CR>", { desc = "Save all buffers." })
 vim.keymap.set("n", "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", { desc = "Save and quit all buffers." })
 vim.keymap.set("n", "Q", "<nop>", { desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." })
@@ -104,24 +99,24 @@ vim.keymap.set("n", "<leader>q",
     if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
   end,
   { desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense." })
-vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "" })
-vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "" })
+vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "Go to next in quickfix list." })
+vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "Go to previous in quickfix list." })
 -- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
 
 -- Diagnostics
-vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error" })
-vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error" })
-vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message" })
+vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error." })
+vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error." })
+vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message." })
 
 -- Keep screen centred when moving around
-vim.keymap.set("n","<C-d>", "<C-d>zz", { desc = "" })
-vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "" })
-vim.keymap.set("n", "n", "nzzzv", { desc = "" })
-vim.keymap.set("n", "N", "Nzzzv", { desc = "" })
-vim.keymap.set("n", "<C-i>", "<C-i>zz", { desc = "Jump forward and center." })
-vim.keymap.set("n", "<C-o>", "<C-o>zz", { desc = "Jump back and center." })
-vim.keymap.set("n", "*", "*zz", { desc = "Search word under cursor and center." })
-vim.keymap.set("n", "#", "#zz", { desc = "Search word under cursor backwards and center." })
+vim.keymap.set("n","<C-d>", "<C-d>zz", { desc = "Move down and centre." })
+vim.keymap.set("n", "<C-u>", "<C-u>zz", { desc = "Move up and centre." })
+vim.keymap.set("n", "n", "nzzzv", { desc = "Move to next search item and centre." })
+vim.keymap.set("n", "N", "Nzzzv", { desc = "Move to previous search item and centre." })
+vim.keymap.set("n", "<C-i>", "<C-i>zz", { desc = "Jump forward and centre." })
+vim.keymap.set("n", "<C-o>", "<C-o>zz", { desc = "Jump back and centre." })
+vim.keymap.set("n", "*", "*zz", { desc = "Search word under cursor and centre." })
+vim.keymap.set("n", "#", "#zz", { desc = "Search word under cursor backwards and centre." })
 
 vim.keymap.set("n", "]b", "<CMD>bnext<CR>", { desc = "Split horizontally." })
 vim.keymap.set("n", "[b", "<CMD>bprev<CR>", { desc = "Split vertically." })
@@ -129,39 +124,32 @@ vim.keymap.set("n", "<leader>g", "<CMD>split<CR>", { desc = "Split horizontally.
 vim.keymap.set("n", "<leader>v", "<CMD>vsplit<CR>", { desc = "Split vertically." })
 
 -- Resize current window using -/_ and =/+ keys
-vim.keymap.set("n", "<Up>", [[<CMD>horizontal resize -2<CR>]], { desc = "" })
-vim.keymap.set("n", "<Down>", [[<CMD>horizontal resize +2<CR>]], { desc = "" })
-vim.keymap.set("n", "<Left>", [[<CMD>vertical resize -5<CR>]], { desc = "" })
-vim.keymap.set("n", "<Right>", [[<CMD>vertical resize +5<CR>]], { desc = "" })
--- TODO: Add fullscreen toggle
+vim.keymap.set("n", "<Up>", [[<CMD>horizontal resize -2<CR>]], { desc = "Shrink window vertically." })
+vim.keymap.set("n", "<Down>", [[<CMD>horizontal resize +2<CR>]], { desc = "Grow window vertically." })
+vim.keymap.set("n", "<Left>", [[<CMD>vertical resize -5<CR>]], { desc = "Shrink window horizontally." })
+vim.keymap.set("n", "<Right>", [[<CMD>vertical resize +5<CR>]], { desc = "Grow window horizontally." })
 
-vim.keymap.set("n", "<leader>l",
-  function()
-    vim.wo.number = not vim.wo.number
-    vim.wo.relativenumber = not vim.wo.relativenumber
-  end,
+vim.keymap.set("n", "<leader>l", function() vim.wo.number = not vim.wo.number vim.wo.relativenumber = not vim.wo.relativenumber end,
   { desc = "Toggle relative line numbering, wo for window option as opt sets the option that only works on first load." })
 
-vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left>]], { desc = "Find and replace current word under cursor." })
-vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/gc<Left><Left>]], { desc = "Find and replace currently highlighted text." })
+vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gc<Left><Left><Left>]], { desc = "Find and replace current word under cursor." })
+vim.keymap.set("x", "<leader>s", [[y:%s/<C-r>"/<C-r>"/gc<Left><Left><Left>]], { desc = "Find and replace currently highlighted text." })
 
 -- Yank and Delete into the system clipboard
-vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "" })
-vim.keymap.set({ "n", "v" }, "<leader>p", [["+p]], { desc = "" })
+vim.keymap.set({ "n", "v" }, "<leader>y", [["+y]], { desc = "Yank into system clipboard." })
+vim.keymap.set({ "n", "v" }, "<leader>p", [["+p]], { desc = "Paste from system clipboard." })
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Set null register." })
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." })
 vim.keymap.set({ "i", "c" }, "<C-v>", [[<C-r>+]], { desc = "Paste from system clipboard." })
-
-vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." })
 
 vim.keymap.set("n", "<leader>lg", "<CMD>LazyGit<CR>", { desc = "LazyGit" })
 vim.keymap.set("n", "<leader>db", function() vim.cmd("silent !gf2 " .. run_command .. " &") end, { desc = "Run gf2 debugger" })
 
 -- Terminal binds
 vim.keymap.set("t", "<C-o>", "<C-\\><C-n>", { desc = "Escape terminal mode." })
-vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end)
-vim.keymap.set("n", "<leader>b", "<CMD>make!<CR>") -- ! prevents auto jumping to first issue in makeprg output.
-vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end)
+vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end, { desc = "Set makeprg build command." })
+vim.keymap.set("n", "<leader>b", "<CMD>make!<CR>", { desc = "Run makeprg build command." }) -- ! prevents auto jumping to first issue in makeprg output.
+vim.keymap.set("n", "<leader><leader>r", function() run_command = vim.fn.input("Run command: ") end, { desc = "Set run command." })
 vim.keymap.set("n", "<leader>r",
   function()
     -- Ensure terminal buffer exists.
@@ -173,7 +161,7 @@ vim.keymap.set("n", "<leader>r",
       term_buf = vim.api.nvim_get_current_buf()
     end
     vim.fn.chansend(vim.bo[term_buf].channel, run_command .. "\r\n")
-  end)
+  end, { desc = "Execute run command in a terminal instance." })
 vim.keymap.set("n", "<leader>t",
   function()
     -- Search for existing term buffer and show it.
@@ -186,13 +174,12 @@ vim.keymap.set("n", "<leader>t",
   end,
   { desc = "Go to Terminal." })
 
--- Run line or highlighted section in lua
-vim.keymap.set("n", "<leader>x", ":.lua<CR>")
-vim.keymap.set("v", "<leader>x", ":lua<CR>")
+vim.keymap.set("v", "<leader>x", ":lua<CR>", { desc = "Run selection in lua." })
+vim.keymap.set("n", "<leader>x", ":.lua<CR>", { desc = "Run current line in lua." })
+vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." })
 
--- Move highlighted text up or down with Shift-j/k
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move highlighted text up." })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move highlighted text down." })
 
 -- Maintain consistent word deletion in nvim insert mode as other GUI programs,
 --vim.keymap.set("i", "<C-h>", "<C-w>", { desc = "Delete work backwards in insert mode. Disable in favour of movement binds as <C-w> can just be used." },
@@ -202,70 +189,68 @@ vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move left while in Insert mode.
 vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right while in Insert mode." })
 vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move up while in Insert mode." })
 vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move down while in Insert mode." })
-
 vim.keymap.set("c", "<C-h>", "<Left>", { desc = "Move left while in Command line mode." })
 vim.keymap.set("c", "<C-l>", "<Right>", { desc = "Move right while in Command line mode." })
 vim.keymap.set("c", "<C-k>", "<Up>", { desc = "Select previous in command history." })
 vim.keymap.set("c", "<C-j>", "<Down>", { desc = "Select next in command history." })
 
 -- Telescope bindings
-vim.keymap.set("n", "<leader>sf", function() require("telescope.builtin").find_files() end, { desc = "[S]earch [F]iles" })
-vim.keymap.set("n", "<leader>sg", function() require("telescope.builtin").live_grep() end, { desc = "[S]earch by [G]rep" })
-vim.keymap.set("n", "<leader>sh", function() require("telescope.builtin").help_tags() end, { desc = "[S]earch [H]elp" })
-vim.keymap.set("n", "<leader>sw", function() require("telescope.builtin").grep_string() end, { desc = "[S]earch Current [W]ord" })
-vim.keymap.set("n", "<leader>sk", function() require("telescope.builtin").keymaps() end, { desc = "[S]earch [K]eymaps" })
-vim.keymap.set("n", "<leader>st", function() require("telescope.builtin").builtin() end, { desc = "[S]earch [T]elescope builtin functions" })
-vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics() end, { desc = "[S]earch [D]iagnostics" })
-vim.keymap.set("n", "<leader>sr", function() require("telescope.builtin").resume() end, { desc = "[S]earch [R]esume" })
-vim.keymap.set("n", "<leader>sb", function() require("telescope.builtin").buffers() end, { desc = "[S]earch [B]uffers" })
-vim.keymap.set("n", "<leader>s.", function() require("telescope.builtin").oldfiles() end, { desc = "[S]earch Recent Files ('.' for repeat)" })
-vim.keymap.set("n", "<leader>su", function() require("telescope.builtin").undo() end, { desc = "[S]earch [U]ndo" })
+
+local function ts_buf_maps(_, map)
+    map("i", "<C-k>", require("telescope.actions").move_selection_previous)
+    map("i", "<C-j>", require("telescope.actions").move_selection_next)
+    return true -- Use default mappings for everything else.
+end
+local ts_opts = { attach_mappings = ts_buf_maps }
+
+vim.keymap.set("n", "<leader>sf", function() require("telescope.builtin").find_files(ts_opts) end, { desc = "Search Files" })
+vim.keymap.set("n", "<leader>sg", function() require("telescope.builtin").live_grep(ts_opts) end, { desc = "Search by Grep" })
+vim.keymap.set("n", "<leader>sh", function() require("telescope.builtin").help_tags(ts_opts) end, { desc = "Search Help" })
+vim.keymap.set("n", "<leader>sw", function() require("telescope.builtin").grep_string(ts_opts) end, { desc = "Search Current Word" })
+vim.keymap.set("n", "<leader>sk", function() require("telescope.builtin").keymaps(ts_opts) end, { desc = "Search Keymaps" })
+vim.keymap.set("n", "<leader>st", function() require("telescope.builtin").builtin(ts_opts) end, { desc = "Search Telescope builtin functions" })
+vim.keymap.set("n", "<leader>sd", function() require("telescope.builtin").diagnostics(ts_opts) end, { desc = "Search Diagnostics" })
+vim.keymap.set("n", "<leader>sr", function() require("telescope.builtin").resume(ts_opts) end, { desc = "Search Resume" })
+vim.keymap.set("n", "<leader>sb", function() require("telescope.builtin").buffers(ts_opts) end, { desc = "Search Buffers" })
+vim.keymap.set("n", "<leader>s.", function() require("telescope.builtin").oldfiles(ts_opts) end, { desc = "Search Recent Files ('.' for repeat)" })
+vim.keymap.set("n", "<leader>su", function() require("telescope.builtin").undo(ts_opts) end, { desc = "Search Undo" })
 vim.keymap.set("n", "<leader>/",
-  function()
-    require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy {
-      winblend = 10,
-      previewer = false,
-    })
-  end,
-  { desc = "[/] Fuzzily search in current buffer" })
+  function() require("telescope.builtin").current_buffer_fuzzy_find(require("telescope.themes").get_ivy { winblend = 10, previewer = false, attach_mappings = ts_buf_maps }) end,
+  { desc = "/ Fuzzily search in current buffer" })
 vim.keymap.set("n", "<leader>sn",
-  function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", } end,
-  { desc = "[S]earch [N]eovim config" })
-vim.keymap.set("n", "<leader>sm",
-  function()
-    -- For some reason only the first section is searched by default.
-    require("telescope.builtin").man_pages { sections = { "ALL" } }
-  end,
-  { desc = "[S]earch [M]an Pages" })
+  function() require("telescope.builtin").find_files { cwd = "~/Repos/dotfiles/home/.config/nvim", attach_mappings = ts_buf_maps } end,
+  { desc = "Search Neovim config." })
+-- For some reason only the first man section is searched by default.
+vim.keymap.set("n", "<leader>sm", function() require("telescope.builtin").man_pages { sections = { "ALL" }, attach_mappings = ts_buf_maps } end, { desc = "Search Man Pages" })
 
 -- Harpoon binds
-vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end, { desc = "" })
-vim.keymap.set("n", "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, { desc = "" })
-vim.keymap.set("n", "<C-c>", function() require("harpoon").ui:close_menu() end, { desc = "" })
-vim.keymap.set("n", "<C-p>", function() require("harpoon"):list():prev() end, { desc = "Toggle previous & next buffers stored within Harpoon list" })
-vim.keymap.set("n", "<C-n>", function() require("harpoon"):list():next() end, { desc = "" })
-vim.keymap.set("n", "<C-h>", function() require("harpoon"):list():select(1) end, { desc = "" })
-vim.keymap.set("n", "<C-j>", function() require("harpoon"):list():select(2) end, { desc = "" })
-vim.keymap.set("n", "<C-k>", function() require("harpoon"):list():select(3) end, { desc = "" })
-vim.keymap.set("n", "<C-l>", function() require("harpoon"):list():select(4) end, { desc = "" })
-vim.keymap.set("n", "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, { desc = "" })
-vim.keymap.set("n", "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, { desc = "" })
-vim.keymap.set("n", "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, { desc = "" })
-vim.keymap.set("n", "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, { desc = "" })
+vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end, { desc = "Add current buffer to harpoon list." })
+vim.keymap.set("n", "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, { desc = "Toggle harpoon quick menu list window." })
+vim.keymap.set("n", "<C-c>", function() require("harpoon").ui:close_menu() end, { desc = "Close harpoon quick menu list window." })
+vim.keymap.set("n", "<C-p>", function() require("harpoon"):list():prev() end, { desc = "Show previous buffer in harpoon list." })
+vim.keymap.set("n", "<C-n>", function() require("harpoon"):list():next() end, { desc = "Show next buffer in harpoon list." })
+vim.keymap.set("n", "<C-h>", function() require("harpoon"):list():select(1) end, { desc = "Show first entry in harpoon list." })
+vim.keymap.set("n", "<C-j>", function() require("harpoon"):list():select(2) end, { desc = "Show second entry in harpoon list." })
+vim.keymap.set("n", "<C-k>", function() require("harpoon"):list():select(3) end, { desc = "Show third entry in harpoon list." })
+vim.keymap.set("n", "<C-l>", function() require("harpoon"):list():select(4) end, { desc = "Show fourth entry in harpoon list." })
+vim.keymap.set("n", "<leader><C-h>", function() require("harpoon"):list():replace_at(1) end, { desc = "Replace first entry in harpoon list with current buffer." })
+vim.keymap.set("n", "<leader><C-j>", function() require("harpoon"):list():replace_at(2) end, { desc = "Replace second entry in harpoon list with current buffer." })
+vim.keymap.set("n", "<leader><C-k>", function() require("harpoon"):list():replace_at(3) end, { desc = "Replace third entry in harpoon list with current buffer." })
+vim.keymap.set("n", "<leader><C-l>", function() require("harpoon"):list():replace_at(4) end, { desc = "Replace fourth entry in harpoon list with current buffer." })
 
 -- LSP Keybinds
 local lsp_keymaps = {
-  { "K", vim.lsp.buf.hover, desc = "Hover Documentation" },
-  { "<leader>rn", vim.lsp.buf.rename, desc = "ReName" },
-  { '<F2>', vim.lsp.buf.rename, desc = "Rename with windows style binding"},
-  { "gd", vim.lsp.buf.definition, desc = "Goto Definition" },
-  { "gD", vim.lsp.buf.declaration, desc = "Goto Declaration" },
-  { "ga", vim.lsp.buf.code_action, desc = "Goto Action" },
-  { 'gi', vim.lsp.buf.implementation, desc = "Goto Implementation" },
-  { 'go', vim.lsp.buf.type_definition, },
-  { 'gr', vim.lsp.buf.references, },
-  { 'gs', vim.lsp.buf.signature_help, },
-  { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' } },
+  { "K", vim.lsp.buf.hover, desc = "Hover documentation." },
+  { "<leader>rn", vim.lsp.buf.rename, desc = "Rename." },
+  { '<F2>', vim.lsp.buf.rename, desc = "Rename, with windows style binding." },
+  { "gd", vim.lsp.buf.definition, desc = "Goto definition." },
+  { "gD", vim.lsp.buf.declaration, desc = "Goto declaration." },
+  { "ga", vim.lsp.buf.code_action, desc = "Goto action." },
+  { 'gi', vim.lsp.buf.implementation, desc = "Goto implementation." },
+  { 'go', vim.lsp.buf.type_definition, desc = "Goto type definition." },
+  { 'gr', vim.lsp.buf.references, desc = "Show all symbol references in quickfix list." },
+  { 'gs', vim.lsp.buf.signature_help, desc = "Display symbol signature help in floating window." },
+  { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' }, desc = "Format current buffer." },
 }
 
 local function set_keymaps(keymaps, buffer)
@@ -376,21 +361,7 @@ require("lazy").setup({
       "nvim-telescope/telescope.nvim",
       tag = "0.1.8",
       dependencies = { "nvim-lua/plenary.nvim", },
-      config = function()
-        require("telescope").setup({
-          defaults = {
-            sorting_strategy = "ascending",
-            mappings = {
-              i = {
-                -- TODO: Move these bindings to the top.
-                ["<C-k>"] = require("telescope.actions").move_selection_previous,
-                ["<C-j>"] = require("telescope.actions").move_selection_next,
-                ["<C-q>"] = require("telescope.actions").send_selected_to_qflist + require("telescope.actions").open_qflist,
-              }
-            }
-          }
-        })
-      end
+      config = function() require("telescope").setup({ defaults = { sorting_strategy = "ascending", } }) end
     },
     {
       'hrsh7th/nvim-cmp',
