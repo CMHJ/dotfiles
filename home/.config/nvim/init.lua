@@ -1,11 +1,9 @@
--- TODO
--- Remove dead code
--- Move keybinds into simple tables at the top
--- Add comment bind with C-/ or otherwise for gcc in normal mode and gc in highlight mode
--- Add binding for simpler file create like 'f' instead of % in netrw
--- Fix shell completion for build and run commands by adding options, something like ui_prompt?
--- remove the lazy and priority stuff that doesn't do anything.
--- Do lazy clean to remove unused plugins
+--   ____ __  __ _   _     _ _                  _                              __ _        --
+--  / ___|  \/  | | | |   | ( )___   _ ____   _(_)_ __ ___     ___ ___  _ __  / _(_) __ _  --
+-- | |   | |\/| | |_| |_  | |// __| | '_ \ \ / / | '_ ` _ \   / __/ _ \| '_ \| |_| |/ _` | --
+-- | |___| |  | |  _  | |_| | \__ \ | | | \ V /| | | | | | | | (_| (_) | | | |  _| | (_| | --
+--  \____|_|  |_|_| |_|\___/  |___/ |_| |_|\_/ |_|_| |_| |_|  \___\___/|_| |_|_| |_|\__, | --
+--                                                                                  |___/  --
 
 -- Set global variables --
 
@@ -54,8 +52,48 @@ vim.opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor fo
 
 vim.o.winborder = "rounded"
 
+-- Set tab size for lua files.
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "lua",
+  callback = function()
+    vim.opt_local.tabstop = 2
+    vim.opt_local.softtabstop = 2
+    vim.opt_local.shiftwidth = 2
+    vim.opt_local.expandtab = true
+  end,
+})
+
 -- Disable comment continuation on newline.
 vim.api.nvim_create_autocmd("FileType", { pattern = "*", callback = function() vim.opt_local.formatoptions:remove({ 'r', 'o' }) end })
+
+-- Trim whitespace.
+vim.api.nvim_create_autocmd("BufWritePre", {
+  pattern = "*",
+  callback = function()
+    local save_cursor = vim.fn.getpos(".")
+
+    -- Trim trailing whitespace
+    vim.cmd([[%s/\s\+$//e]])
+
+    local current_buffer_idx = 0
+    local total_lines = vim.fn.line("$")
+    local last_line_content = vim.fn.getline(total_lines)
+
+    -- Add newline to EOF if there isn't one
+    if last_line_content ~= "" then
+      vim.api.nvim_buf_set_lines(current_buffer_idx, total_lines, total_lines, true, { "" })
+      total_lines = vim.fn.line("$")
+    end
+
+    -- Remove extra blank lines at EOF and check number of lines to prevent loop
+    while total_lines > 1 and vim.fn.getline(total_lines - 1) == "" do
+      vim.api.nvim_buf_set_lines(current_buffer_idx, total_lines - 1, total_lines, true, {})
+      total_lines = vim.fn.line("$")
+    end
+
+    vim.fn.setpos(".", save_cursor)
+  end,
+})
 
 -- Automatically jump to last position in file and unfold lines when opened again.
 vim.api.nvim_create_autocmd("BufReadPost", { pattern = "*", command = 'silent! normal! g`"zv' })
@@ -80,33 +118,32 @@ local function get_first_term_buf_id()
   return nil
 end
 
--- Keybinds --
--- General Keybinds --
+-- General Keymaps --
 
 vim.keymap.set("i", "<C-c>", "<Esc>", { desc = "Return to normal mode. Keep Esc and C-c behaviour consistent, e.g. when finishing a multiline edit." })
 vim.keymap.set("n", "<leader>w", "<CMD>wa<CR>", { desc = "Save all buffers." })
 vim.keymap.set("n", "<leader>wq", "<CMD>wa<CR><CMD>qa<CR>", { desc = "Save and quit all buffers." })
 vim.keymap.set("n", "Q", "<nop>", { desc = "Disable Ex mode, if you know you know. Doesn't seem to have this behaviour in nvim but disable anyway." })
 
--- netrw file explorer binds --
+-- Maintain consistent word deletion in nvim insert mode with other GUI programs.
+--vim.keymap.set("i", "<C-h>", "<C-w>", { desc = "Delete work backwards in insert mode. Disable in favour of movement keymaps as <C-w> can just be used." },
+vim.keymap.set("i", "<C-Del>", "<C-o>de", { desc = "Delete word forwards in insert mode." })
+
+vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move left while in Insert mode." })
+vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right while in Insert mode." })
+vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move up while in Insert mode." })
+vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move down while in Insert mode." })
+vim.keymap.set("c", "<C-h>", "<Left>", { desc = "Move left while in Command line mode." })
+vim.keymap.set("c", "<C-l>", "<Right>", { desc = "Move right while in Command line mode." })
+vim.keymap.set("c", "<C-k>", "<Up>", { desc = "Select previous in command history." })
+vim.keymap.set("c", "<C-j>", "<Down>", { desc = "Select next in command history." })
+
+vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move highlighted text up." })
+vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move highlighted text down." })
+
+-- netrw file explorer keymaps
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Open netrw file explorer." })
 --vim.keymap.set("n", "<leader>pv", vim.cmd.Lexplore, { desc = "Open small file explorer to the side." })
-
--- Quickfix list bindings --
-vim.keymap.set("n", "<leader>q",
-  function()
-    local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
-    if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
-  end,
-  { desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense." })
-vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "Go to next in quickfix list." })
-vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "Go to previous in quickfix list." })
--- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
-
--- Diagnostics
-vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error." })
-vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error." })
-vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message." })
 
 -- Keep screen centred when moving around
 vim.keymap.set("n","<C-d>", "<C-d>zz", { desc = "Move down and centre." })
@@ -118,11 +155,11 @@ vim.keymap.set("n", "<C-o>", "<C-o>zz", { desc = "Jump back and centre." })
 vim.keymap.set("n", "*", "*zz", { desc = "Search word under cursor and centre." })
 vim.keymap.set("n", "#", "#zz", { desc = "Search word under cursor backwards and centre." })
 
+-- Buffer and Window management keymaps
 vim.keymap.set("n", "]b", "<CMD>bnext<CR>", { desc = "Split horizontally." })
 vim.keymap.set("n", "[b", "<CMD>bprev<CR>", { desc = "Split vertically." })
 vim.keymap.set("n", "<leader>g", "<CMD>split<CR>", { desc = "Split horizontally." })
 vim.keymap.set("n", "<leader>v", "<CMD>vsplit<CR>", { desc = "Split vertically." })
-
 -- Resize current window using -/_ and =/+ keys
 vim.keymap.set("n", "<Up>", [[<CMD>horizontal resize -2<CR>]], { desc = "Shrink window vertically." })
 vim.keymap.set("n", "<Down>", [[<CMD>horizontal resize +2<CR>]], { desc = "Grow window vertically." })
@@ -142,10 +179,33 @@ vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]], { desc = "Set null register."
 vim.keymap.set("x", "<leader>p", [["_dP]], { desc = "Paste from system clipboard over highlighted text and send overwritten text to null register." })
 vim.keymap.set({ "i", "c" }, "<C-v>", [[<C-r>+]], { desc = "Paste from system clipboard." })
 
+vim.keymap.set("v", "<leader>x", ":lua<CR>", { desc = "Run selection in lua." })
+vim.keymap.set("n", "<leader>x", ":.lua<CR>", { desc = "Run current line in lua." })
+vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." })
+
 vim.keymap.set("n", "<leader>lg", "<CMD>LazyGit<CR>", { desc = "LazyGit" })
 vim.keymap.set("n", "<leader>db", function() vim.cmd("silent !gf2 " .. run_command .. " &") end, { desc = "Run gf2 debugger" })
 
--- Terminal binds
+-- Quickfix list keymaps --
+
+vim.keymap.set("n", "<leader>q",
+  function()
+    local quickfix_list_open = vim.fn.getqflist({winid = 0}).winid ~= 0
+    if quickfix_list_open then vim.cmd("cclose") else vim.cmd("copen") end
+  end,
+  { desc = "Toggle Quickfix list, because 'c' is for quickfix... it makes sense." })
+vim.keymap.set("n", "]q", "<CMD>cnext<CR>", { desc = "Go to next in quickfix list." })
+vim.keymap.set("n", "[q", "<CMD>cprev<CR>", { desc = "Go to previous in quickfix list." })
+-- cdo <CMD> - apply command to all items in the quickfix list like a sub cmd
+
+-- Diagnostics keymaps --
+
+vim.keymap.set("n", "<leader>dn", function() vim.diagnostic.jump({ count=1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to next error." })
+vim.keymap.set("n", "<leader>dp", function() vim.diagnostic.jump({ count=-1, float=true, severity = vim.diagnostic.severity.ERROR }) end, { desc = "Go to previous error." })
+vim.keymap.set("n", "<leader>do", vim.diagnostic.open_float, { desc = "Open floating diagnostic message." })
+
+-- Terminal keymaps --
+
 vim.keymap.set("t", "<C-o>", "<C-\\><C-n>", { desc = "Escape terminal mode." })
 vim.keymap.set("n", "<leader><leader>b", function() vim.opt.makeprg = vim.fn.input("Build command: ") end, { desc = "Set makeprg build command." })
 vim.keymap.set("n", "<leader>b", "<CMD>make!<CR>", { desc = "Run makeprg build command." }) -- ! prevents auto jumping to first issue in makeprg output.
@@ -174,27 +234,7 @@ vim.keymap.set("n", "<leader>t",
   end,
   { desc = "Go to Terminal." })
 
-vim.keymap.set("v", "<leader>x", ":lua<CR>", { desc = "Run selection in lua." })
-vim.keymap.set("n", "<leader>x", ":.lua<CR>", { desc = "Run current line in lua." })
-vim.keymap.set("n", "<leader><leader>x", "<CMD>source %<CR>", { desc = "Source current file." })
-
-vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move highlighted text up." })
-vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move highlighted text down." })
-
--- Maintain consistent word deletion in nvim insert mode as other GUI programs,
---vim.keymap.set("i", "<C-h>", "<C-w>", { desc = "Delete work backwards in insert mode. Disable in favour of movement binds as <C-w> can just be used." },
-vim.keymap.set("i", "<C-Del>", "<C-o>de", { desc = "Delete word forwards in insert mode." })
-
-vim.keymap.set("i", "<C-h>", "<Left>", { desc = "Move left while in Insert mode." })
-vim.keymap.set("i", "<C-l>", "<Right>", { desc = "Move right while in Insert mode." })
-vim.keymap.set("i", "<C-k>", "<Up>", { desc = "Move up while in Insert mode." })
-vim.keymap.set("i", "<C-j>", "<Down>", { desc = "Move down while in Insert mode." })
-vim.keymap.set("c", "<C-h>", "<Left>", { desc = "Move left while in Command line mode." })
-vim.keymap.set("c", "<C-l>", "<Right>", { desc = "Move right while in Command line mode." })
-vim.keymap.set("c", "<C-k>", "<Up>", { desc = "Select previous in command history." })
-vim.keymap.set("c", "<C-j>", "<Down>", { desc = "Select next in command history." })
-
--- Telescope bindings
+-- Telescope keymaps --
 
 local function ts_buf_maps(_, map)
     map("i", "<C-k>", require("telescope.actions").move_selection_previous)
@@ -223,7 +263,8 @@ vim.keymap.set("n", "<leader>sn",
 -- For some reason only the first man section is searched by default.
 vim.keymap.set("n", "<leader>sm", function() require("telescope.builtin").man_pages { sections = { "ALL" }, attach_mappings = ts_buf_maps } end, { desc = "Search Man Pages" })
 
--- Harpoon binds
+-- Harpoon keymaps --
+
 vim.keymap.set("n", "<leader>a", function() require("harpoon"):list():add() end, { desc = "Add current buffer to harpoon list." })
 vim.keymap.set("n", "<leader>h", function() require("harpoon").ui:toggle_quick_menu(require("harpoon"):list()) end, { desc = "Toggle harpoon quick menu list window." })
 vim.keymap.set("n", "<C-c>", function() require("harpoon").ui:close_menu() end, { desc = "Close harpoon quick menu list window." })
@@ -242,31 +283,31 @@ vim.keymap.set("n", "<leader><C-l>", function() require("harpoon"):list():replac
 
 local function nvim_cmp_maps(cmp, luasnip)
   return {
-    ['<C-u>'] = cmp.mapping.scroll_docs(-4),
-    ['<C-d>'] = cmp.mapping.scroll_docs(4),
-    ['<C-Space>'] = cmp.mapping.complete(),
-    ['<Tab>'] = cmp.mapping(function(fallback)
+    ["<C-u>"] = cmp.mapping.scroll_docs(-4),
+    ["<C-d>"] = cmp.mapping.scroll_docs(4),
+    ["<C-Space>"] = cmp.mapping.complete(),
+    ["<Tab>"] = cmp.mapping(function(fallback)
       if cmp.visible() then cmp.confirm({ behavior = cmp.ConfirmBehavior.Insert, select = true })
       elseif luasnip.expand_or_locally_jumpable() then luasnip.expand_or_jump()
       else fallback()
       end
     end, { 'i', 's' }),
-    ['<S-Tab>'] = cmp.mapping(function(fallback)
+    ["<S-Tab>"] = cmp.mapping(function(fallback)
       if luasnip.locally_jumpable(-1) then luasnip.jump(-1)
       else fallback()
       end
     end, { 'i', 's' }),
-    ['<C-n>'] = cmp.mapping(function(fallback)
+    ["<C-n>"] = cmp.mapping(function(fallback)
       if cmp.visible() then cmp.select_next_item()
       else fallback()
       end
     end, { 'i', 's' }),
-    ['<C-p>'] = cmp.mapping(function(fallback)
+    ["<C-p>"] = cmp.mapping(function(fallback)
       if cmp.visible() then cmp.select_prev_item()
       else fallback()
       end
     end, { 'i', 's' }),
-    ['<C-k>'] = cmp.mapping(function(fallback)
+    ["<C-k>"] = cmp.mapping(function(fallback)
       if cmp.visible_docs() then cmp.close_docs()
       elseif cmp.visible() then cmp.open_docs()
       else fallback()
@@ -280,15 +321,15 @@ end
 local lsp_keymaps = {
   { "K", vim.lsp.buf.hover, desc = "Hover documentation." },
   { "<leader>rn", vim.lsp.buf.rename, desc = "Rename." },
-  { '<F2>', vim.lsp.buf.rename, desc = "Rename, with windows style binding." },
+  { "<F2>", vim.lsp.buf.rename, desc = "Rename, with windows style bind." },
   { "gd", vim.lsp.buf.definition, desc = "Goto definition." },
   { "gD", vim.lsp.buf.declaration, desc = "Goto declaration." },
   { "ga", vim.lsp.buf.code_action, desc = "Goto action." },
-  { 'gi', vim.lsp.buf.implementation, desc = "Goto implementation." },
-  { 'go', vim.lsp.buf.type_definition, desc = "Goto type definition." },
-  { 'gr', vim.lsp.buf.references, desc = "Show all symbol references in quickfix list." },
-  { 'gs', vim.lsp.buf.signature_help, desc = "Display symbol signature help in floating window." },
-  { '<leader>f', function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' }, desc = "Format current buffer." },
+  { "gi", vim.lsp.buf.implementation, desc = "Goto implementation." },
+  { "go", vim.lsp.buf.type_definition, desc = "Goto type definition." },
+  { "gr", vim.lsp.buf.references, desc = "Show all symbol references in quickfix list." },
+  { "gs", vim.lsp.buf.signature_help, desc = "Display symbol signature help in floating window." },
+  { "<leader>f", function() vim.lsp.buf.format({ async = true }) end, mode = { 'n', 'x' }, desc = "Format current buffer." },
 }
 
 local function set_keymaps(keymaps, buffer)
@@ -299,13 +340,13 @@ local function set_keymaps(keymaps, buffer)
   end
 end
 
--- Keybinds have to be set after the LSP is initialised.
+-- Keymaps have to be set after the LSP is initialised.
 vim.api.nvim_create_autocmd("LspAttach", { callback = function(event) set_keymaps(lsp_keymaps, event.buf) end })
 
 -- LSP Server Configuration --
 
 local lsp_servers = {
-  lua_ls = { settings = { Lua = { diagnostics = { globals = { 'vim' } }, telemetry = { enable = false } } } },
+  lua_ls = { settings = { Lua = { diagnostics = { globals = { "vim" } }, telemetry = { enable = false } } } },
   clangd = { cmd = { "clangd", "--header-insertion=never"}},
   rust_analyzer = {
     settings = {
@@ -335,7 +376,7 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local out = vim.fn.system({ "git", "clone", "https://github.com/folke/lazy.nvim.git", "--filter=blob:none",
     "--branch=stable", lazypath })
   if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo( { { "Failed to clone lazy.nvim:\n", "ErrorMsg" }, { out, "WarningMsg" }, { "\nPress any key to exit..." } }, true, {})
+    vim.api.nvim_echo({ { "Failed to clone lazy.nvim:\n", "ErrorMsg" }, { out, "WarningMsg" }, { "\nPress any key to exit..." } }, true, {})
     vim.fn.getchar()
     os.exit(1)
   end
@@ -353,8 +394,8 @@ require("lazy").setup({
         vim.cmd.colorscheme(theme) -- Automatically set theme based on plugin name.
 
         -- Enable transparency
-        vim.cmd('hi Directory guibg=NONE')
-        vim.cmd('hi SignColumn guibg=NONE')
+        vim.cmd("hi Directory guibg=NONE")
+        vim.cmd("hi SignColumn guibg=NONE")
         vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
         vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
@@ -365,13 +406,7 @@ require("lazy").setup({
     { "brenoprata10/nvim-highlight-colors", config = function() require("nvim-highlight-colors").setup({}) end },
     { "windwp/nvim-autopairs", event = "InsertEnter", config = true },
     { "kylechui/nvim-surround", version = "*", config = true }, -- * = stable
-    {
-      "ThePrimeagen/harpoon",
-      branch = "harpoon2",
-      dependencies = { "nvim-lua/plenary.nvim" },
-      config = function()
-        require("harpoon"):setup()
-      end,
+    { "ThePrimeagen/harpoon", branch = "harpoon2", dependencies = { "nvim-lua/plenary.nvim" }, config = function() require("harpoon"):setup() end,
     },
     {
       "kdheepak/lazygit.nvim",
@@ -402,15 +437,15 @@ require("lazy").setup({
       config = function() require("telescope").setup({ defaults = { sorting_strategy = "ascending", } }) end
     },
     {
-      'hrsh7th/nvim-cmp',
+      "hrsh7th/nvim-cmp",
       dependencies = {
-        'hrsh7th/cmp-buffer',
-        'hrsh7th/cmp-path',
-        'hrsh7th/cmp-nvim-lsp',
+        "hrsh7th/cmp-buffer",
+        "hrsh7th/cmp-path",
+        "hrsh7th/cmp-nvim-lsp",
         "hrsh7th/cmp-nvim-lsp-signature-help",
-        'saadparwaiz1/cmp_luasnip',
-        'rafamadriz/friendly-snippets',
-        { 'L3MON4D3/LuaSnip', config = function() require("luasnip.loaders.from_vscode").lazy_load() end },
+        "saadparwaiz1/cmp_luasnip",
+        "rafamadriz/friendly-snippets",
+        { "L3MON4D3/LuaSnip", config = function() require("luasnip.loaders.from_vscode").lazy_load() end },
       },
       config = function()
         local cmp = require("cmp")
@@ -433,7 +468,7 @@ require("lazy").setup({
       "neovim/nvim-lspconfig",
       dependencies = {
         { "folke/lazydev.nvim", ft = "lua", opts = { library = { { path = "${3rd}/luv/library", words = { "vim%.uv" } } } } }, -- Automatically configure the lua LSP.
-        'hrsh7th/nvim-cmp',
+        "hrsh7th/nvim-cmp",
       },
       opts = { servers = lsp_servers },
       config = function(_, opts)
@@ -464,48 +499,6 @@ require("lazy").setup({
       opts = { ensure_installed = lsp_server_names, automatic_enable = true, }
     }
   }
-})
-
--- Filetype configurations --
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "lua",
-  callback = function()
-    vim.opt_local.tabstop = 2
-    vim.opt_local.softtabstop = 2
-    vim.opt_local.shiftwidth = 2
-    vim.opt_local.expandtab = true
-  end,
-})
-
--- Save autocmds --
-
-vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
-  callback = function()
-    local save_cursor = vim.fn.getpos(".")
-
-    -- Trim trailing whitespace
-    vim.cmd([[%s/\s\+$//e]])
-
-    local current_buffer_idx = 0
-    local total_lines = vim.fn.line("$")
-    local last_line_content = vim.fn.getline(total_lines)
-
-    -- Add newline to EOF if there isn't one
-    if last_line_content ~= "" then
-      vim.api.nvim_buf_set_lines(current_buffer_idx, total_lines, total_lines, true, { "" })
-      total_lines = vim.fn.line("$")
-    end
-
-    -- Remove extra blank lines at EOF and check number of lines to prevent loop
-    while total_lines > 1 and vim.fn.getline(total_lines - 1) == "" do
-      vim.api.nvim_buf_set_lines(current_buffer_idx, total_lines - 1, total_lines, true, {})
-      total_lines = vim.fn.line("$")
-    end
-
-    vim.fn.setpos(".", save_cursor)
-  end,
 })
 
 -- Neovide configuration --
