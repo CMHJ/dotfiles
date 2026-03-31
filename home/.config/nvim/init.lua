@@ -46,13 +46,16 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.smartindent = true
+vim.opt.autoindent = true
 vim.opt.timeout = true -- Timeout
 vim.opt.timeoutlen = 250 -- ms
 vim.opt.colorcolumn = { "80", "120" } -- Create highlighted columns in editor for line lengths.
 
 vim.o.winborder = "rounded"
 
--- Set tab size for lua files.
+-- Disable stupid close parenthesis indent matching when newlining inside function parameters.
+vim.api.nvim_create_autocmd("FileType", { pattern = "c,h,cpp,hpp", callback = function() vim.opt.cindent = false end })
+
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "lua",
   callback = function()
