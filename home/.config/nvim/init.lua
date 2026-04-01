@@ -45,7 +45,6 @@ vim.opt.tabstop = 4 -- Default indentation.
 vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
-vim.opt.smartindent = true
 vim.opt.autoindent = true
 vim.opt.timeout = true -- Timeout
 vim.opt.timeoutlen = 250 -- ms
