@@ -421,24 +421,14 @@ require("lazy").setup({
       branch = "main",
       lazy = false,
       build = ":TSUpdate",
-      opts = {
-        modules = {},
-        ignore_install = {},
-        sync_install = false,
-        auto_install = true,
-      },
-      init = function()
-        vim.api.nvim_create_autocmd('FileType', { callback = function()
-            pcall(vim.treesitter.start) -- Enable treesitter highlighting and disable regex syntax
-            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" -- Enable treesitter-based indentation
-          end, })
-
-        local ensure_installed = { "vim", "vimdoc", "lua", "bash", "c", "cpp", "go", "rust", "python", "markdown", "toml", "json" }
-        local already_installed = require('nvim-treesitter.config').get_installed()
-        local parsers_to_install = vim.iter(ensure_installed)
-          :filter(function(parser) return not vim.tbl_contains(already_installed, parser) end)
-          :totable()
-        require('nvim-treesitter').install(parsers_to_install)
+      config = function()
+        vim.api.nvim_create_autocmd("FileType", { callback = function()
+          pcall(vim.treesitter.start) -- Enable treesitter highlighting and disable regex syntax - pcall to catch errors
+          vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Enable treesitter-based folding
+          vim.wo[0][0].foldmethod = "expr"
+          vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" -- Enable treesitter-based indentation
+        end, })
+        require("nvim-treesitter").install { "vim", "vimdoc", "lua", "bash", "c", "cpp", "python", "go", "rust", "toml", "json", "markdown" }
       end,
     },
     {
