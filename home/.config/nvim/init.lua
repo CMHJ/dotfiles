@@ -424,17 +424,17 @@ require("lazy").setup({
       config = function()
         vim.api.nvim_create_autocmd("FileType", { callback = function()
           pcall(vim.treesitter.start) -- Enable treesitter highlighting and disable regex syntax - pcall to catch errors
-          vim.wo[0][0].foldexpr = "v:lua.vim.treesitter.foldexpr()" -- Enable treesitter-based folding
-          vim.wo[0][0].foldmethod = "expr"
           vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()" -- Enable treesitter-based indentation
         end, })
         require("nvim-treesitter").install { "vim", "vimdoc", "lua", "bash", "c", "cpp", "python", "go", "rust", "toml", "json", "markdown" }
       end,
     },
     {
-      "nvim-telescope/telescope.nvim",
-      tag = "0.1.8",
-      dependencies = { "nvim-lua/plenary.nvim", },
+      "nvim-telescope/telescope.nvim", version = "*",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+        { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
+      },
       config = function() require("telescope").setup({ defaults = { sorting_strategy = "ascending", } }) end
     },
     {
