@@ -9,6 +9,7 @@
 
 local theme = "default"
 
+vim.g.current_compiler = "custom" -- Stop ftplugin files from overwriting makeprg.
 vim.g.mapleader = " " -- Set leader to spacebar.
 vim.g.maplocalleader = "\\"
 
